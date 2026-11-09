@@ -7,10 +7,13 @@ namespace App\Http\Controllers;
 use App\ProjectExample;
 use Inertia\Inertia;
 use Inertia\Response;
-use WavyKit\Pages\Laravel\Pages;
+use WavyKit\Navigation\Navigation;
+use WavyKit\Pages\Pages;
 
 final class PagesTrialController extends Controller
 {
+    public function __construct(private readonly Navigation $navigation) {}
+
     public function index(Pages $pages): Response
     {
         return $this->render($pages, 'Projects');
@@ -32,8 +35,8 @@ final class PagesTrialController extends Controller
             'title' => $title,
             'currentPageId' => $pages->page()?->id,
             'breadcrumbs' => $pages->breadcrumbs(),
-            'primary' => $pages->navigation('primary'),
-            'footer' => $pages->navigation('footer'),
+            'primary' => $this->navigation->menu('primary'),
+            'footer' => $this->navigation->menu('footer'),
             'project' => $project === null ? null : ['id' => $project->id, 'name' => $project->name],
             'projects' => array_map(fn (ProjectExample $example): array => [
                 'id' => $example->id,

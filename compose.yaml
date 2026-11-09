@@ -20,7 +20,7 @@ services:
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         volumes:
             - '.:/var/www/html'
-            - '../../packages/pages:/var/packages/pages:ro'
+            - '../../packages/wavykit/packages:/var/packages/wavykit/packages:ro'
         depends_on:
             pgsql:
                 condition: service_healthy
@@ -38,7 +38,7 @@ services:
             LARAVEL_SAIL: 1
         volumes:
             - '.:/var/www/html'
-            - '../../packages/pages:/var/packages/pages:ro'
+            - '../../packages/wavykit/packages:/var/packages/wavykit/packages:ro'
         depends_on:
             pgsql:
                 condition: service_healthy

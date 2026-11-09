@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f24d3e1ff382f3b1e3b73eed4521efd",
+    "content-hash": "94007497aa0410f9175dd7a6dee5723c",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -7433,12 +7433,47 @@
             "time": "2026-04-26T05:33:54+00:00"
         },
         {
-            "name": "wavykit/pages",
-            "version": "dev-main",
+            "name": "wavykit/navigation",
+            "version": "0.1.x-dev",
             "dist": {
                 "type": "path",
-                "url": "../../packages/pages",
-                "reference": "1a71e000bb4fccd1013f6cad3677fcf06835e5da"
+                "url": "../../packages/wavykit/packages/navigation",
+                "reference": "87f21d5c07a8b681465d3e4aa3258480a913f611"
+            },
+            "require": {
+                "illuminate/support": "^13.0",
+                "php": "^8.3",
+                "wavykit/pages": "^0.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "WavyKit\\Navigation\\NavigationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "WavyKit\\Navigation\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Named Laravel menus derived from, or arranged around, WavyKit pages.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "wavykit/pages",
+            "version": "0.1.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../../packages/wavykit/packages/pages",
+                "reference": "3f7b7fe11cec97d89c63d6458957233e00cfc439"
             },
             "require": {
                 "illuminate/contracts": "^13.0",
@@ -7446,17 +7481,11 @@
                 "illuminate/support": "^13.0",
                 "php": "^8.3"
             },
-            "require-dev": {
-                "laravel/pint": "^1.27",
-                "orchestra/testbench": "^11.0",
-                "pestphp/pest": "^4.0",
-                "phpstan/phpstan": "^2.1"
-            },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "WavyKit\\Pages\\Laravel\\PagesServiceProvider"
+                        "WavyKit\\Pages\\PagesServiceProvider"
                     ]
                 }
             },
@@ -7464,31 +7493,6 @@
                 "psr-4": {
                     "WavyKit\\Pages\\": "src/"
                 }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "WavyKit\\Pages\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "pest"
-                ],
-                "analyse": [
-                    "phpstan analyse --memory-limit=512M"
-                ],
-                "format": [
-                    "pint"
-                ],
-                "format:check": [
-                    "pint --test"
-                ],
-                "check": [
-                    "@composer validate --strict",
-                    "@format:check",
-                    "@analyse",
-                    "@test"
-                ]
             },
             "license": [
                 "MIT"
@@ -11621,6 +11625,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "wavykit/navigation": 20,
         "wavykit/pages": 20
     },
     "prefer-stable": false,
@@ -11629,5 +11634,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

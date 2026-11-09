@@ -1,8 +1,9 @@
 # Pages Trial
 
-A disposable Laravel 13 / Inertia 3 / React consumer for `wavykit/pages`.
+A disposable Laravel 13 / Inertia 3 / React consumer for `wavykit/pages` and
+`wavykit/navigation`.
 Created from App Foundation `v0.1.0` (commit `29dab9eb1f186fd6a214364baa03d23d18fac39d`).
-The foundation and Pages retain their independent repositories.
+The foundation and the WavyKit monorepo retain their independent repositories.
 
 ## Local setup
 
@@ -18,10 +19,11 @@ docker compose run --rm --no-deps laravel.test composer install --no-interaction
 ./vendor/bin/sail composer setup
 ```
 
-Pages is a local Composer path dependency with symlinking enabled. The Compose
-services mount its source read-only at the matching relative path. Development
-changes to Pages are immediately available here; no package source is copied into
-the app. Composer installation requires that local source checkout. This trial is
+Pages and Navigation are local Composer path dependencies, symlinked from the
+WavyKit monorepo's `packages/` folder at version `0.1.x-dev`. The Compose
+services mount that folder read-only at the matching relative path. Development
+changes to either package are immediately available here; no package source is
+copied into the app. Composer installation requires that local source checkout. This trial is
 intentionally not a standalone distributable application.
 
 The app uses port 8081, Vite 5174, PostgreSQL 5434, and Mailpit 8026. Its
@@ -32,8 +34,9 @@ The application keeps its Composer and npm lockfiles.
 
 Open `/projects`, then Apollo or Artemis and its edit-page link. The projects are
 in-memory examples; the edit screen is read-only. Breadcrumbs resolve the bound
-project name, Projects remains active in primary navigation, and the footer places
-the same index under Resources with a different label. Guest and verified-user
+project name. The primary menu is derived from Projects and excludes the project
+pages with `except()`, so Projects stays active without listing them. The footer
+places the same index under Resources with a different label. Guest and verified-user
 account links follow the foundation's existing authentication state.
 
 ## Checks
@@ -57,4 +60,4 @@ it adds no agent files, editor configuration, or Git hooks.
 
 As checked on 2026-11-08, npm audit reports zero vulnerabilities after the upgrade.
 The foundation source retains its own dependency choices; this trial's tooling
-upgrade does not modify the starter or the Pages package.
+upgrade does not modify the starter or the WavyKit packages.

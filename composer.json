@@ -15,7 +15,8 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "wavykit/pages": "dev-main"
+        "wavykit/navigation": "^0.1@dev",
+        "wavykit/pages": "^0.1@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -115,11 +116,12 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../../packages/pages",
+            "url": "../../packages/wavykit/packages/*",
             "options": {
                 "symlink": true,
                 "versions": {
-                    "wavykit/pages": "dev-main"
+                    "wavykit/navigation": "0.1.x-dev",
+                    "wavykit/pages": "0.1.x-dev"
                 }
             }
         }
