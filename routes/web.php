@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\PagesTrialController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Middleware\EnsureRegistrationEnabled;
 use App\Http\Middleware\NormalizeEmail;
@@ -52,6 +52,6 @@ Route::middleware('auth:web')->group(function (): void {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
-Route::get('projects', [PagesTrialController::class, 'index'])->name('projects.index');
-Route::get('projects/{project}', [PagesTrialController::class, 'show'])->name('projects.show');
-Route::get('projects/{project}/edit', [PagesTrialController::class, 'edit'])->name('projects.edit');
+Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
+Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');

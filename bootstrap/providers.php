@@ -2,10 +2,10 @@
 
 use App\Providers\AppServiceProvider;
 use App\Providers\FortifyServiceProvider;
-use App\Providers\PagesTrialServiceProvider;
+use App\Providers\WavyKitServiceProvider;
 
 return [
     AppServiceProvider::class,
     FortifyServiceProvider::class,
-    PagesTrialServiceProvider::class,
+    WavyKitServiceProvider::class,
 ];

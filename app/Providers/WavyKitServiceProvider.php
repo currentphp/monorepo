@@ -15,11 +15,25 @@ use WavyKit\Pages\Page;
 use WavyKit\Pages\PageContext;
 use WavyKit\Pages\PageRegistry;
 
-final class PagesTrialServiceProvider extends ServiceProvider
+/**
+ * Registers the playground's declarations for each WavyKit component.
+ *
+ * Add one method per component, and call it from boot(). Registration runs on
+ * every boot, including boots that restore cached routes.
+ */
+final class WavyKitServiceProvider extends ServiceProvider
 {
     public function boot(PageRegistry $pages, MenuRegistry $menus): void
     {
+        $this->registerPages($pages);
+        $this->registerNavigation($menus);
+    }
+
+    /** wavykit/pages: page identity, hierarchy, and resource-aware labels. */
+    private function registerPages(PageRegistry $pages): void
+    {
         Route::bind('project', fn (string $id): ProjectExample => ProjectExample::findExample($id) ?? abort(404));
+
         $pages->register(
             Page::make('home')->route('home')->label('Home'),
             Page::make('projects')->route('projects.index')->label('Projects')->children(
@@ -37,6 +51,11 @@ final class PagesTrialServiceProvider extends ServiceProvider
             Page::make('profile')->route('profile.edit')->label('Profile')->parent('dashboard'),
             Page::make('login')->route('login')->label('Sign in'),
         );
+    }
+
+    /** wavykit/navigation: menus shared with every page through SharedProps::MENUS. */
+    private function registerNavigation(MenuRegistry $menus): void
+    {
         $menus->derive('primary', 'projects')->except('projects.show');
         $menus->define('footer',
             Menu::group('resources')->label('Resources')->children(Menu::page('home'), Menu::page('projects')->label('All projects')),

@@ -1,22 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import Breadcrumbs from '@/components/wavykit/breadcrumbs';
+import Menu from '@/components/wavykit/menu';
 import { home } from '@/routes';
-
-type Breadcrumb = {
-    pageId: string;
-    label: string;
-    url: string | null;
-    current: boolean;
-};
-
-type MenuItem = {
-    pageId: string | null;
-    label: string;
-    url: string | null;
-    current: boolean;
-    active: boolean;
-    kind: 'page' | 'group';
-    children: MenuItem[];
-};
 
 type Project = {
     id: number;
@@ -27,51 +12,12 @@ type Project = {
 
 type Props = {
     title: string;
-    currentPageId: string;
-    breadcrumbs: Breadcrumb[];
-    primary: MenuItem[];
-    footer: MenuItem[];
     project: Pick<Project, 'id' | 'name'> | null;
     projects: Project[];
 };
 
-function MenuItems({ items }: { items: MenuItem[] }) {
-    return (
-        <ul className="flex flex-wrap gap-4">
-            {items.map((item) => (
-                <li key={`${item.kind}:${item.pageId ?? item.label}`}>
-                    {item.url ? (
-                        <Link
-                            href={item.url}
-                            aria-current={item.current ? 'page' : undefined}
-                            className={`rounded underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 ${item.active ? 'font-semibold text-teal-700 dark:text-teal-300' : ''}`}
-                        >
-                            {item.label}
-                        </Link>
-                    ) : (
-                        <span className="font-semibold">{item.label}</span>
-                    )}
-                    {item.children.length > 0 && (
-                        <div className="mt-3 text-sm">
-                            <MenuItems items={item.children} />
-                        </div>
-                    )}
-                </li>
-            ))}
-        </ul>
-    );
-}
-
-export default function PagesTrial({
-    title,
-    currentPageId,
-    breadcrumbs,
-    primary,
-    footer,
-    project,
-    projects,
-}: Props) {
-    const { auth } = usePage().props;
+export default function Projects({ title, project, projects }: Props) {
+    const { auth, name, wavykit } = usePage().props;
     const selected = projects.find((item) => item.id === project?.id);
 
     return (
@@ -85,14 +31,11 @@ export default function PagesTrial({
             </a>
             <header className="border-b border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900">
                 <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-6 px-6 py-5">
-                    <Link
-                        href={primary[0]?.url ?? home()}
-                        className="text-lg font-semibold"
-                    >
-                        Pages Trial
+                    <Link href={home()} className="text-lg font-semibold">
+                        {name}
                     </Link>
                     <nav aria-label="Primary">
-                        <MenuItems items={primary} />
+                        <Menu items={wavykit.menus.primary} />
                     </nav>
                 </div>
             </header>
@@ -101,31 +44,7 @@ export default function PagesTrial({
                 tabIndex={-1}
                 className="mx-auto max-w-5xl space-y-8 px-6 py-10"
             >
-                <nav aria-label="Breadcrumb">
-                    <ol className="flex flex-wrap gap-2 text-sm">
-                        {breadcrumbs.map((crumb, index) => (
-                            <li key={crumb.pageId} className="flex gap-2">
-                                {index > 0 && <span aria-hidden="true">/</span>}
-                                {crumb.url ? (
-                                    <Link
-                                        href={crumb.url}
-                                        className="underline underline-offset-4"
-                                    >
-                                        {crumb.label}
-                                    </Link>
-                                ) : (
-                                    <span
-                                        aria-current={
-                                            crumb.current ? 'page' : undefined
-                                        }
-                                    >
-                                        {crumb.label}
-                                    </span>
-                                )}
-                            </li>
-                        ))}
-                    </ol>
-                </nav>
+                <Breadcrumbs items={wavykit.breadcrumbs} />
                 <div className="space-y-3">
                     <p className="text-sm text-stone-600 dark:text-stone-400">
                         {auth.user
@@ -136,9 +55,10 @@ export default function PagesTrial({
                         {title}
                     </h1>
                     <p className="max-w-2xl text-stone-600 dark:text-stone-400">
-                        Explore a project and its edit page. Breadcrumbs follow
-                        the selected project while Projects stays active in the
-                        primary navigation.
+                        Explore a project and its edit page. Breadcrumbs come
+                        from WavyKit Pages; the menus come from WavyKit
+                        Navigation, where the primary menu keeps Projects active
+                        without listing individual projects.
                     </p>
                 </div>
                 {selected ? (
@@ -147,7 +67,7 @@ export default function PagesTrial({
                             {selected.name}
                         </h2>
                         <p className="text-stone-600 dark:text-stone-400">
-                            {currentPageId === 'projects.edit'
+                            {wavykit.pageId === 'projects.edit'
                                 ? 'This is a read-only edit-page example. No project changes are saved.'
                                 : 'This example project has a details page and an edit page.'}
                         </p>
@@ -189,7 +109,7 @@ export default function PagesTrial({
             </main>
             <footer className="mx-auto max-w-5xl border-t border-stone-200 px-6 py-8 dark:border-stone-800">
                 <nav aria-label="Footer">
-                    <MenuItems items={footer} />
+                    <Menu items={wavykit.menus.footer} />
                 </nav>
             </footer>
         </div>

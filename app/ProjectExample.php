@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * In-memory trial fixtures; no project table or persisted changes are used.
+ * Demo projects from database/fixtures/projects.json; no project table or persisted changes are used.
  *
  * @property int $id
  * @property string $name
@@ -19,10 +19,7 @@ final class ProjectExample extends Model
     /** @return list<self> */
     public static function examples(): array
     {
-        return [
-            new self(['id' => 42, 'name' => 'Apollo']),
-            new self(['id' => 77, 'name' => 'Artemis']),
-        ];
+        return array_map(fn (array $record): self => new self($record), Fixtures::load('projects'));
     }
 
     public static function findExample(string $id): ?self

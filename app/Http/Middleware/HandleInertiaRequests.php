@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\WavyKit\SharedProps;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user()?->only(['id', 'name', 'email', 'email_verified_at']),
                 'canRegister' => (bool) config('fortify.registration_enabled'),
             ],
+            // Resolved at render time, after route-model binding.
+            'wavykit' => fn (): array => app(SharedProps::class)->toArray(),
         ];
     }
 }

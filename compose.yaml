@@ -5,7 +5,7 @@ services:
             context: ./docker/8.5
             args:
                 WWWGROUP: '${WWWGROUP:-1000}'
-        image: pages-trial-sail:8.5
+        image: wavykit-playground-sail:8.5
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -30,7 +30,7 @@ services:
             - sail
 
     queue:
-        image: pages-trial-sail:8.5
+        image: wavykit-playground-sail:8.5
         command: php artisan queue:work --tries=3 --timeout=60
         restart: unless-stopped
         environment:

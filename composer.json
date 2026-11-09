@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "wavykit/pages-trial",
+    "name": "wavykit/playground",
     "type": "project",
-    "description": "An App Foundation consumer for exercising WavyKit Pages.",
+    "description": "A Laravel app for exercising every WavyKit component from the monorepo.",
     "keywords": [
         "laravel",
         "framework"
