@@ -7,9 +7,9 @@ The foundation and the WavyKit monorepo keep their independent repositories.
 
 ## Components
 
-| Package | Registered in | Demonstrated by |
-| --- | --- | --- |
-| `wavykit/pages` | `WavyKitServiceProvider::registerPages()` | Breadcrumbs and resource-aware labels on every page; the projects demo. |
+| Package              | Registered in                                  | Demonstrated by                                                              |
+| -------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------- |
+| `wavykit/pages`      | `WavyKitServiceProvider::registerPages()`      | Breadcrumbs and resource-aware labels on every page; the projects demo.      |
 | `wavykit/navigation` | `WavyKitServiceProvider::registerNavigation()` | Primary and footer menus on every page, with `except()` and user visibility. |
 
 [`app/WavyKit/SharedProps.php`](app/WavyKit/SharedProps.php) resolves component
