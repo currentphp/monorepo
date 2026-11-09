@@ -44,13 +44,17 @@ account links follow the foundation's existing authentication state.
 
 Tests use the foundation's dedicated `testing` PostgreSQL database. No migrations,
 seeds, or tests should point at another application's database. No CI or agent
-scaffolding was installed, and nothing has been committed or published.
+scaffolding was installed.
 
 ## Dependency status
 
-The trial updates vulnerable PHP packages within the foundation's constraints;
-Composer audit is clear after that update. Compatible npm fixes were also applied.
-Seven frontend-tooling advisories remain in the inherited Vite+ 0.3 dependency
-chain (four moderate, three critical); npm reports that clearing them requires a
-major Vite+ upgrade. No forced major upgrade was applied. Keep this a local trial
-until the tooling update is reviewed separately.
+The trial updates vulnerable PHP packages within the foundation's constraints.
+The frontend uses Vite+ 1.5.0 with its matching `vite` alias and npm override to
+`@voidzero-dev/vite-plus-core@1.5.0`, following the
+[documented upgrade path](https://viteplus.dev/guide/upgrade-project).
+The migration preserves npm, existing lint/format rules, and the PHP test suite;
+it adds no agent files, editor configuration, or Git hooks.
+
+As checked on 2026-11-08, npm audit reports zero vulnerabilities after the upgrade.
+The foundation source retains its own dependency choices; this trial's tooling
+upgrade does not modify the starter or the Pages package.
