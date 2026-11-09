@@ -9,10 +9,10 @@ use App\ProjectExample;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LogicException;
+use WavyKit\Context;
 use WavyKit\Navigation\Menu;
 use WavyKit\Navigation\MenuRegistry;
 use WavyKit\Pages\Page;
-use WavyKit\Pages\PageContext;
 use WavyKit\Pages\PageRegistry;
 
 /**
@@ -29,7 +29,7 @@ final class WavyKitServiceProvider extends ServiceProvider
         $this->registerNavigation($menus);
     }
 
-    /** wavykit/pages: page identity, hierarchy, and resource-aware labels. */
+    /** Places (WavyKit\Pages): page identity, hierarchy, and resource-aware labels. */
     private function registerPages(PageRegistry $pages): void
     {
         Route::bind('project', fn (string $id): ProjectExample => ProjectExample::findExample($id) ?? abort(404));
@@ -38,7 +38,7 @@ final class WavyKitServiceProvider extends ServiceProvider
             Page::make('home')->route('home')->label('Home'),
             Page::make('projects')->route('projects.index')->label('Projects')->children(
                 Page::make('projects.show')->route('projects.show')
-                    ->label(function (PageContext $context): string {
+                    ->label(function (Context $context): string {
                         $project = $context->parameter('project');
                         if (! $project instanceof ProjectExample) {
                             throw new LogicException('Expected a bound project.');
@@ -53,16 +53,16 @@ final class WavyKitServiceProvider extends ServiceProvider
         );
     }
 
-    /** wavykit/navigation: menus shared with every page through SharedProps::MENUS. */
+    /** Wayfinding (WavyKit\Navigation): menus shared with every page through SharedProps::MENUS. */
     private function registerNavigation(MenuRegistry $menus): void
     {
         $menus->derive('primary', 'projects')->except('projects.show');
         $menus->define('footer',
             Menu::group('resources')->label('Resources')->children(Menu::page('home'), Menu::page('projects')->label('All projects')),
             Menu::group('account')->label('Your account')
-                ->visibleWhen(fn (PageContext $context): bool => $context->user instanceof User && $context->user->hasVerifiedEmail())
+                ->visibleWhen(fn (Context $context): bool => $context->user instanceof User && $context->user->hasVerifiedEmail())
                 ->children(Menu::page('profile')),
-            Menu::page('login')->visibleWhen(fn (PageContext $context): bool => $context->user === null),
+            Menu::page('login')->visibleWhen(fn (Context $context): bool => $context->user === null),
         );
     }
 }

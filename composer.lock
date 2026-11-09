@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95a5584f41fba3f8a8fd6a5da804ab50",
+    "content-hash": "1b3707a0c484716a4c953981ee7fb02e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -7433,47 +7433,12 @@
             "time": "2026-04-26T05:33:54+00:00"
         },
         {
-            "name": "wavykit/navigation",
+            "name": "wavykit/core",
             "version": "0.1.x-dev",
             "dist": {
                 "type": "path",
-                "url": "../../packages/wavykit/packages/navigation",
-                "reference": "87f21d5c07a8b681465d3e4aa3258480a913f611"
-            },
-            "require": {
-                "illuminate/support": "^13.0",
-                "php": "^8.3",
-                "wavykit/pages": "^0.1"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "WavyKit\\Navigation\\NavigationServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "WavyKit\\Navigation\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "Named Laravel menus derived from, or arranged around, WavyKit pages.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "wavykit/pages",
-            "version": "0.1.x-dev",
-            "dist": {
-                "type": "path",
-                "url": "../../packages/wavykit/packages/pages",
-                "reference": "3f7b7fe11cec97d89c63d6458957233e00cfc439"
+                "url": "../../packages/wavykit/packages/core",
+                "reference": "66842073c8c81e1e4e6af7a5b94ba3bcc2755a94"
             },
             "require": {
                 "illuminate/contracts": "^13.0",
@@ -7485,19 +7450,19 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "WavyKit\\Pages\\PagesServiceProvider"
+                        "WavyKit\\CoreServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "WavyKit\\Pages\\": "src/"
+                    "WavyKit\\": "src/"
                 }
             },
             "license": [
                 "MIT"
             ],
-            "description": "A Laravel page registry for consistent breadcrumbs and navigation.",
+            "description": "One description of a Laravel application's experience: pages, breadcrumbs, and menus.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -11626,8 +11591,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "wavykit/navigation": 20,
-        "wavykit/pages": 20
+        "wavykit/core": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

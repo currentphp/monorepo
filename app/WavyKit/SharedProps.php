@@ -35,7 +35,7 @@ final readonly class SharedProps
 
         return [
             'pageId' => $this->pages->page()?->id,
-            'breadcrumbs' => $this->pages->breadcrumbs(),
+            'breadcrumbs' => $this->navigation->breadcrumbs(),
             'menus' => $menus,
         ];
     }
