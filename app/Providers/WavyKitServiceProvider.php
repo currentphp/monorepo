@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LogicException;
 use WavyKit\Context;
-use WavyKit\Navigation\Menu;
+use WavyKit\Navigation\MenuEntry;
 use WavyKit\Navigation\MenuRegistry;
 use WavyKit\Pages\Page;
 use WavyKit\Pages\PageRegistry;
@@ -58,11 +58,11 @@ final class WavyKitServiceProvider extends ServiceProvider
     {
         $menus->derive('primary', 'projects')->except('projects.show');
         $menus->define('footer',
-            Menu::group('resources')->label('Resources')->children(Menu::page('home'), Menu::page('projects')->label('All projects')),
-            Menu::group('account')->label('Your account')
+            MenuEntry::group('resources')->label('Resources')->children(MenuEntry::page('home'), MenuEntry::page('projects')->label('All projects')),
+            MenuEntry::group('account')->label('Your account')
                 ->visibleWhen(fn (Context $context): bool => $context->user instanceof User && $context->user->hasVerifiedEmail())
-                ->children(Menu::page('profile')),
-            Menu::page('login')->visibleWhen(fn (Context $context): bool => $context->user === null),
+                ->children(MenuEntry::page('profile')),
+            MenuEntry::page('login')->visibleWhen(fn (Context $context): bool => $context->user === null),
         );
     }
 }

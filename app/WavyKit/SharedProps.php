@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\WavyKit;
 
+use WavyKit\Navigation\Breadcrumb;
 use WavyKit\Navigation\MenuItem;
 use WavyKit\Navigation\Navigation;
 use WavyKit\Pages\Pages;
@@ -22,7 +23,7 @@ final readonly class SharedProps
     /**
      * @return array{
      *     pageId: ?string,
-     *     breadcrumbs: list<array{pageId: string, label: string, url: ?string, current: bool}>,
+     *     breadcrumbs: list<Breadcrumb>,
      *     menus: array<string, list<MenuItem>>,
      * }
      */
@@ -34,7 +35,7 @@ final readonly class SharedProps
         }
 
         return [
-            'pageId' => $this->pages->page()?->id,
+            'pageId' => $this->pages->current()?->id,
             'breadcrumbs' => $this->navigation->breadcrumbs(),
             'menus' => $menus,
         ];

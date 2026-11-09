@@ -12,7 +12,7 @@ export default function Breadcrumbs({ items }: { items: Breadcrumb[] }) {
                 {items.map((crumb, index) => (
                     <li key={crumb.pageId} className="flex gap-2">
                         {index > 0 && <span aria-hidden="true">/</span>}
-                        {crumb.url ? (
+                        {crumb.url && !crumb.current ? (
                             <Link
                                 href={crumb.url}
                                 className="underline underline-offset-4"

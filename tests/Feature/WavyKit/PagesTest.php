@@ -20,7 +20,8 @@ it('resolves project labels and URLs from the active bound resource', function (
         ->where('wavykit.breadcrumbs.1.label', $name)
         ->where('wavykit.breadcrumbs.1.url', route('projects.show', $id))
         ->where('wavykit.breadcrumbs.2.label', 'Edit')
-        ->where('wavykit.breadcrumbs.2.url', null)
+        ->where('wavykit.breadcrumbs.2.url', route('projects.edit', $id))
+        ->where('wavykit.breadcrumbs.2.current', true)
         ->where('project.name', $name));
 })->with(['Apollo' => [42, 'Apollo'], 'Artemis' => [77, 'Artemis']]);
 

@@ -1,14 +1,15 @@
 // Shapes of the `wavykit` shared prop (app/WavyKit/SharedProps.php).
 
-/** wavykit/pages breadcrumb output. */
+/** wavykit/core Breadcrumb output; the current page keeps its URL. */
 export type Breadcrumb = {
     pageId: string;
     label: string;
     url: string | null;
     current: boolean;
+    icon: string | null;
 };
 
-/** wavykit/navigation MenuItem output. */
+/** wavykit/core MenuItem output. */
 export type MenuItem = {
     pageId: string | null;
     label: string;
