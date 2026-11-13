@@ -11,3 +11,7 @@ parameters:
         - routes/
 
     level: 7
+
+    # Report calls to WavyKit's @internal members, as an outside adopter would see them.
+    featureToggles:
+        internalTag: true
