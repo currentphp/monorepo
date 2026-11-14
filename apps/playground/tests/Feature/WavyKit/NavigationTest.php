@@ -28,9 +28,13 @@ it('shows the profile placement for a verified user without the sign-in link', f
         ->assertInertia(fn (Assert $page) => $page
             ->has('wavykit.menus.footer', 2)
             ->where('wavykit.menus.footer.1.children.0.pageId', 'profile'));
+
+    $this->assertMenuHas('footer', 'profile')->assertMenuMissing('footer', 'login');
 });
 
 it('omits verified-account navigation for an unverified user', function () {
     $this->actingAs(User::factory()->unverified()->create())->get(route('projects.index'))->assertOk()
         ->assertInertia(fn (Assert $page) => $page->has('wavykit.menus.footer', 1));
+
+    $this->assertMenuMissing('footer', 'profile')->assertMenuMissing('footer', 'login');
 });

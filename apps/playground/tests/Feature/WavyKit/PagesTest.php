@@ -23,6 +23,10 @@ it('resolves project labels and URLs from the active bound resource', function (
         ->where('wavykit.breadcrumbs.2.url', route('projects.edit', $id))
         ->where('wavykit.breadcrumbs.2.current', true)
         ->where('project.name', $name));
+
+    $this->assertCurrentPage('projects.edit')
+        ->assertBreadcrumbs(['Projects', $name, 'Edit'])
+        ->assertMenuActive('primary', 'projects');
 })->with(['Apollo' => [42, 'Apollo'], 'Artemis' => [77, 'Artemis']]);
 
 it('returns 404 for an unknown project', function () {
