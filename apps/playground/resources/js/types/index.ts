@@ -1,2 +1,2 @@
 export type * from './auth';
-export type * from './wavykit';
+export type { Breadcrumb, MenuItem, MenuItemKind } from '@wavykit/inertia';

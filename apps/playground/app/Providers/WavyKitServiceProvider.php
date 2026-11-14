@@ -53,7 +53,7 @@ final class WavyKitServiceProvider extends ServiceProvider
         );
     }
 
-    /** Wayfinding (WavyKit\Navigation): menus shared with every page through SharedProps::MENUS. */
+    /** Wayfinding (WavyKit\Navigation): menus shared with every page by HandleInertiaRequests. */
     private function registerNavigation(MenuRegistry $menus): void
     {
         $menus->derive('primary', 'projects')->except('projects.show');

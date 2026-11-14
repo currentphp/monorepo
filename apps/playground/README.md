@@ -10,12 +10,15 @@ this monorepo. Created from App Foundation `v0.1.0` (commit
 | ------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | `wavykit/core`: pages                 | `WavyKitServiceProvider::registerPages()`      | Page identity and resource-aware labels on every page; the projects demo.                     |
 | `wavykit/core`: breadcrumbs and menus | `WavyKitServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and user visibility, on every page. |
+| `wavykit/inertia`                     | `HandleInertiaRequests::share()`               | The `wavykit` prop on every page, typed by the package's `wavykit.d.ts`.                     |
 
-[`app/WavyKit/SharedProps.php`](app/WavyKit/SharedProps.php) resolves component
-output for each request. [`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php)
-shares it with every Inertia page as the `wavykit` prop, typed in
-[`resources/js/types/wavykit.ts`](resources/js/types/wavykit.ts) and rendered by
-the components in [`resources/js/components/wavykit/`](resources/js/components/wavykit/).
+[`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php) shares
+component output with every Inertia page as the `wavykit` prop, through
+`WavyKitProps` from `wavykit/inertia`. Its TypeScript types come from the
+package, mapped to `@wavykit/inertia` in `tsconfig.json` and declared in
+[`resources/js/types/global.d.ts`](resources/js/types/global.d.ts); the
+components in [`resources/js/components/wavykit/`](resources/js/components/wavykit/)
+render it.
 Tests live in [`tests/Feature/WavyKit/`](tests/Feature/WavyKit/), one file per
 component, plus `SharedPropsTest.php` for pages outside the demos.
 
@@ -34,8 +37,8 @@ holds only the foundation's application data, such as users and sessions.
    every folder in the monorepo's `packages/`.
 2. Add a `register<Component>()` method to `WavyKitServiceProvider` and call it
    from `boot()`.
-3. Expose any request output through `SharedProps` and its TypeScript type, or
-   pass it from a demo controller.
+3. Expose any request output through the `wavykit` prop in
+   `HandleInertiaRequests`, or pass it from a demo controller.
 4. Add `tests/Feature/WavyKit/<Component>Test.php`, fixtures if the demo needs
    data, and a row in the table above.
 

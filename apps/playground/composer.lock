@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2bae36cd4fe4ed91b5c12138dd93e560",
+    "content-hash": "57c706f9e82d917ab7ab3b4f779b8111",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -7438,7 +7438,7 @@
             "dist": {
                 "type": "path",
                 "url": "../../packages/core",
-                "reference": "de0033c429a29ca12becd00a765f75a650c5caf6"
+                "reference": "c6542346c9e94b2a25c860310b054d235843ffa8"
             },
             "require": {
                 "illuminate/console": "^13.0",
@@ -7464,6 +7464,35 @@
                 "MIT"
             ],
             "description": "One description of a Laravel application's experience: pages, breadcrumbs, and menus.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "wavykit/inertia",
+            "version": "0.1.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../../packages/inertia",
+                "reference": "6f927c531298f78da1443ea93ecce45935cf82fd"
+            },
+            "require": {
+                "illuminate/container": "^13.0",
+                "inertiajs/inertia-laravel": "^3.0",
+                "php": "^8.3",
+                "wavykit/core": "^0.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WavyKit\\Inertia\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Share WavyKit pages, breadcrumbs, and menus with Inertia, with TypeScript types.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -11591,7 +11620,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "wavykit/core": 20
+        "wavykit/core": 20,
+        "wavykit/inertia": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
