@@ -42,6 +42,16 @@ holds only the foundation's application data, such as users and sessions.
 4. Add `tests/Feature/WavyKit/<Component>Test.php`, fixtures if the demo needs
    data, and a row in the table above.
 
+## Inspecting and testing
+
+`php artisan wavykit:pages`, `wavykit:menus`, and `wavykit:check` list and
+validate what `WavyKitServiceProvider` registers; add `--json` to the listings
+for machine-readable output. Run them through Sail like any Artisan command.
+
+The base `TestCase` uses `WavyKit\Testing\InteractsWithWavyKit`, so tests can
+assert the current page, breadcrumbs, and menu visibility after a request, for
+example `$this->assertMenuMissing('footer', 'profile')`.
+
 ## Local setup
 
 Run from this application directory. Requires Docker Compose; the development
