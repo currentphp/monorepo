@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\WavyKit\SharedProps;
 use Inertia\Testing\AssertableInertia as Assert;
 
 it('shares component output with pages outside the projects demo', function () {
@@ -10,7 +9,7 @@ it('shares component output with pages outside the projects demo', function () {
         ->component('welcome')
         ->where('wavykit.pageId', 'home')
         ->where('wavykit.breadcrumbs.0.label', 'Home')
-        ->has('wavykit.menus', count(SharedProps::MENUS))
+        ->has('wavykit.menus', 2)
         ->where('wavykit.menus.footer.0.children.0.current', true));
 });
 
