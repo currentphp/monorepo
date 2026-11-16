@@ -18,14 +18,15 @@ returns plain data for Blade, Inertia, or any other frontend.
 composer require wavykit/core
 ```
 
-The core provides pages, breadcrumbs, and menus. The first release is
-`v0.1.0`, for Laravel 13 and PHP 8.3+. Pull requests are not open yet; issues
+The core provides pages, breadcrumbs, and menus. The current release is
+`v0.2.0`, for Laravel 13 and PHP 8.3+; Inertia apps add
+`composer require wavykit/inertia`. Pull requests are not open yet; issues
 and feedback are welcome (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 | Package | Purpose |
 | --- | --- |
 | [`wavykit/core`](packages/core/README.md) | Pages (identity, hierarchy, route association, request context), breadcrumbs, and menus. |
-| [`wavykit/inertia`](packages/inertia/README.md) | Shares the page ID, breadcrumbs, and menus with Inertia, with TypeScript types. Unreleased; planned for `v0.2.0`. |
+| [`wavykit/inertia`](packages/inertia/README.md) | Shares the page ID, breadcrumbs, and menus with Inertia, with TypeScript types. |
 
 Integrations that need other libraries are separate packages.
 
@@ -45,9 +46,11 @@ composer check        # or: composer check core inertia
 
 Packages are released together with lockstep `vX.Y.Z` tags and distributed
 through read-only split repositories; CI runs every package's checks. See [Monorepo layout and releases](docs/monorepo.md)
-for the layout and release workflow. The monorepo and the `wavykit/core`
-split repository are public on GitHub, and `wavykit/core` is published on
-[Packagist](https://packagist.org/packages/wavykit/core).
+for the layout and release workflow. The monorepo and the `wavykit/core` and
+`wavykit/inertia` split repositories are public on GitHub, and both packages
+are published on Packagist:
+[`wavykit/core`](https://packagist.org/packages/wavykit/core) and
+[`wavykit/inertia`](https://packagist.org/packages/wavykit/inertia).
 
 ## Ownership
 

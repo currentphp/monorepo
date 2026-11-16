@@ -33,8 +33,8 @@ directories under `packages/`.
 
 The root `composer.json` is `wavykit/monorepo`, a development-only manifest
 that is never published. It installs every package from `packages/*` through
-a path repository, at version `0.1.x-dev`, and requires each one as
-`^0.1@dev`. The `@dev` flag lets only these packages resolve to development
+a path repository, at version `0.2.x-dev`, and requires each one as
+`^0.2@dev`. The `@dev` flag lets only these packages resolve to development
 versions; everything else stays stable, including `--prefer-lowest` runs. It
 also holds the development dependencies, test autoloading, scripts, and the PHP
 8.3 resolution platform. `composer.lock` is local and ignored.
@@ -127,11 +127,15 @@ report to the job summary. It never fails the pull request; see
 2. Create the empty read-only repository `<owner>/<name>` and add it to the
    split app's installation before the next push to `main`.
 3. In the root `composer.json`, add the package to the path repository's
-   `versions` option at `0.1.x-dev` (the current development line) and to
-   `require` as `^0.1@dev`. Add its test namespace to `autoload-dev`, and add
+   `versions` option at `0.2.x-dev` (the current development line) and to
+   `require` as `^0.2@dev`. Add its test namespace to `autoload-dev`, and add
    its name to the version-conflict exclusions in `monorepo-builder.php`.
 4. If the package depends on another WavyKit package, require it with a normal
-   constraint such as `^0.1`. The root path repository supplies the local copy.
+   constraint such as `^0.2`. The root path repository supplies the local copy.
+   On 0.x a caret constraint pins the minor version (`^0.2` means
+   `>=0.2.0 <0.3.0`), so when a minor release starts a new development line,
+   move the path repository's `versions`, the root and playground
+   requirements, and every internal constraint to it together.
 5. Add the package to the root README.
 
 ## One-time setup

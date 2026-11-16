@@ -70,16 +70,19 @@ feedback are open.
 
 ### v0.2
 
-Planned for the next minor release:
+`v0.2.0`, released 2026-11-16, added:
 
 - **`wavykit/inertia`**, a new package that shares breadcrumbs, the current
   page, and menus with Inertia. Applications opt in with one explicit call in
-  their `HandleInertiaRequests::share()` method, so they choose prop names,
-  which menus to send, and lazy evaluation. The package ships hand-written
-  TypeScript types for the shared data.
-- **Inspection commands and test assertions** in the core, such as listing and
-  checking registered pages and menus, and asserting the breadcrumbs, current
-  page, or menu contents for a request.
+  their `HandleInertiaRequests::share()` method, so they choose the prop name
+  and which menus to send; the prop resolves at render time. The package ships
+  hand-written TypeScript types for the shared data.
+- **Inspection commands and test assertions** in the core: `wavykit:pages`,
+  `wavykit:menus`, and `wavykit:check`, and a test trait asserting the current
+  page, breadcrumbs, and menu contents for a request.
+- **A read-only `Current` facade** for reading the current request, and an
+  explicit public API: everything else is marked `@internal`, as
+  [CONTRIBUTING.md](../CONTRIBUTING.md#public-api) describes.
 
 ### After v0.2
 
