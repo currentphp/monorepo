@@ -5,10 +5,12 @@
 set -eu
 
 only=""
-if [ "${1:-}" != "${1#--only=}" ]; then
-    only="${1#--only=}"
-    shift
-fi
+case "${1:-}" in
+    --only=*)
+        only="${1#--only=}"
+        shift
+        ;;
+esac
 case "$only" in
     "" | format | analyse | test) ;;
     *) echo "Unknown step: $only" >&2; exit 1 ;;
