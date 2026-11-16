@@ -70,7 +70,8 @@ feedback are open.
 
 ### v0.2
 
-`v0.2.0`, released 2026-11-16, added:
+Released 2026-11-16 as `wavykit/core` 0.2.0 and the first release of
+`wavykit/inertia`, 0.1.0 (packages are versioned independently since then):
 
 - **`wavykit/inertia`**, a new package that shares breadcrumbs, the current
   page, and menus with Inertia. Applications opt in with one explicit call in

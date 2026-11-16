@@ -3,7 +3,8 @@ name: Split packages
 on:
   push:
     branches: [main]
-    tags: ['v*']
+    # Package release tags: <package>/vX.Y.Z, for example inertia/v0.1.0.
+    tags: ['*/v*']
 
 permissions:
   contents: read
@@ -20,8 +21,22 @@ jobs:
       packages: ${{ steps.list.outputs.packages }}
     steps:
       - uses: actions/checkout@v7
+      # A push to main splits every package; a release tag splits only its package.
       - id: list
-        run: echo "packages=$(find packages -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$REF_TYPE" = tag ]; then
+            package="${REF_NAME%%/*}"
+            if [ ! -f "packages/$package/composer.json" ]; then
+              echo "::error::Tag $REF_NAME does not name a package in packages/."
+              exit 1
+            fi
+            echo "packages=$(jq -cn --arg package "$package" '[$package]')" >> "$GITHUB_OUTPUT"
+          else
+            echo "packages=$(find packages -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+          fi
 
   split:
     name: Split ${{ matrix.package }}
@@ -72,7 +87,8 @@ jobs:
           sha="$(git subtree split --prefix="packages/$PACKAGE" HEAD)"
 
           if [ "$REF_TYPE" = tag ]; then
-            target="refs/tags/$REF_NAME"
+            # inertia/v0.1.0 becomes v0.1.0 in the split repository.
+            target="refs/tags/${REF_NAME#*/}"
           else
             target="refs/heads/$REF_NAME"
           fi

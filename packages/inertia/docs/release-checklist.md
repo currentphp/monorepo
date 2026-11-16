@@ -1,7 +1,8 @@
 # First release checklist
 
-Working checklist for the first public release of `wavykit/inertia`, in the
-lockstep `v0.2.0` with `wavykit/core`. Checked items record completed work.
+Working checklist for the first public release of `wavykit/inertia`,
+`v0.1.0`, versioned independently of `wavykit/core` (it requires core `^0.2`).
+Checked items record completed work.
 
 ## Local readiness
 
@@ -9,7 +10,7 @@ lockstep `v0.2.0` with `wavykit/core`. Checked items record completed work.
 - [x] Read only through the supported `WavyKit\Current` API.
 - [x] Document installation, sharing the prop, its shape, evaluation, and the TypeScript types in the README.
 - [x] Ship hand-written TypeScript types in `resources/types/wavykit.d.ts`, outside the export-ignored paths.
-- [x] Include MIT license, matching Composer identity, and a dated changelog entry (`0.2.0 - 2026-11-16`).
+- [x] Include MIT license, matching Composer identity, and a dated changelog entry (`0.1.0 - 2026-11-16`).
 - [x] Pass the root `composer check` and CI on PHP 8.3–8.5 with lowest and stable resolutions.
 - [x] Consume the package in the playground (`apps/playground`), with its checks passing.
 
@@ -22,8 +23,10 @@ lockstep `v0.2.0` with `wavykit/core`. Checked items record completed work.
 ## Publication
 
 - [ ] Merge the reviewed release branch.
-- [ ] Create and push the `v0.2.0` tag; confirm the split workflow mirrors it to `wavykit/inertia` and `wavykit/core`.
-- [ ] Register the `wavykit/inertia` split repository on Packagist, with its update webhook, and verify installation from the published version.
+- [ ] Remove the `v0.2.0` tag that the last lockstep release pushed to `wavykit/inertia` (never downloaded), so Packagist drops that version.
+- [ ] Create and push the `inertia/v0.1.0` tag; confirm the split workflow pushes `v0.1.0` to `wavykit/inertia` only.
+- [x] Register the `wavykit/inertia` split repository on Packagist, with its update webhook (2026-11-16).
+- [ ] Verify installation from the published version.
 
 Repository creation, commits, pushes, tags, and publication are separate
 actions requiring explicit authorization.

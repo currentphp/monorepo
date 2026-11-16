@@ -1,5 +1,6 @@
 #!/bin/sh
-# Reports public API changes in each package since the latest v* tag, using
+# Reports public API changes in each package since its latest release tag
+# (<package>/vX.Y.Z, or before those existed, the lockstep vX.Y.Z tags), using
 # roave/backward-compatibility-check on subtree splits of the package.
 # Writes Markdown to $GITHUB_STEP_SUMMARY when set, otherwise to stdout.
 # Exits 1 when any package reports changes. Requires the checker on PATH or
@@ -12,16 +13,27 @@ summary="${GITHUB_STEP_SUMMARY:-/dev/stdout}"
 checker="$(command -v roave-backward-compatibility-check || echo "$(composer global config bin-dir --absolute --quiet)/roave-backward-compatibility-check")"
 
 cd "$root"
-tag="$(git tag --list 'v*' --sort=-v:refname | head -n 1)"
-if [ -z "$tag" ]; then
-    echo "No v* tag to compare with; nothing to report." >> "$summary"
-    exit 0
-fi
+
+# Prints the package's latest release tag, or nothing when it has none.
+latest_tag() {
+    tag="$(git tag --list "$1/v*" --sort=-v:refname | head -n 1)"
+    if [ -n "$tag" ]; then
+        echo "$tag"
+        return
+    fi
+    for tag in $(git tag --list 'v*' --sort=-v:refname); do
+        if git cat-file -e "$tag:packages/$1" 2>/dev/null; then
+            echo "$tag"
+            return
+        fi
+    done
+}
 
 status=0
 for package in $("$root/bin/packages"); do
-    if ! git cat-file -e "$tag:packages/$package" 2>/dev/null; then
-        printf '## %s\n\nNot in %s; skipped.\n\n' "$package" "$tag" >> "$summary"
+    tag="$(latest_tag "$package")"
+    if [ -z "$tag" ]; then
+        printf '## %s\n\nNo release yet; skipped.\n\n' "$package" >> "$summary"
         continue
     fi
     base="$(git subtree split --prefix="packages/$package" "$tag")"

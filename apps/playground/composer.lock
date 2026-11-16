@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d300324768ebdacd2043ba7bf359fac7",
+    "content-hash": "227cf78d1839d3309e26f2652f3107f0",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -7438,7 +7438,7 @@
             "dist": {
                 "type": "path",
                 "url": "../../packages/core",
-                "reference": "fa8aa9c869e55424dfa0dd043f8002837b499084"
+                "reference": "b3833d7deaa1842e10b2c5f9e6386b1fd6e91ac5"
             },
             "require": {
                 "illuminate/console": "^13.0",
@@ -7471,11 +7471,11 @@
         },
         {
             "name": "wavykit/inertia",
-            "version": "0.2.x-dev",
+            "version": "0.1.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/inertia",
-                "reference": "e073e939e91e2632ee2a073296f418c7c0354480"
+                "reference": "8b770330810396bbd8ea998661ac90dea8eaab44"
             },
             "require": {
                 "illuminate/container": "^13.0",
