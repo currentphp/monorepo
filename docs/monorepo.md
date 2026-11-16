@@ -112,7 +112,7 @@ dependency resolutions. New packages are checked automatically once the root
 manifest requires them.
 
 The [playground workflow](../.github/workflows/playground.yml) runs the app's
-own checks with its lockfiles and a disposable PostgreSQL service.
+own checks with its lockfiles, on SQLite, with no services.
 
 The [backward-compatibility workflow](../.github/workflows/backward-compatibility.yml)
 runs [`bin/backward-compatibility`](../bin/backward-compatibility) on pull

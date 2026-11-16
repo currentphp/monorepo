@@ -54,27 +54,21 @@ example `$this->assertMenuMissing('footer', 'profile')`.
 
 ## Local setup
 
-Run from this application directory. Requires Docker Compose; the development
-runtime includes PHP 8.5 and Node 24.21.0.
+Run from this application directory with PHP 8.5 and Node 24.21.0 (pinned in
+`mise.toml`; `mise install` provides them). No Docker or database server is
+needed: the app uses SQLite in `database/database.sqlite`, and mail goes to the
+log.
 
 ```sh
-cp -n .env.example .env
-export WWWUSER="$(id -u)" WWWGROUP="$(id -g)"
-docker compose build laravel.test
-docker compose run --rm --no-deps laravel.test composer install --no-interaction --prefer-dist
-./vendor/bin/sail up -d
-./vendor/bin/sail composer setup
+composer setup   # install, create .env and the SQLite file, migrate, build
+composer dev     # serve at http://localhost:8000 with Vite
 ```
 
 WavyKit packages are local Composer path dependencies, symlinked from the
-monorepo's `packages/` folder at version `0.1.x-dev`. The Compose services mount
-that folder read-only at the matching relative path, so package changes are
+monorepo's `packages/` folder at version `0.1.x-dev`, so package changes are
 immediately available here and no package source is copied into the app.
-This app is not a standalone distributable application.
-
-The app uses port 8083, Vite 5176, PostgreSQL 5436, and Mailpit 8028. Its
-`wavykit-monorepo-playground` Compose project and database volume are independent of
-other apps. The application keeps its Composer and npm lockfiles.
+This app is not a standalone distributable application. The application keeps
+its Composer and npm lockfiles.
 
 ## Demo pages
 
@@ -88,12 +82,12 @@ follow the foundation's existing authentication state.
 ## Checks
 
 ```sh
-./vendor/bin/sail composer check
+composer check
 ```
 
-Tests use the foundation's dedicated `testing` PostgreSQL database. No migrations,
-seeds, or tests should point at another application's database. The monorepo CI
-checks the app independently of the packages.
+Tests use an in-memory SQLite database, so they never touch
+`database/database.sqlite`. The monorepo CI checks the app independently of the
+packages.
 
 ## Dependency status
 
