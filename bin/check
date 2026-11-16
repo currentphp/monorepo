@@ -1,24 +1,47 @@
 #!/bin/sh
 # Validates the manifests, then runs Pint, PHPStan, and Pest in each package
-# using the root install. Pass package names to limit the package checks.
+# using the root install. Pass package names to limit the package checks, and
+# --only=format|analyse|test to run a single step.
 set -eu
+
+only=""
+if [ "${1:-}" != "${1#--only=}" ]; then
+    only="${1#--only=}"
+    shift
+fi
+case "$only" in
+    "" | format | analyse | test) ;;
+    *) echo "Unknown step: $only" >&2; exit 1 ;;
+esac
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 bin="$root/vendor/bin"
 packages="$("$root/bin/packages" "$@")"
 
+run() {
+    [ -z "$only" ] || [ "$only" = "$1" ]
+}
+
 cd "$root"
-composer validate --strict --no-check-lock --no-check-publish
-"$bin/monorepo-builder" validate
+if [ -z "$only" ]; then
+    composer validate --strict --no-check-lock --no-check-publish
+    "$bin/monorepo-builder" validate
+fi
 
 for package in $packages; do
     echo
     echo "==> $package"
     cd "$root/packages/$package"
-    composer validate --strict
-    "$bin/pint" --test
-    "$bin/phpstan" analyse --memory-limit=512M --no-progress
-    # Pest resolves its root from the vendor directory, so run it from the root.
-    (cd "$root" && "$bin/pest" --configuration="packages/$package/phpunit.xml" \
-        --test-directory="packages/$package/tests")
+    [ -n "$only" ] || composer validate --strict
+    if run format; then
+        "$bin/pint" --test
+    fi
+    if run analyse; then
+        "$bin/phpstan" analyse --memory-limit=512M --no-progress
+    fi
+    if run test; then
+        # Pest resolves its root from the vendor directory, so run it from the root.
+        (cd "$root" && "$bin/pest" --configuration="packages/$package/phpunit.xml" \
+            --test-directory="packages/$package/tests")
+    fi
 done
