@@ -19,6 +19,10 @@ composer install
 composer check            # every package
 composer check core       # one package
 composer format [package] # apply Pint formatting
+composer format:check     # verify formatting only
+composer analyse          # PHPStan only
+composer test             # Pest only
+composer audit            # known-vulnerability advisories (network)
 ```
 
 `composer check` validates the manifests and shared dependency constraints, then

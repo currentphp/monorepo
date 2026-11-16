@@ -44,10 +44,16 @@
     },
     "scripts": {
         "check": "bin/check",
-        "format": "bin/format"
+        "format": "bin/format",
+        "format:check": "bin/check --only=format",
+        "analyse": "bin/check --only=analyse",
+        "test": "bin/check --only=test"
     },
     "scripts-descriptions": {
         "check": "Validate manifests, then run Pint, PHPStan, and Pest in each package (pass package names to limit).",
-        "format": "Apply Pint formatting in each package (pass package names to limit)."
+        "format": "Apply Pint formatting in each package (pass package names to limit).",
+        "format:check": "Verify Pint formatting in each package without modifying files.",
+        "analyse": "Run PHPStan at maximum level in each package.",
+        "test": "Run Pest in each package."
     }
 }
