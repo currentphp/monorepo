@@ -9,7 +9,7 @@ to your React or Vue frontend as one shared prop, so components stop keeping
 their own breadcrumb arrays and navigation lists.
 
 Package: `wavykit/inertia`. Namespace: `WavyKit\Inertia\`. Maintained by
-WavyKit. Unreleased; it is planned for `v0.2.0`. While WavyKit is on 0.x,
+WavyKit. First released in 0.2.0. While WavyKit is on 0.x,
 minor releases may change the public API.
 
 ## Requirements
