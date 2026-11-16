@@ -33,8 +33,9 @@ directories under `packages/`.
 
 The root `composer.json` is `wavykit/monorepo`, a development-only manifest
 that is never published. It installs every package from `packages/*` through
-a path repository, at version `0.2.x-dev`, and requires each one as
-`^0.2@dev`. The `@dev` flag lets only these packages resolve to development
+a path repository, each at its own development line (`0.2.x-dev` for core,
+`0.1.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
+line. The `@dev` flag lets only these packages resolve to development
 versions; everything else stays stable, including `--prefer-lowest` runs. It
 also holds the development dependencies, test autoloading, scripts, and the PHP
 8.3 resolution platform. `composer.lock` is local and ignored.
@@ -83,12 +84,13 @@ has no such package, and each component is meant to be installed on its own.
 ## Distribution
 
 The [split workflow](../.github/workflows/split.yml) runs on pushes to `main`
-and on `v*` tags. For each folder in `packages/`, it runs
+and on `<name>/v*` release tags. It runs
 `git subtree split --prefix=packages/<name>` and pushes the result to
 `<owner>/<name>` on GitHub, where `<owner>` is this repository's owner:
 
-- a push to `main` updates the split repository's `main` branch;
-- a `vX.Y.Z` tag is pushed to the split repository as the same tag.
+- a push to `main` updates every split repository's `main` branch;
+- a `<name>/vX.Y.Z` tag, such as `inertia/v0.1.0`, is pushed to that
+  package's split repository only, as `vX.Y.Z`.
 
 Packagist reads each split repository, so `composer.json` sits at its root and
 Composer derives versions from its tags. Contributions go to this repository;
@@ -99,10 +101,17 @@ package under `packages/<name>/`; earlier history remains in this repository.
 
 ## Versioning
 
-Versions are lockstep: one `vMAJOR.MINOR.PATCH` tag on this repository releases
-every package at that version. Each package's CHANGELOG records its own
-changes. Revisit independent, package-prefixed tags before 1.0 or when packages
-start releasing on different schedules.
+Each package has its own version, released with a `<name>/vMAJOR.MINOR.PATCH`
+tag on this repository; its CHANGELOG records its changes, and a package
+releases only when it has changes. A package requires other WavyKit packages by
+their own versions, for example `wavykit/inertia` 0.1 requires
+`wavykit/core` `^0.2`.
+
+Until 2026-11-16, versions were lockstep: the `v0.1.0` and `v0.2.0` tags on this
+repository released every package at that version, and their split tags remain.
+`wavykit/inertia` first shipped with the `v0.2.0` tag; that split tag was
+withdrawn before anyone installed it, and the package's first release is
+0.1.0.
 
 ## Continuous integration
 
@@ -117,7 +126,7 @@ own checks with its lockfiles, on SQLite, with no services.
 The [backward-compatibility workflow](../.github/workflows/backward-compatibility.yml)
 runs [`bin/backward-compatibility`](../bin/backward-compatibility) on pull
 requests. It compares a subtree split of each package with the same split at
-the latest `v*` tag, using `roave/backward-compatibility-check`, and writes the
+its latest release tag, using `roave/backward-compatibility-check`, and writes the
 report to the job summary. It never fails the pull request; see
 [CONTRIBUTING.md](../CONTRIBUTING.md#public-api) for what the report means.
 
@@ -127,15 +136,15 @@ report to the job summary. It never fails the pull request; see
 2. Create the empty read-only repository `<owner>/<name>` and add it to the
    split app's installation before the next push to `main`.
 3. In the root `composer.json`, add the package to the path repository's
-   `versions` option at `0.2.x-dev` (the current development line) and to
-   `require` as `^0.2@dev`. Add its test namespace to `autoload-dev`, and add
+   `versions` option at `0.1.x-dev` (a new package's first development line)
+   and to `require` as `^0.1@dev`. Add its test namespace to `autoload-dev`, and add
    its name to the version-conflict exclusions in `monorepo-builder.php`.
 4. If the package depends on another WavyKit package, require it with a normal
    constraint such as `^0.2`. The root path repository supplies the local copy.
    On 0.x a caret constraint pins the minor version (`^0.2` means
-   `>=0.2.0 <0.3.0`), so when a minor release starts a new development line,
-   move the path repository's `versions`, the root and playground
-   requirements, and every internal constraint to it together.
+   `>=0.2.0 <0.3.0`), so when a package's minor release starts a new
+   development line, move its path repository `versions` entry, its root and
+   playground requirements, and other packages' constraints on it together.
 5. Add the package to the root README.
 
 ## One-time setup

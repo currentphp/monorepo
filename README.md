@@ -18,9 +18,9 @@ returns plain data for Blade, Inertia, or any other frontend.
 composer require wavykit/core
 ```
 
-The core provides pages, breadcrumbs, and menus. The current release is
-`v0.2.0`, for Laravel 13 and PHP 8.3+; Inertia apps add
-`composer require wavykit/inertia`. Pull requests are not open yet; issues
+The core provides pages, breadcrumbs, and menus; its current release is 0.2.0,
+for Laravel 13 and PHP 8.3+. Inertia apps add `composer require
+wavykit/inertia` (0.1.0). Pull requests are not open yet; issues
 and feedback are welcome (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 | Package | Purpose |
@@ -44,8 +44,8 @@ composer install
 composer check        # or: composer check core inertia
 ```
 
-Packages are released together with lockstep `vX.Y.Z` tags and distributed
-through read-only split repositories; CI runs every package's checks. See [Monorepo layout and releases](docs/monorepo.md)
+Each package has its own version, released with a `<package>/vX.Y.Z` tag and
+distributed through a read-only split repository; CI runs every package's checks. See [Monorepo layout and releases](docs/monorepo.md)
 for the layout and release workflow. The monorepo and the `wavykit/core` and
 `wavykit/inertia` split repositories are public on GitHub, and both packages
 are published on Packagist:
