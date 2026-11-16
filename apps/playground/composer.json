@@ -25,7 +25,6 @@
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
-        "laravel/sail": "^1.53",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9.3",
         "pestphp/pest": "^5.2",
@@ -49,6 +48,7 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan config:clear --ansi",
             "@php -r 'require \"vendor/autoload.php\"; $app = require \"bootstrap/app.php\"; $kernel = $app->make(Illuminate\\Contracts\\Console\\Kernel::class); $kernel->bootstrap(); if (! config(\"app.key\")) { exit($kernel->call(\"key:generate\", [\"--no-interaction\" => true])); }'",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --no-interaction",
             "npm ci",
             "npm run build"
@@ -95,8 +95,7 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi --no-interaction",
-            "@php -r \"echo PHP_EOL.'Next: ./vendor/bin/sail up -d && ./vendor/bin/sail composer setup'.PHP_EOL.'Setup runs PostgreSQL migrations, npm ci, and npm run build. Then run ./vendor/bin/sail npm run dev.'.PHP_EOL;\""
+            "@php artisan key:generate --ansi --no-interaction"
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
