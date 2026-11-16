@@ -32,8 +32,8 @@ holds only the foundation's application data, such as users and sessions.
 
 ## Adding a component
 
-1. Require it in `composer.json` as `^0.1@dev`, and add it to the path
-   repository's `versions` option at `0.1.x-dev`. The repository already reads
+1. Require it in `composer.json` as `^0.2@dev`, and add it to the path
+   repository's `versions` option at `0.2.x-dev`. The repository already reads
    every folder in the monorepo's `packages/`.
 2. Add a `register<Component>()` method to `WavyKitServiceProvider` and call it
    from `boot()`.
@@ -65,7 +65,7 @@ composer dev     # serve at http://localhost:8000 with Vite
 ```
 
 WavyKit packages are local Composer path dependencies, symlinked from the
-monorepo's `packages/` folder at version `0.1.x-dev`, so package changes are
+monorepo's `packages/` folder at version `0.2.x-dev`, so package changes are
 immediately available here and no package source is copied into the app.
 This app is not a standalone distributable application. The application keeps
 its Composer and npm lockfiles.
