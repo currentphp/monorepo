@@ -56,28 +56,32 @@
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
         ],
-        "lint": [
+        "format": [
             "pint --parallel"
         ],
-        "lint:check": [
+        "format:check": [
             "pint --parallel --test"
         ],
-        "ci:check": [
+        "analyse": [
+            "phpstan analyse --memory-limit=512M"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ],
+        "audit:dependencies": [
+            "@composer audit",
+            "npm audit --omit=dev"
+        ],
+        "check": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan wayfinder:generate --with-form --no-interaction",
+            "@format:check",
+            "@analyse",
             "npm run check",
             "npm run types:check",
             "npm run build",
             "@test"
-        ],
-        "types:check": [
-            "phpstan analyse"
-        ],
-        "test": [
-            "@php artisan config:clear --ansi",
-            "@lint:check",
-            "@types:check",
-            "@php artisan test"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -115,7 +119,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../../packages/wavykit/packages/*",
+            "url": "../../packages/*",
             "options": {
                 "symlink": true,
                 "versions": {

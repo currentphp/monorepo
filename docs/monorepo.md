@@ -24,6 +24,11 @@ checked and released on its own, and a package that depends on another tests
 the two together. A root `tests/` folder is reserved for future integration
 tests that span several packages.
 
+The [playground](../apps/playground/README.md) is a Laravel application under
+`apps/`, not a published package. It uses the local packages and has its own
+dependencies, checks, and lockfiles. The split workflow only publishes
+directories under `packages/`.
+
 ## Development install
 
 The root `composer.json` is `wavykit/monorepo`, a development-only manifest
@@ -105,6 +110,9 @@ The [tests workflow](../.github/workflows/tests.yml) installs from the root and
 runs `composer check` on PHP 8.3, 8.4, and 8.5, with lowest and stable
 dependency resolutions. New packages are checked automatically once the root
 manifest requires them.
+
+The [playground workflow](../.github/workflows/playground.yml) runs the app's
+own checks with its lockfiles and a disposable PostgreSQL service.
 
 The [backward-compatibility workflow](../.github/workflows/backward-compatibility.yml)
 runs [`bin/backward-compatibility`](../bin/backward-compatibility) on pull

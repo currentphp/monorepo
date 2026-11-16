@@ -1,9 +1,8 @@
 # WavyKit Playground
 
 A Laravel 13 / Inertia 3 / React app for exercising every WavyKit component from
-the local monorepo.
-Created from App Foundation `v0.1.0` (commit `29dab9eb1f186fd6a214364baa03d23d18fac39d`).
-The foundation and the WavyKit monorepo keep their independent repositories.
+this monorepo. Created from App Foundation `v0.1.0` (commit
+`29dab9eb1f186fd6a214364baa03d23d18fac39d`).
 
 ## Components
 
@@ -58,11 +57,10 @@ WavyKit packages are local Composer path dependencies, symlinked from the
 monorepo's `packages/` folder at version `0.1.x-dev`. The Compose services mount
 that folder read-only at the matching relative path, so package changes are
 immediately available here and no package source is copied into the app.
-Installation requires the monorepo checkout at `../../packages/wavykit`; this app
-is intentionally not a standalone distributable application.
+This app is not a standalone distributable application.
 
-The app uses port 8081, Vite 5174, PostgreSQL 5434, and Mailpit 8026. Its
-`wavykit-playground` Compose project and database volume are independent of
+The app uses port 8083, Vite 5176, PostgreSQL 5436, and Mailpit 8028. Its
+`wavykit-monorepo-playground` Compose project and database volume are independent of
 other apps. The application keeps its Composer and npm lockfiles.
 
 ## Demo pages
@@ -77,12 +75,12 @@ follow the foundation's existing authentication state.
 ## Checks
 
 ```sh
-./vendor/bin/sail composer ci:check
+./vendor/bin/sail composer check
 ```
 
 Tests use the foundation's dedicated `testing` PostgreSQL database. No migrations,
-seeds, or tests should point at another application's database. No CI or agent
-scaffolding is installed.
+seeds, or tests should point at another application's database. The monorepo CI
+checks the app independently of the packages.
 
 ## Dependency status
 

@@ -5,7 +5,7 @@ services:
             context: ./docker/8.5
             args:
                 WWWGROUP: '${WWWGROUP:-1000}'
-        image: wavykit-playground-sail:8.5
+        image: wavykit-monorepo-playground-sail:8.5
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -20,7 +20,7 @@ services:
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         volumes:
             - '.:/var/www/html'
-            - '../../packages/wavykit/packages:/var/packages/wavykit/packages:ro'
+            - '../../packages:/var/packages:ro'
         depends_on:
             pgsql:
                 condition: service_healthy
@@ -30,7 +30,7 @@ services:
             - sail
 
     queue:
-        image: wavykit-playground-sail:8.5
+        image: wavykit-monorepo-playground-sail:8.5
         command: php artisan queue:work --tries=3 --timeout=60
         restart: unless-stopped
         environment:
@@ -38,7 +38,7 @@ services:
             LARAVEL_SAIL: 1
         volumes:
             - '.:/var/www/html'
-            - '../../packages/wavykit/packages:/var/packages/wavykit/packages:ro'
+            - '../../packages:/var/packages:ro'
         depends_on:
             pgsql:
                 condition: service_healthy
