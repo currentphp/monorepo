@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-No changes yet.
+### Developer Experience
+
+- A test checks the shared prop's JSON against `resources/types/wavykit.d.ts`,
+  so a change to either fails until the other is updated.
 
 ## 0.1.0 - 2026-11-16
 
