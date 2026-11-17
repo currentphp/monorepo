@@ -15,6 +15,15 @@ final class PageRegistry
 
     private bool $finalized = false;
 
+    /** @var list<PageDefinition> Root pages, sorted; built at finalization. */
+    private array $roots = [];
+
+    /** @var array<string, list<PageDefinition>> Children by parent ID, sorted; built at finalization. */
+    private array $childrenOf = [];
+
+    /** @var array<string, PageDefinition> Pages by route name; built at finalization. */
+    private array $byRoute = [];
+
     /**
      * Snapshot declarations without resolving labels, URLs, or visibility.
      *
@@ -48,17 +57,35 @@ final class PageRegistry
             return;
         }
 
-        $routes = [];
+        $byRoute = [];
+        $roots = [];
+        $childrenOf = [];
         foreach ($this->definitions as $page) {
             if ($page->routeName !== null) {
-                if (isset($routes[$page->routeName])) {
+                if (isset($byRoute[$page->routeName])) {
                     throw new InvalidDefinition("Route '{$page->routeName}' belongs to multiple pages.");
                 }
-                $routes[$page->routeName] = true;
+                $byRoute[$page->routeName] = $page;
             }
             $this->walk($page);
+            if ($page->parentId === null) {
+                $roots[] = $page;
+            } else {
+                $childrenOf[$page->parentId][] = $page;
+            }
         }
 
+        // Frozen from here, so lookups are indexed once; usort is stable, so ties keep registration order.
+        $byOrder = fn (PageDefinition $a, PageDefinition $b): int => $a->order <=> $b->order;
+        usort($roots, $byOrder);
+        foreach ($childrenOf as &$children) {
+            usort($children, $byOrder);
+        }
+        unset($children);
+
+        $this->byRoute = $byRoute;
+        $this->roots = $roots;
+        $this->childrenOf = $childrenOf;
         $this->finalized = true;
     }
 
@@ -98,13 +125,9 @@ final class PageRegistry
      */
     public function forRoute(?string $name): ?PageDefinition
     {
-        foreach ($this->all() as $page) {
-            if ($name !== null && $page->routeName === $name) {
-                return $page;
-            }
-        }
+        $this->finalize();
 
-        return null;
+        return $name === null ? null : ($this->byRoute[$name] ?? null);
     }
 
     /**
@@ -135,10 +158,9 @@ final class PageRegistry
      */
     public function children(?string $parentId): array
     {
-        $pages = array_values(array_filter($this->all(), fn (PageDefinition $page): bool => $page->parentId === $parentId));
-        usort($pages, fn (PageDefinition $a, PageDefinition $b): int => $a->order <=> $b->order);
+        $this->finalize();
 
-        return $pages;
+        return $parentId === null ? $this->roots : ($this->childrenOf[$parentId] ?? []);
     }
 
     /** @param array<string, PageDefinition> $pending */
