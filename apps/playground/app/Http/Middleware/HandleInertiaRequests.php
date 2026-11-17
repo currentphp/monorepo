@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use WavyKit\Inertia\WavyKitProps;
+use WavyKit\Inertia\CurrentProps;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -44,7 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'canRegister' => (bool) config('fortify.registration_enabled'),
             ],
             // Resolved at render time, after route-model binding.
-            'wavykit' => WavyKitProps::make()->menus('primary', 'footer'),
+            'current' => CurrentProps::make()->menus('primary', 'footer'),
         ];
     }
 }

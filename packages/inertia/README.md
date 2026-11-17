@@ -30,13 +30,13 @@ Add one entry to `share()` in your `HandleInertiaRequests` middleware, under
 any key you like, naming the menus every page needs:
 
 ```php
-use WavyKit\Inertia\WavyKitProps;
+use WavyKit\Inertia\CurrentProps;
 
 public function share(Request $request): array
 {
     return [
         ...parent::share($request),
-        'wavykit' => WavyKitProps::make()->menus('primary', 'footer'),
+        'current' => CurrentProps::make()->menus('primary', 'footer'),
     ];
 }
 ```
@@ -72,7 +72,7 @@ Every page then receives:
 The prop resolves when the response renders, after route-model binding, so
 labels can use bound models. A partial reload that leaves out its key does not
 resolve it at all. To change when it is sent, wrap it in Inertia's own prop
-types, for example `Inertia::defer(fn () => WavyKitProps::make()->menus('primary'))`.
+types, for example `Inertia::defer(fn () => CurrentProps::make()->menus('primary'))`.
 
 ## TypeScript types
 
@@ -93,12 +93,12 @@ output. Map them to an import path in `tsconfig.json`:
 Then type the shared prop, passing your menu names:
 
 ```ts
-import type { WavyKit } from '@wavykit/inertia';
+import type { Current } from '@wavykit/inertia';
 
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
-            wavykit: WavyKit<'primary' | 'footer'>;
+            current: Current<'primary' | 'footer'>;
         };
     }
 }

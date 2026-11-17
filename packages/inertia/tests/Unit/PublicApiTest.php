@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use WavyKit\Inertia\WavyKitProps;
+use WavyKit\Inertia\CurrentProps;
 
 test('the supported API changes only deliberately', function () {
-    $reflection = new ReflectionClass(WavyKitProps::class);
+    $reflection = new ReflectionClass(CurrentProps::class);
     $methods = array_values(array_map(
         fn (ReflectionMethod $method): string => $method->getName(),
         array_filter(

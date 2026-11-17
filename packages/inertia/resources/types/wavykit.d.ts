@@ -1,4 +1,4 @@
-// TypeScript types for the prop shared by WavyKit\Inertia\WavyKitProps.
+// TypeScript types for the prop shared by WavyKit\Inertia\CurrentProps.
 // Hand-written to match wavykit/core's JSON output; versioned with this package.
 
 /** A breadcrumb, root first; the current page keeps its URL. */
@@ -42,9 +42,9 @@ export type MenuItem = {
 
 /**
  * The shared prop. Pass the names given to `menus()` to type the menus,
- * for example `WavyKit<'primary' | 'footer'>`.
+ * for example `Current<'primary' | 'footer'>`.
  */
-export type WavyKit<MenuName extends string = string> = {
+export type Current<MenuName extends string = string> = {
     /** Null on unregistered routes. */
     pageId: string | null;
     /** The active page's subject, or the nearest ancestor's; null when none. */
