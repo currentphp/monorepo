@@ -1,0 +1,70 @@
+name: Site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/site
+    env:
+      APP_ENV: testing
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.21.0'
+      - run: composer install --prefer-dist --no-interaction --no-progress
+      - run: cp .env.example .env
+      - run: npm ci
+      - run: composer check
+
+  # Builds the static site from main and publishes it to GitHub Pages.
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: apps/site
+    env:
+      APP_ENV: production
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.21.0'
+      - run: composer install --prefer-dist --no-interaction --no-progress --no-dev --optimize-autoloader
+      - run: npm ci
+      - run: composer build
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: apps/site/dist
+      - id: deployment
+        uses: actions/deploy-pages@v5
