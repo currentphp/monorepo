@@ -24,10 +24,16 @@ checked and released on its own, and a package that depends on another tests
 the two together. A root `tests/` folder is reserved for future integration
 tests that span several packages.
 
-The [playground](../apps/playground/README.md) is a Laravel application under
-`apps/`, not a published package. It uses the local packages and has its own
-dependencies, checks, and lockfiles. The split workflow only publishes
-directories under `packages/`.
+Applications live under `apps/` and are never published as packages. Each uses
+the local packages through a path repository and has its own dependencies,
+checks, and lockfiles:
+
+- the [playground](../apps/playground/README.md), a Laravel, Inertia, and React
+  application that exercises every package;
+- the [site](../apps/site/README.md), the website and guides at
+  `currentphp.com`, built with Current and exported to static files.
+
+The split workflow only publishes directories under `packages/`.
 
 ## Development install
 
@@ -126,6 +132,9 @@ manifest requires them.
 The [playground workflow](../.github/workflows/playground.yml) runs the app's
 own checks with its lockfiles, on SQLite, with no services.
 
+The [site workflow](../.github/workflows/site.yml) runs the site's checks, and
+on `main` builds the static site and deploys it to GitHub Pages.
+
 The [backward-compatibility workflow](../.github/workflows/backward-compatibility.yml)
 runs [`bin/backward-compatibility`](../bin/backward-compatibility) on pull
 requests. It compares a subtree split of each package with the same split at
@@ -146,8 +155,9 @@ report to the job summary. It never fails the pull request; see
    constraint such as `^0.2`. The root path repository supplies the local copy.
    On 0.x a caret constraint pins the minor version (`^0.2` means
    `>=0.2.0 <0.3.0`), so when a package's minor release starts a new
-   development line, move its path repository `versions` entry, its root and
-   playground requirements, and other packages' constraints on it together.
+   development line, move its path repository `versions` entries, its root,
+   playground, and site requirements, and other packages' constraints on it
+   together.
 5. Add the package to the root README.
 
 ## One-time setup

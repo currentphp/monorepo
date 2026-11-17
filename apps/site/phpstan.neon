@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - bootstrap/app.php
+        - config/
+        - routes/
+
+    level: 8
+
+    # Report calls to Current's @internal members, as an outside adopter would see them.
+    featureToggles:
+        internalTag: true

@@ -1,0 +1,112 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "current/site",
+    "type": "project",
+    "description": "Current's website and guides, built with Current.",
+    "keywords": [],
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "current/current": "^0.3@dev",
+        "laravel/framework": "^13.17",
+        "league/commonmark": "^2.10",
+        "phiki/phiki": "^2.2",
+        "spatie/laravel-export": "^1.6",
+        "spatie/laravel-sitemap": "^8.2",
+        "symfony/yaml": "^8.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.9",
+        "laravel/pint": "^1.27",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "pestphp/pest": "^5.2",
+        "pestphp/pest-plugin-laravel": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "setup": [
+            "composer install --no-interaction",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate --ansi --no-interaction",
+            "npm ci",
+            "npm run build"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan serve"
+        ],
+        "format": [
+            "pint --parallel"
+        ],
+        "format:check": [
+            "pint --parallel --test"
+        ],
+        "analyse": [
+            "phpstan analyse --memory-limit=512M"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ],
+        "build": [
+            "Composer\\Config::disableProcessTimeout",
+            "npm run build",
+            "@putenv APP_URL=https://currentphp.com",
+            "@php artisan export",
+            "npm run search"
+        ],
+        "check": [
+            "Composer\\Config::disableProcessTimeout",
+            "@format:check",
+            "@analyse",
+            "npm run build",
+            "@test"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../packages/*",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "current/current": "0.3.x-dev",
+                    "current/inertia": "0.2.x-dev"
+                }
+            }
+        }
+    ]
+}
