@@ -29,6 +29,9 @@
 
 ### Changed
 
+- Derived menus and page lookups no longer slow down quadratically on large
+  page trees: the page registry indexes children and routes once when it is
+  frozen (a 1,000-page menu went from about 36 ms to 0.1 ms per render).
 - `PageDefinition` has `presents`, `presentsParameter`, and `labelled`.
   Internal: `Pages` resolves URLs through one builder shared with subjects, and
   label callbacks share one resolver for pages, menus, and subjects.

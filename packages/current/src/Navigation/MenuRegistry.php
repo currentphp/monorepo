@@ -92,7 +92,7 @@ final class MenuRegistry
             $seen = [];
             foreach ($roots as $id) {
                 $page = $pages[$id] ?? throw new InvalidDefinition("Menu '{$name}' references unknown page '{$id}'.");
-                $this->validateBranch($name, $page, $pages, $seen);
+                $this->validateBranch($name, $page, $seen);
             }
             $exclusions[$name] = $this->derivedMenus[$name]->exclusions();
             foreach ($exclusions[$name] as $id) {
@@ -217,19 +217,16 @@ final class MenuRegistry
     }
 
     /**
-     * @param  array<string, PageDefinition>  $pages
      * @param  array<string, bool>  $seen
      */
-    private function validateBranch(string $name, PageDefinition $page, array $pages, array &$seen): void
+    private function validateBranch(string $name, PageDefinition $page, array &$seen): void
     {
         if (isset($seen[$page->id])) {
             throw new InvalidDefinition("Menu '{$name}' includes page '{$page->id}' more than once.");
         }
         $seen[$page->id] = true;
-        foreach ($pages as $child) {
-            if ($child->parentId === $page->id) {
-                $this->validateBranch($name, $child, $pages, $seen);
-            }
+        foreach ($this->pages->children($page->id) as $child) {
+            $this->validateBranch($name, $child, $seen);
         }
     }
 
