@@ -1,5 +1,8 @@
 # First release checklist
 
+> Historical: this checklist predates the 2026-11-16 rename from WavyKit to
+> Current and keeps the names used at the time.
+
 Working checklist for the first public release of `wavykit/core`. Proposed
 version: `v0.1.0`; no version entry, tag, or publication is created by this
 checklist. Checked items record completed work; compatibility checks must be

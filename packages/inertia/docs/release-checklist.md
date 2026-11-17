@@ -1,5 +1,8 @@
 # First release checklist
 
+> Historical: this checklist predates the 2026-11-16 rename from WavyKit to
+> Current and keeps the names used at the time.
+
 Working checklist for the first public release of `wavykit/inertia`,
 `v0.1.0`, versioned independently of `wavykit/core` (it requires core `^0.2`).
 Checked items record completed work.

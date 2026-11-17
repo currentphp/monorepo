@@ -2,9 +2,19 @@
 
 ## Unreleased
 
+### Breaking
+
+- Renamed from WavyKit to Current. The package is `current/current`
+  (previously `wavykit/core`, now abandoned) and the namespace is `Current\`
+  (previously `WavyKit\`). The class behind the facade is `Current\Experience`
+  (previously `WavyKit\Current`); the service provider is
+  `CurrentServiceProvider`, the test trait `InteractsWithCurrent`, the
+  exception interface `CurrentException`, and the commands `current:*`.
+  Version numbers continue from `wavykit/core`.
+
 ### Added
 
-- Subjects (`WavyKit\Subjects\`): declare kinds once with
+- Subjects (`Current\Subjects\`): declare kinds once with
   `Subject::make()->for()->label()->page()` in `SubjectRegistry`; pages
   present them with `Page::presents()` and take the subject's label unless
   they have their own. `Current::subject()` returns the active page's subject,
@@ -13,9 +23,9 @@
   (`{ kind, id, label, url }`, identity `kind:id`). Registration is validated:
   overlapping classes, canonical pages that do not present their kind, unknown
   kinds, unroutable classes, and routes missing the presented parameter.
-- `wavykit:subjects` (with `--json`), subject checks in `wavykit:check`, a
-  `presents` detail in `wavykit:pages`, and `assertCurrentSubject()` in
-  `InteractsWithWavyKit`.
+- `current:subjects` (with `--json`), subject checks in `current:check`, a
+  `presents` detail in `current:pages`, and `assertCurrentSubject()` in
+  `InteractsWithCurrent`.
 
 ### Changed
 

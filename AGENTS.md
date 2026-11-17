@@ -1,6 +1,6 @@
-# WavyKit
+# Current
 
-PHP monorepo of the `wavykit/*` packages. Contributor workflow is in
+PHP monorepo of Current's `current/*` Laravel packages. Contributor workflow is in
 [CONTRIBUTING.md](CONTRIBUTING.md); layout and releases are in [docs/monorepo.md](docs/monorepo.md).
 
 ## Checks

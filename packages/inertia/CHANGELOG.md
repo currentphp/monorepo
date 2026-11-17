@@ -4,6 +4,10 @@
 
 ### Breaking
 
+- Renamed from WavyKit to Current. The package is `current/inertia`
+  (previously `wavykit/inertia`, now abandoned), the namespace is `Current\`
+  (previously `WavyKit\`), and the TypeScript types file is `current.d.ts`.
+  Version numbers continue from `wavykit/inertia`.
 - Renamed `WavyKitProps` to `CurrentProps` and the TypeScript type `WavyKit`
   to `Current`: the prop is the serialized form of the `Current` facade. The
   documentation now shares it under the key `current`; applications still
@@ -11,13 +15,13 @@
 
 ### Added
 
-- `subject` in the shared prop: the current subject from `wavykit/core`'s
+- `subject` in the shared prop: the current subject from `current/current`'s
   `Current::subject()` (`{ kind, id, label, url }` or null), with a `Subject`
-  TypeScript type. Requires `wavykit/core` 0.3.
+  TypeScript type. Requires `current/current` 0.3.
 
 ### Developer Experience
 
-- A test checks the shared prop's JSON against `resources/types/wavykit.d.ts`,
+- A test checks the shared prop's JSON against `resources/types/current.d.ts`,
   so a change to either fails until the other is updated.
 
 ## 0.1.0 - 2026-11-16

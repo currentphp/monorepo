@@ -1,26 +1,26 @@
-# WavyKit Playground
+# Current Playground
 
-A Laravel 13 / Inertia 3 / React app for exercising every WavyKit component from
+A Laravel 13 / Inertia 3 / React app for exercising every Current component from
 this monorepo. Created from App Foundation `v0.1.0` (commit
 `29dab9eb1f186fd6a214364baa03d23d18fac39d`).
 
 ## Components
 
-| Package and area                      | Registered in                                  | Demonstrated by                                                                               |
-| ------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `wavykit/core`: pages                 | `WavyKitServiceProvider::registerPages()`      | Page identity and resource-aware labels on every page; the projects demo.                     |
-| `wavykit/core`: breadcrumbs and menus | `WavyKitServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and user visibility, on every page. |
-| `wavykit/inertia`                     | `HandleInertiaRequests::share()`               | The `current` prop on every page, typed by the package's `wavykit.d.ts`.                      |
-| `wavykit/core`: subjects              | `WavyKitServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and `current.subject`.                  |
+| Package and area                         | Registered in                                     | Demonstrated by                                                                               |
+| ---------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `current/current`: pages                 | `ExperienceServiceProvider::registerPages()`      | Page identity and resource-aware labels on every page; the projects demo.                     |
+| `current/current`: breadcrumbs and menus | `ExperienceServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and user visibility, on every page. |
+| `current/inertia`                        | `HandleInertiaRequests::share()`                  | The `current` prop on every page, typed by the package's `current.d.ts`.                      |
+| `current/current`: subjects              | `ExperienceServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and `current.subject`.                  |
 
 [`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php) shares
 component output with every Inertia page as the `current` prop, through
-`CurrentProps` from `wavykit/inertia`. Its TypeScript types come from the
-package, mapped to `@wavykit/inertia` in `tsconfig.json` and declared in
+`CurrentProps` from `current/inertia`. Its TypeScript types come from the
+package, mapped to `@current/inertia` in `tsconfig.json` and declared in
 [`resources/js/types/global.d.ts`](resources/js/types/global.d.ts); the
-components in [`resources/js/components/wavykit/`](resources/js/components/wavykit/)
+components in [`resources/js/components/current/`](resources/js/components/current/)
 render it.
-Tests live in [`tests/Feature/WavyKit/`](tests/Feature/WavyKit/), one file per
+Tests live in [`tests/Feature/Current/`](tests/Feature/Current/), one file per
 component, plus `SharedPropsTest.php` for pages outside the demos.
 
 ## Demo data
@@ -37,20 +37,20 @@ holds only the foundation's application data, such as users and sessions.
    `^0.1@dev`), and add it to the path repository's `versions` option at the
    same line (`0.1.x-dev`). The repository already reads
    every folder in the monorepo's `packages/`.
-2. Add a `register<Component>()` method to `WavyKitServiceProvider` and call it
+2. Add a `register<Component>()` method to `ExperienceServiceProvider` and call it
    from `boot()`.
 3. Expose any request output through the `current` prop in
    `HandleInertiaRequests`, or pass it from a demo controller.
-4. Add `tests/Feature/WavyKit/<Component>Test.php`, fixtures if the demo needs
+4. Add `tests/Feature/Current/<Component>Test.php`, fixtures if the demo needs
    data, and a row in the table above.
 
 ## Inspecting and testing
 
-`php artisan wavykit:pages`, `wavykit:menus`, and `wavykit:check` list and
-validate what `WavyKitServiceProvider` registers; add `--json` to the listings
+`php artisan current:pages`, `current:menus`, and `current:check` list and
+validate what `ExperienceServiceProvider` registers; add `--json` to the listings
 for machine-readable output. Run them through Sail like any Artisan command.
 
-The base `TestCase` uses `WavyKit\Testing\InteractsWithWavyKit`, so tests can
+The base `TestCase` uses `Current\Testing\InteractsWithCurrent`, so tests can
 assert the current page, breadcrumbs, and menu visibility after a request, for
 example `$this->assertMenuMissing('footer', 'profile')`.
 
@@ -66,7 +66,7 @@ composer setup   # install, create .env and the SQLite file, migrate, build
 composer dev     # serve at http://localhost:8000 with Vite
 ```
 
-WavyKit packages are local Composer path dependencies, symlinked from the
+Current packages are local Composer path dependencies, symlinked from the
 monorepo's `packages/` folder at each package's development line (core
 `0.3.x-dev`, inertia `0.2.x-dev`), so package changes are
 immediately available here and no package source is copied into the app.
@@ -84,11 +84,11 @@ follow the foundation's existing authentication state.
 
 ### Subjects
 
-Projects and their tasks are subjects (`WavyKit\Subjects`), described once in
+Projects and their tasks are subjects (`Current\Subjects`), described once in
 `registerSubjects()` and read by breadcrumbs (Projects › Apollo › Tasks ›
 Fix login, with no per-page label callback), by canonical links (the task list
 on a project page), and by `current.subject` in the Inertia prop. Open
-`/projects/42/tasks/1`, or run `php artisan wavykit:subjects`.
+`/projects/42/tasks/1`, or run `php artisan current:subjects`.
 
 ## Checks
 
@@ -111,4 +111,4 @@ it adds no agent files, editor configuration, or Git hooks.
 
 As checked on 2026-11-08, npm audit reports zero vulnerabilities after the upgrade.
 The foundation source retains its own dependency choices; this app's tooling
-upgrade does not modify the starter or the WavyKit packages.
+upgrade does not modify the starter or the Current packages.

@@ -1,4 +1,4 @@
-# WavyKit Core
+# Current
 
 One description of your Laravel application's experience: its pages, the
 breadcrumbs and menus that read from them, and the subjects users look at.
@@ -11,15 +11,16 @@ and menus read the same definitions, so labels, URLs, and current and active
 states stay consistent. A menu can follow the page hierarchy, or arrange pages
 its own way without changing their breadcrumbs.
 
-WavyKit describes; your application executes. Routes, controllers,
+Current describes; your application executes. Routes, controllers,
 authorization, and rendering stay with the application, and everything here
 returns plain data for Blade, Inertia, or any other frontend.
 
-Package: `wavykit/core`. Namespaces: `WavyKit\Pages\` (pages),
-`WavyKit\Navigation\` (breadcrumbs and menus), `WavyKit\Subjects\`
-(subjects), and `WavyKit\Context`.
-Maintained by WavyKit. The current release is 0.2.0. While WavyKit is on
-0.x, minor releases may change the public API; see [Versioning](#versioning).
+Package: `current/current`. Namespaces: `Current\Pages\` (pages),
+`Current\Navigation\` (breadcrumbs and menus), `Current\Subjects\`
+(subjects), and `Current\Context`.
+Current is a Wavy project. It was released as `wavykit/core` up to 0.2.0; the
+first release as `current/current` is 0.3.0. While Current is on 0.x, minor
+releases may change the public API; see [Versioning](#versioning).
 
 ## Requirements
 
@@ -31,10 +32,10 @@ or database requirement.
 Install with Composer:
 
 ```sh
-composer require wavykit/core
+composer require current/current
 ```
 
-Laravel discovers `WavyKit\CoreServiceProvider` automatically. Register your
+Laravel discovers `Current\CurrentServiceProvider` automatically. Register your
 pages and menus as shown below; existing routes and controllers remain in
 place.
 
@@ -43,8 +44,8 @@ place.
 Register definitions in an application service provider's `boot()` method:
 
 ```php
-use WavyKit\Pages\Page;
-use WavyKit\Pages\PageRegistry;
+use Current\Pages\Page;
+use Current\Pages\PageRegistry;
 
 public function boot(PageRegistry $pages): void
 {
@@ -59,7 +60,7 @@ public function boot(PageRegistry $pages): void
 }
 ```
 
-These named routes belong to the application. WavyKit never creates or
+These named routes belong to the application. Current never creates or
 modifies routes, middleware, URLs, or access rules. Definitions may be
 registered before routes finish loading; resolve output only after route
 registration, and after model-binding middleware if route parameters are needed
@@ -78,10 +79,10 @@ most one page. Route-less pages are valid.
 
 ### Reading the current page
 
-Read the current request through the `WavyKit\Facades\Current` facade:
+Read the current request through the `Current\Facades\Current` facade:
 
 ```php
-use WavyKit\Facades\Current;
+use Current\Facades\Current;
 
 $page = Current::page();
 $id = Current::pageId();
@@ -97,16 +98,16 @@ route, or null. It retains dynamic callbacks rather than executing them.
 `pageId()` returns its ID. `is()` matches the active page's ID against one or
 more patterns, with `*` as a wildcard, like Laravel's `routeIs()`; it checks
 the active page only, not its ancestors. `context()` returns a
-`WavyKit\Context` with the active definition, bound route parameters, and
+`Current\Context` with the active definition, bound route parameters, and
 current user, which `Current::user()` also returns. `Current::subject()`
 returns the subject the request is about; see [Subjects](#subjects).
 
-`Current` only reads. To inject it instead, type-hint `WavyKit\Current`, the
+`Current` only reads. To inject it instead, type-hint `Current\Experience`, the
 class behind the facade. It holds no request state, so it is safe in queue
 workers and Octane. Register pages and menus through `PageRegistry` and
 `MenuRegistry`, as shown above.
 
-Packages that build on the core read pages through `WavyKit\Pages\Pages`,
+Packages that build on the core read pages through `Current\Pages\Pages`,
 which `Current` uses, and resolve page output through the same request:
 `activeTrail($context)` returns the active page's ancestry, root first;
 `label($page, $context)` and `url($page, $context)` resolve one page with the
@@ -114,12 +115,12 @@ rules below.
 
 ### Resource-aware labels and URLs
 
-Labels may be strings or callbacks receiving `WavyKit\Context`:
+Labels may be strings or callbacks receiving `Current\Context`:
 
 ```php
 use App\Models\Project;
-use WavyKit\Context;
-use WavyKit\Pages\Page;
+use Current\Context;
+use Current\Pages\Page;
 
 Page::make('projects.show')
     ->route('projects.show')
@@ -173,13 +174,13 @@ route, with Laravel's URL-generation exception preserved as the cause.
 ## Breadcrumbs
 
 ```php
-use WavyKit\Facades\Current;
+use Current\Facades\Current;
 
 $breadcrumbs = Current::breadcrumbs();
 ```
 
 On `projects.create`, breadcrumbs are Projects → Create project. Each is a
-`WavyKit\Navigation\Breadcrumb` with `pageId`, `label`, nullable `url`,
+`Current\Navigation\Breadcrumb` with `pageId`, `label`, nullable `url`,
 `current`, and nullable `icon`, the same shape as menu items. Every breadcrumb
 keeps its URL, including the current one, so the renderer decides whether to
 link it; route-less ancestors have no URL. Labels are resolved plain strings,
@@ -211,8 +212,8 @@ Use `derive()` for a menu that follows the page hierarchy, registered next to
 your pages:
 
 ```php
-use WavyKit\Navigation\MenuRegistry;
-use WavyKit\Pages\PageRegistry;
+use Current\Navigation\MenuRegistry;
+use Current\Pages\PageRegistry;
 
 public function boot(PageRegistry $pages, MenuRegistry $menus): void
 {
@@ -237,7 +238,7 @@ Use `define()` when a menu needs its own nesting or ordering. Each
 `MenuEntry` places a registered page or groups other entries:
 
 ```php
-use WavyKit\Navigation\MenuEntry;
+use Current\Navigation\MenuEntry;
 
 $menus->define('footer',
     MenuEntry::page('privacy'),
@@ -249,7 +250,7 @@ $menus->define('footer',
 
 Register the referenced pages separately, once. Each placement reuses its page's
 route, label, and icon unless overridden. Placement labels can also be callbacks
-receiving `WavyKit\Context`.
+receiving `Current\Context`.
 
 Explicit entries follow their authored order and include only their declared
 children. They do not import page descendants, and derived-menu exclusions do
@@ -267,7 +268,7 @@ when their visibility callbacks would hide them.
 `visibleWhen()` applies to explicit page placements and groups:
 
 ```php
-use WavyKit\Context;
+use Current\Context;
 
 $menus->define('account',
     MenuEntry::page('account')->visibleWhen(
@@ -291,7 +292,7 @@ routes and controllers.
 ### Reading menus
 
 ```php
-use WavyKit\Facades\Current;
+use Current\Facades\Current;
 
 $items = Current::menu('primary');
 ```
@@ -331,7 +332,7 @@ For example, create `resources/views/partials/menu.blade.php`:
 ```
 
 Render it inside an appropriately labelled navigation element with
-`@include('partials.menu', ['items' => \WavyKit\Facades\Current::menu('primary')])`.
+`@include('partials.menu', ['items' => \Current\Facades\Current::menu('primary')])`.
 
 ## Subjects
 
@@ -341,10 +342,10 @@ it; pages that present a kind then take its label, and any object of that kind
 resolves to the same label and link anywhere.
 
 ```php
-use WavyKit\Pages\Page;
-use WavyKit\Pages\PageRegistry;
-use WavyKit\Subjects\Subject;
-use WavyKit\Subjects\SubjectRegistry;
+use Current\Pages\Page;
+use Current\Pages\PageRegistry;
+use Current\Subjects\Subject;
+use Current\Subjects\SubjectRegistry;
 
 public function boot(SubjectRegistry $subjects, PageRegistry $pages): void
 {
@@ -381,13 +382,13 @@ public function boot(SubjectRegistry $subjects, PageRegistry $pages): void
   identity is the kind plus the route key, `project:42`. Two kinds cannot
   share a class or a class hierarchy.
 
-Read subjects as `WavyKit\Subjects\SubjectItem` objects with `kind`, `id`,
+Read subjects as `Current\Subjects\SubjectItem` objects with `kind`, `id`,
 `label`, nullable `url`, and `key()`; they serialize to
 `{ kind, id, label, url }`:
 
 ```php
-use WavyKit\Facades\Current;
-use WavyKit\Subjects\Subjects;
+use Current\Facades\Current;
+use Current\Subjects\Subjects;
 
 Current::subject();               // what the request is about, or null
 app(Subjects::class)->of($task);  // any object's subject and canonical link
@@ -397,11 +398,11 @@ app(Subjects::class)->of($task);  // any object's subject and canonical link
 page's that presents one: on `projects.edit` it is the project. It is null
 outside a request or when no page in the trail presents a subject. `of()` works
 anywhere Laravel can generate URLs, including queue jobs and notifications.
-WavyKit never loads or queries subjects; it reads objects your routes bind.
+Current never loads or queries subjects; it reads objects your routes bind.
 
 ## Errors
 
-Every exception implements `WavyKit\Exceptions\WavyKitException` and extends
+Every exception implements `Current\Exceptions\CurrentException` and extends
 `LogicException`:
 
 - `InvalidDefinition`: a page or menu declaration is invalid, was registered
@@ -440,24 +441,24 @@ Four Artisan commands describe and check what is registered, without a
 request:
 
 ```sh
-php artisan wavykit:pages          # the page tree: ID, label, route, icon
-php artisan wavykit:menus          # every menu as a tree; or: wavykit:menus primary
-php artisan wavykit:subjects       # subject kinds: class, canonical page, presenting pages
-php artisan wavykit:check          # validate everything; exits 1 on any problem
+php artisan current:pages          # the page tree: ID, label, route, icon
+php artisan current:menus          # every menu as a tree; or: current:menus primary
+php artisan current:subjects       # subject kinds: class, canonical page, presenting pages
+php artisan current:check          # validate everything; exits 1 on any problem
 ```
 
 Labels that come from callbacks are listed as `(dynamic)`; the commands never
-run label, parameter, or visibility callbacks. `wavykit:menus` shows whether a
+run label, parameter, or visibility callbacks. `current:menus` shows whether a
 menu is derived (with its roots and `except()` exclusions) or defined, which
 entries are groups, and which have a `visibleWhen()` rule.
 
-`wavykit:check` reports duplicate or cyclic pages, unknown parents, unknown
+`current:check` reports duplicate or cyclic pages, unknown parents, unknown
 routes, and invalid menu references, and suits CI. It lists every unknown route
 at once; other definition errors stop at the first one, so fix it and run the
 check again. The listing commands run the same checks first and fail the same
 way.
 
-Add `--json` to `wavykit:pages`, `wavykit:menus`, or `wavykit:subjects` for
+Add `--json` to `current:pages`, `current:menus`, or `current:subjects` for
 machine-readable output.
 Pages are nested under `children`, with `label` null and `dynamicLabel` true
 for callback labels; menus have `name`, `kind` (`derived` or `defined`),
@@ -465,15 +466,15 @@ for callback labels; menus have `name`, `kind` (`derived` or `defined`),
 
 ## Testing
 
-Add `WavyKit\Testing\InteractsWithWavyKit` to your application's `TestCase`,
-make a request, then assert what WavyKit resolved for it:
+Add `Current\Testing\InteractsWithCurrent` to your application's `TestCase`,
+make a request, then assert what Current resolved for it:
 
 ```php
-use WavyKit\Testing\InteractsWithWavyKit;
+use Current\Testing\InteractsWithCurrent;
 
 abstract class TestCase extends BaseTestCase
 {
-    use InteractsWithWavyKit;
+    use InteractsWithCurrent;
 }
 ```
 
@@ -498,24 +499,24 @@ $this->assertMenuMissing('primary', 'admin');
 - `assertCurrentSubject(?string $kind, ?string $id = null)` checks the current
   subject's kind, and its ID when given; pass null to assert there is none.
 
-The assertions read the last request through `WavyKit\Facades\Current`, so
+The assertions read the last request through `Current\Facades\Current`, so
 callbacks see that request's bound models and user. Failure messages include
 the actual labels or the menu as it was resolved. In Pest, add the trait with
-`pest()->use(InteractsWithWavyKit::class)` or `uses(...)`. PHPUnit is required,
+`pest()->use(InteractsWithCurrent::class)` or `uses(...)`. PHPUnit is required,
 as in any Laravel test suite; the trait is never loaded outside tests.
 
 ## Development
 
-The core is developed from the WavyKit monorepo root, which installs the
+The core is developed from the Current monorepo root, which installs the
 development tools once and links this package through a path repository:
 
 ```sh
 composer install
-composer check core
+composer check current
 ```
 
 The package keeps its own `phpunit.xml`, `phpstan.neon`, and `pint.json`.
-`composer check core` validates this manifest, checks Pint formatting, runs
+`composer check current` validates this manifest, checks Pint formatting, runs
 PHPStan at maximum level on source, and executes Pest unit, Testbench feature,
 and route-cache integration tests. `composer format core` applies formatting.
 The root `composer.lock` is local and ignored; fresh checkouts resolve
@@ -532,7 +533,7 @@ diagnostics remain visible and are not suppressed.
 
 Monorepo CI runs the checks on PHP 8.3, 8.4, and 8.5 with lowest and stable
 resolutions. PHP 8.3 remains the declared minimum and dependency-resolution
-platform. The private WavyKit playground, a Laravel 13 / Inertia 3 / React
+platform. The private Current playground, a Laravel 13 / Inertia 3 / React
 application, consumes the package and checks that its output is identical with
 and without cached routes. These are observed checks, not a production-readiness
 guarantee.
@@ -543,10 +544,10 @@ The initial release is intended to remain on 0.x while the public API is refined
 Use minor releases for breaking changes during 0.x and patch releases for
 compatible fixes. At 1.0 and later, breaking public API changes require a major
 release. The monorepo's `CONTRIBUTING.md` defines what counts as public API:
-anything marked `@internal` may change in any release. Releases are tagged `core/vMAJOR.MINOR.PATCH` on the WavyKit monorepo, and
-the split workflow pushes each one to the read-only `core` split repository as
-`vMAJOR.MINOR.PATCH`; `v0.1.0` and `v0.2.0` came from the earlier lockstep
-tags. Composer derives versions from those tags, so `composer.json`
+anything marked `@internal` may change in any release. Releases are tagged `current/vMAJOR.MINOR.PATCH` on the Current monorepo, and
+the split workflow pushes each one to the read-only `currentphp/current` split
+repository as `vMAJOR.MINOR.PATCH`. Versions 0.1.0 and 0.2.0 were released as
+`wavykit/core` from the earlier lockstep tags. Composer derives versions from those tags, so `composer.json`
 does not contain a version field. The release process is documented in the
 monorepo's `docs/monorepo.md`; contribute there, not to the split repository.
 
