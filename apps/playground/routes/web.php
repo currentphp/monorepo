@@ -55,3 +55,4 @@ Route::middleware('auth:web')->group(function (): void {
 Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+Route::get('projects/{project}/tasks/{task}', [ProjectController::class, 'task'])->name('tasks.show');

@@ -6,9 +6,12 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\ProjectExample;
+use App\TaskExample;
+use App\WavyKit\Subjects\SubjectKind;
+use App\WavyKit\Subjects\SubjectRegistry;
+use Illuminate\Routing\Route as RouteDefinition;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use LogicException;
 use WavyKit\Context;
 use WavyKit\Navigation\MenuEntry;
 use WavyKit\Navigation\MenuRegistry;
@@ -23,29 +26,53 @@ use WavyKit\Pages\PageRegistry;
  */
 final class WavyKitServiceProvider extends ServiceProvider
 {
-    public function boot(PageRegistry $pages, MenuRegistry $menus): void
+    public function register(): void
     {
-        $this->registerPages($pages);
+        $this->app->singleton(SubjectRegistry::class);
+    }
+
+    public function boot(PageRegistry $pages, MenuRegistry $menus, SubjectRegistry $subjects): void
+    {
+        $this->registerSubjects($subjects);
+        $this->registerPages($pages, $subjects);
         $this->registerNavigation($menus);
     }
 
+    /**
+     * Subjects (WK-019 prototype, App\WavyKit\Subjects): projects and their
+     * tasks, each described once and read by breadcrumbs, links, and props.
+     */
+    private function registerSubjects(SubjectRegistry $subjects): void
+    {
+        $subjects->register(
+            SubjectKind::make('project')->for(ProjectExample::class)
+                ->label(fn (ProjectExample $project): string => $project->name)
+                ->page('projects.show'),
+            SubjectKind::make('task')->for(TaskExample::class)
+                ->label(fn (TaskExample $task): string => $task->title)
+                ->page('tasks.show', fn (TaskExample $task): array => ['project' => $task->project(), 'task' => $task]),
+        );
+    }
+
     /** Places (WavyKit\Pages): page identity, hierarchy, and resource-aware labels. */
-    private function registerPages(PageRegistry $pages): void
+    private function registerPages(PageRegistry $pages, SubjectRegistry $subjects): void
     {
         Route::bind('project', fn (string $id): ProjectExample => ProjectExample::findExample($id) ?? abort(404));
+        Route::bind('task', function (string $id, RouteDefinition $route): TaskExample {
+            $project = $route->parameter('project');
+
+            return ($project instanceof ProjectExample ? TaskExample::findExample($project, $id) : null) ?? abort(404);
+        });
 
         $pages->register(
             Page::make('home')->route('home')->label('Home'),
             Page::make('projects')->route('projects.index')->label('Projects')->children(
-                Page::make('projects.show')->route('projects.show')
-                    ->label(function (Context $context): string {
-                        $project = $context->parameter('project');
-                        if (! $project instanceof ProjectExample) {
-                            throw new LogicException('Expected a bound project.');
-                        }
-
-                        return $project->name;
-                    })->children(Page::make('projects.edit')->route('projects.edit')->label('Edit')),
+                $subjects->presents(Page::make('projects.show')->route('projects.show'), 'project')->children(
+                    Page::make('projects.edit')->route('projects.edit')->label('Edit'),
+                    Page::make('projects.tasks')->label('Tasks')->children(
+                        $subjects->presents(Page::make('tasks.show')->route('tasks.show'), 'task'),
+                    ),
+                ),
             ),
             Page::make('dashboard')->route('dashboard')->label('Overview'),
             Page::make('profile')->route('profile.edit')->label('Profile')->parent('dashboard'),

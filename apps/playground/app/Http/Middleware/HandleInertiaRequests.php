@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\WavyKit\Subjects\CurrentSubject;
+use App\WavyKit\Subjects\Subject;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use WavyKit\Inertia\WavyKitProps;
@@ -45,6 +47,8 @@ class HandleInertiaRequests extends Middleware
             ],
             // Resolved at render time, after route-model binding.
             'wavykit' => WavyKitProps::make()->menus('primary', 'footer'),
+            // WK-019 prototype: stands in for a subject in the wavykit prop.
+            'subject' => fn (): ?Subject => app(CurrentSubject::class)->get(),
         ];
     }
 }
