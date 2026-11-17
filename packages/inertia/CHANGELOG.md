@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Breaking
+
+- Renamed `WavyKitProps` to `CurrentProps` and the TypeScript type `WavyKit`
+  to `Current`: the prop is the serialized form of the `Current` facade. The
+  documentation now shares it under the key `current`; applications still
+  choose their own key.
+
 ### Added
 
 - `subject` in the shared prop: the current subject from `wavykit/core`'s

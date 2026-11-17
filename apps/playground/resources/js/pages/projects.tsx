@@ -19,8 +19,8 @@ type Props = {
 };
 
 export default function Projects({ title, project, projects, tasks }: Props) {
-    const { auth, name, wavykit } = usePage().props;
-    const subject = wavykit.subject;
+    const { auth, name, current } = usePage().props;
+    const subject = current.subject;
     const selected = projects.find((item) => item.id === project?.id);
 
     return (
@@ -38,7 +38,7 @@ export default function Projects({ title, project, projects, tasks }: Props) {
                         {name}
                     </Link>
                     <nav aria-label="Primary">
-                        <Menu items={wavykit.menus.primary} />
+                        <Menu items={current.menus.primary} />
                     </nav>
                 </div>
             </header>
@@ -47,7 +47,7 @@ export default function Projects({ title, project, projects, tasks }: Props) {
                 tabIndex={-1}
                 className="mx-auto max-w-5xl space-y-8 px-6 py-10"
             >
-                <Breadcrumbs items={wavykit.breadcrumbs} />
+                <Breadcrumbs items={current.breadcrumbs} />
                 <div className="space-y-3">
                     <p className="text-sm text-stone-600 dark:text-stone-400">
                         {auth.user
@@ -77,7 +77,7 @@ export default function Projects({ title, project, projects, tasks }: Props) {
                             {selected.name}
                         </h2>
                         <p className="text-stone-600 dark:text-stone-400">
-                            {wavykit.pageId === 'projects.edit'
+                            {current.pageId === 'projects.edit'
                                 ? 'This is a read-only edit-page example. No project changes are saved.'
                                 : 'This example project has a details page and an edit page.'}
                         </p>
@@ -138,7 +138,7 @@ export default function Projects({ title, project, projects, tasks }: Props) {
             </main>
             <footer className="mx-auto max-w-5xl border-t border-stone-200 px-6 py-8 dark:border-stone-800">
                 <nav aria-label="Footer">
-                    <Menu items={wavykit.menus.footer} />
+                    <Menu items={current.menus.footer} />
                 </nav>
             </footer>
         </div>

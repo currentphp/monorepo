@@ -15,14 +15,15 @@ use WavyKit\Navigation\Breadcrumb;
 use WavyKit\Subjects\SubjectItem;
 
 /**
- * Shares the current page ID and subject, breadcrumbs, and selected menus as one Inertia prop.
+ * Shares the current request's page ID, subject, breadcrumbs, and selected menus as one Inertia prop.
  *
- * Place it under a key of your choice in HandleInertiaRequests::share(). It
- * resolves when the response renders, after route-model binding, and not at
+ * The serialized form of the WavyKit\Facades\Current facade. Place it in
+ * HandleInertiaRequests::share() under a key of your choice; the documentation
+ * uses `current`. It resolves when the response renders, after route-model binding, and not at
  * all when a partial reload excludes its key. The shape is
  * `{ pageId, subject, breadcrumbs, menus }`, matching the package's TypeScript types.
  */
-final class WavyKitProps implements ProvidesInertiaProperty
+final class CurrentProps implements ProvidesInertiaProperty
 {
     /** @var list<string> */
     private array $menus = [];

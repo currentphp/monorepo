@@ -6,9 +6,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use PHPUnit\Framework\AssertionFailedError;
+use WavyKit\Inertia\CurrentProps;
 use WavyKit\Inertia\Tests\Fixtures\DeclaredTypes;
 use WavyKit\Inertia\Tests\Fixtures\Project;
-use WavyKit\Inertia\WavyKitProps;
 use WavyKit\Navigation\MenuEntry;
 use WavyKit\Navigation\MenuRegistry;
 use WavyKit\Pages\Page;
@@ -22,7 +22,7 @@ function declaredTypes(): DeclaredTypes
 }
 
 test('the declaration file declares the shared types', function () {
-    expect(declaredTypes()->names())->toEqualCanonicalizing(['Breadcrumb', 'MenuItem', 'MenuItemKind', 'Subject', 'WavyKit']);
+    expect(declaredTypes()->names())->toEqualCanonicalizing(['Breadcrumb', 'MenuItem', 'MenuItemKind', 'Subject', 'Current']);
 });
 
 test('the shared prop matches the TypeScript types', function () {
@@ -42,26 +42,26 @@ test('the shared prop matches the TypeScript types', function () {
     app(MenuRegistry::class)->define('footer',
         MenuEntry::group('help')->label('Help')->icon('lifebuoy')->children(MenuEntry::page('docs.install')),
     );
-    Inertia::share('wavykit', WavyKitProps::make()->menus('primary', 'footer'));
+    Inertia::share('current', CurrentProps::make()->menus('primary', 'footer'));
 
-    $prop = $this->getJson('/docs/install', ['X-Inertia' => 'true'])->assertOk()->json('props.wavykit');
+    $prop = $this->getJson('/docs/install', ['X-Inertia' => 'true'])->assertOk()->json('props.current');
 
     expect($prop['breadcrumbs'][0]['url'])->toBeNull()
         ->and($prop['breadcrumbs'][1]['icon'])->toBe('book')
         ->and($prop['menus']['footer'][0]['kind'])->toBe('group');
-    declaredTypes()->assertMatches('WavyKit', $prop, 'wavykit');
+    declaredTypes()->assertMatches('Current', $prop, 'current');
 });
 
 test('a prop without menus and outside any page still matches', function () {
     Route::get('/elsewhere', fn () => Inertia::render('Elsewhere'));
-    Inertia::share('wavykit', WavyKitProps::make());
+    Inertia::share('current', CurrentProps::make());
 
     $content = $this->getJson('/elsewhere', ['X-Inertia' => 'true'])->assertOk()->getContent();
-    $prop = json_decode($content, true, flags: JSON_THROW_ON_ERROR)['props']['wavykit'];
+    $prop = json_decode($content, true, flags: JSON_THROW_ON_ERROR)['props']['current'];
 
     // json_decode turns the empty `{}` record into an empty array.
     expect($content)->toContain('"menus":{}');
-    declaredTypes()->assertMatches('WavyKit', $prop, 'wavykit');
+    declaredTypes()->assertMatches('Current', $prop, 'current');
 });
 
 test('drift is reported with the path and the declared type', function (string $type, mixed $value, string $message) {
@@ -82,11 +82,11 @@ test('a shared subject matches the TypeScript types', function () {
         Subject::make('project')->for(Project::class)->label(fn (Project $project): string => $project->name)->page('projects.show'),
     );
     app(PageRegistry::class)->register(Page::make('projects.show')->route('projects.show')->presents('project'));
-    Inertia::share('wavykit', WavyKitProps::make());
+    Inertia::share('current', CurrentProps::make());
 
-    $prop = $this->getJson('/projects/42', ['X-Inertia' => 'true'])->assertOk()->json('props.wavykit');
+    $prop = $this->getJson('/projects/42', ['X-Inertia' => 'true'])->assertOk()->json('props.current');
 
     expect($prop['subject'])->toBe(['kind' => 'project', 'id' => '42', 'label' => 'Apollo', 'url' => 'http://localhost/projects/42'])
         ->and($prop['breadcrumbs'][0]['label'])->toBe('Apollo');
-    declaredTypes()->assertMatches('WavyKit', $prop, 'wavykit');
+    declaredTypes()->assertMatches('Current', $prop, 'current');
 });

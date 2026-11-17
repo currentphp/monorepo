@@ -1,5 +1,5 @@
 import type { Auth } from '@/types/auth';
-import type { WavyKit } from '@wavykit/inertia';
+import type { Current } from '@wavykit/inertia';
 
 declare module 'react' {
     interface InputHTMLAttributes<T> {
@@ -12,7 +12,7 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
-            wavykit: WavyKit<'primary' | 'footer'>;
+            current: Current<'primary' | 'footer'>;
             [key: string]: unknown;
         };
     }

@@ -8,8 +8,8 @@ use Inertia\Inertia;
 use WavyKit\Context;
 use WavyKit\Exceptions\InvalidDefinition;
 use WavyKit\Exceptions\ResolutionFailed;
+use WavyKit\Inertia\CurrentProps;
 use WavyKit\Inertia\Tests\Fixtures\Project;
-use WavyKit\Inertia\WavyKitProps;
 use WavyKit\Navigation\MenuEntry;
 use WavyKit\Navigation\MenuRegistry;
 use WavyKit\Pages\Page;
@@ -41,35 +41,35 @@ beforeEach(function () {
 });
 
 test('it shares the page ID, breadcrumbs, and selected menus after route-model binding', function () {
-    Inertia::share('wavykit', WavyKitProps::make()->menus('footer', 'primary'));
+    Inertia::share('current', CurrentProps::make()->menus('footer', 'primary'));
 
     $response = $this->getJson('/projects/42', INERTIA)->assertOk()
-        ->assertJsonPath('props.wavykit.pageId', 'projects.show')
-        ->assertJsonPath('props.wavykit.breadcrumbs.0.label', 'Projects')
-        ->assertJsonPath('props.wavykit.breadcrumbs.1', [
+        ->assertJsonPath('props.current.pageId', 'projects.show')
+        ->assertJsonPath('props.current.breadcrumbs.0.label', 'Projects')
+        ->assertJsonPath('props.current.breadcrumbs.1', [
             'pageId' => 'projects.show',
             'label' => 'Apollo',
             'url' => 'http://localhost/projects/42',
             'current' => true,
             'icon' => null,
         ])
-        ->assertJsonPath('props.wavykit.menus.primary.0.active', true)
-        ->assertJsonPath('props.wavykit.menus.primary.0.current', false)
-        ->assertJsonPath('props.wavykit.menus.footer.0.label', 'All projects');
+        ->assertJsonPath('props.current.menus.primary.0.active', true)
+        ->assertJsonPath('props.current.menus.primary.0.current', false)
+        ->assertJsonPath('props.current.menus.footer.0.label', 'All projects');
 
-    expect(array_keys($response->json('props.wavykit.menus')))->toBe(['footer', 'primary']);
+    expect(array_keys($response->json('props.current.menus')))->toBe(['footer', 'primary']);
 });
 
 test('the application chooses the prop key', function () {
-    Inertia::share('experience', WavyKitProps::make());
+    Inertia::share('experience', CurrentProps::make());
 
     $this->getJson('/projects', INERTIA)->assertOk()
         ->assertJsonPath('props.experience.pageId', 'projects')
-        ->assertJsonMissingPath('props.wavykit');
+        ->assertJsonMissingPath('props.current');
 });
 
 test('no menus serializes as an empty object', function () {
-    Inertia::share('wavykit', WavyKitProps::make());
+    Inertia::share('current', CurrentProps::make());
 
     $content = $this->getJson('/projects', INERTIA)->assertOk()->getContent();
 
@@ -77,16 +77,16 @@ test('no menus serializes as an empty object', function () {
 });
 
 test('unregistered routes share no page and inactive menus', function () {
-    Inertia::share('wavykit', WavyKitProps::make()->menus('primary'));
+    Inertia::share('current', CurrentProps::make()->menus('primary'));
 
     $this->getJson('/unregistered', INERTIA)->assertOk()
-        ->assertJsonPath('props.wavykit.pageId', null)
-        ->assertJsonPath('props.wavykit.breadcrumbs', [])
-        ->assertJsonPath('props.wavykit.menus.primary.0.active', false);
+        ->assertJsonPath('props.current.pageId', null)
+        ->assertJsonPath('props.current.breadcrumbs', [])
+        ->assertJsonPath('props.current.menus.primary.0.active', false);
 });
 
 test('a partial reload that excludes the prop does not resolve it', function () {
-    Inertia::share('wavykit', WavyKitProps::make()->menus('primary'));
+    Inertia::share('current', CurrentProps::make()->menus('primary'));
 
     $this->getJson('/projects/42', [
         ...INERTIA,
@@ -94,35 +94,35 @@ test('a partial reload that excludes the prop does not resolve it', function () 
         'X-Inertia-Partial-Data' => 'other',
     ])->assertOk()
         ->assertJsonPath('props.other', 'value')
-        ->assertJsonMissingPath('props.wavykit');
+        ->assertJsonMissingPath('props.current');
 
     expect($this->labels)->toBe(0);
 });
 
 test('it can be wrapped in Inertia prop types such as deferred props', function () {
-    Inertia::share('wavykit', Inertia::defer(fn () => WavyKitProps::make()->menus('primary')));
+    Inertia::share('current', Inertia::defer(fn () => CurrentProps::make()->menus('primary')));
 
     $this->getJson('/projects/42', INERTIA)->assertOk()
-        ->assertJsonMissingPath('props.wavykit')
-        ->assertJsonPath('deferredProps.default', ['wavykit']);
+        ->assertJsonMissingPath('props.current')
+        ->assertJsonPath('deferredProps.default', ['current']);
     expect($this->labels)->toBe(0);
 
     $this->getJson('/projects/42', [
         ...INERTIA,
         'X-Inertia-Partial-Component' => 'Project',
-        'X-Inertia-Partial-Data' => 'wavykit',
+        'X-Inertia-Partial-Data' => 'current',
     ])->assertOk()
-        ->assertJsonPath('props.wavykit.breadcrumbs.1.label', 'Apollo')
-        ->assertJsonPath('props.wavykit.menus.primary.0.pageId', 'projects');
+        ->assertJsonPath('props.current.breadcrumbs.1.label', 'Apollo')
+        ->assertJsonPath('props.current.menus.primary.0.pageId', 'projects');
 });
 
 test('menu names are checked when declared and when resolved', function () {
-    expect(fn () => WavyKitProps::make()->menus('primary', 'primary'))
+    expect(fn () => CurrentProps::make()->menus('primary', 'primary'))
         ->toThrow(InvalidDefinition::class, "Menu 'primary' must have a non-empty name and be shared once.")
-        ->and(fn () => WavyKitProps::make()->menus(' '))
+        ->and(fn () => CurrentProps::make()->menus(' '))
         ->toThrow(InvalidDefinition::class);
 
-    Inertia::share('wavykit', WavyKitProps::make()->menus('missing'));
+    Inertia::share('current', CurrentProps::make()->menus('missing'));
     $this->withoutExceptionHandling();
 
     expect(fn () => $this->getJson('/projects', INERTIA))

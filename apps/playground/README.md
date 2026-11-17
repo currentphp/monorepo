@@ -10,12 +10,12 @@ this monorepo. Created from App Foundation `v0.1.0` (commit
 | ------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | `wavykit/core`: pages                 | `WavyKitServiceProvider::registerPages()`      | Page identity and resource-aware labels on every page; the projects demo.                     |
 | `wavykit/core`: breadcrumbs and menus | `WavyKitServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and user visibility, on every page. |
-| `wavykit/inertia`                     | `HandleInertiaRequests::share()`               | The `wavykit` prop on every page, typed by the package's `wavykit.d.ts`.                      |
-| `wavykit/core`: subjects              | `WavyKitServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and `wavykit.subject`.                  |
+| `wavykit/inertia`                     | `HandleInertiaRequests::share()`               | The `current` prop on every page, typed by the package's `wavykit.d.ts`.                      |
+| `wavykit/core`: subjects              | `WavyKitServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and `current.subject`.                  |
 
 [`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php) shares
-component output with every Inertia page as the `wavykit` prop, through
-`WavyKitProps` from `wavykit/inertia`. Its TypeScript types come from the
+component output with every Inertia page as the `current` prop, through
+`CurrentProps` from `wavykit/inertia`. Its TypeScript types come from the
 package, mapped to `@wavykit/inertia` in `tsconfig.json` and declared in
 [`resources/js/types/global.d.ts`](resources/js/types/global.d.ts); the
 components in [`resources/js/components/wavykit/`](resources/js/components/wavykit/)
@@ -39,7 +39,7 @@ holds only the foundation's application data, such as users and sessions.
    every folder in the monorepo's `packages/`.
 2. Add a `register<Component>()` method to `WavyKitServiceProvider` and call it
    from `boot()`.
-3. Expose any request output through the `wavykit` prop in
+3. Expose any request output through the `current` prop in
    `HandleInertiaRequests`, or pass it from a demo controller.
 4. Add `tests/Feature/WavyKit/<Component>Test.php`, fixtures if the demo needs
    data, and a row in the table above.
@@ -87,7 +87,7 @@ follow the foundation's existing authentication state.
 Projects and their tasks are subjects (`WavyKit\Subjects`), described once in
 `registerSubjects()` and read by breadcrumbs (Projects › Apollo › Tasks ›
 Fix login, with no per-page label callback), by canonical links (the task list
-on a project page), and by `wavykit.subject` in the Inertia prop. Open
+on a project page), and by `current.subject` in the Inertia prop. Open
 `/projects/42/tasks/1`, or run `php artisan wavykit:subjects`.
 
 ## Checks
