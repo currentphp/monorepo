@@ -70,8 +70,9 @@ feedback are open.
 
 ### v0.2
 
-Released 2026-11-16 as `current/current` 0.2.0 and the first release of
-`current/inertia`, 0.1.0 (packages are versioned independently since then):
+Released 2026-11-16 as `wavykit/core` 0.2.0 and the first release of
+`wavykit/inertia`, 0.1.0, before the rename to Current (packages are versioned
+independently since then; the names below are today's):
 
 - **`current/inertia`**, a new package that shares breadcrumbs, the current
   page, and menus with Inertia. Applications opt in with one explicit call in
@@ -85,13 +86,20 @@ Released 2026-11-16 as `current/current` 0.2.0 and the first release of
   explicit public API: everything else is marked `@internal`, as
   [CONTRIBUTING.md](../CONTRIBUTING.md#public-api) describes.
 
-### After v0.2
+### v0.3
 
-**Subjects:** the resources users look at and act on, such as a project or an
-invoice, with their own identity, linked to the pages that present them. A
-subject would be the same thing in a breadcrumb, a search result, or a list of
-available actions. Subjects will be designed and prototyped before any API is
-fixed, and will live in the core under `Current\Subjects\`.
+Released 2026-11-16 as `current/current` 0.3.0 and `current/inertia` 0.2.0,
+the first releases under the name Current (formerly WavyKit):
+
+- **Subjects** in the core (`Current\Subjects\`): the resources users look at
+  and act on, such as a project or an invoice, declared once with their own
+  identity and linked to the pages that present them. A subject is the same
+  thing in a breadcrumb, a link from anywhere, and the current request
+  (`Current::subject()`). Designed and prototyped in the playground before the
+  API was fixed.
+- **The current subject in Inertia**, shared by `CurrentProps` (formerly
+  `WavyKitProps`) with its TypeScript type.
+- **The rename** to Current, and faster derived menus on large page trees.
 
 ### Later
 

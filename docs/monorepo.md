@@ -112,9 +112,9 @@ their own versions, for example `current/inertia` 0.1 requires
 
 Until 2026-11-16, versions were lockstep: the `v0.1.0` and `v0.2.0` tags on this
 repository released every package at that version, and their split tags remain.
-`current/inertia` first shipped with the `v0.2.0` tag; that split tag was
-withdrawn before anyone installed it, and the package's first release is
-0.1.0.
+`wavykit/inertia` (now `current/inertia`) first shipped with the `v0.2.0` tag;
+that split tag was withdrawn before anyone installed it, and the package's
+first release was 0.1.0.
 
 ## Continuous integration
 

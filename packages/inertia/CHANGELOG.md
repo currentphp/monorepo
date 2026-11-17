@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.2.0 - 2026-11-16
+
+The first release as `current/inertia`, continuing from `wavykit/inertia` 0.1.0.
+
 ### Breaking
 
 - Renamed from WavyKit to Current. The package is `current/inertia`
