@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use WavyKit\Inertia\CurrentProps;
+use Current\Inertia\CurrentProps;
 
 test('the supported API changes only deliberately', function () {
     $reflection = new ReflectionClass(CurrentProps::class);

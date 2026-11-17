@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace WavyKit\Inertia\Tests;
+namespace Current\Inertia\Tests;
 
+use Current\CurrentServiceProvider;
 use Inertia\ServiceProvider as InertiaServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use WavyKit\CoreServiceProvider;
 
 abstract class TestCase extends OrchestraTestCase
 {
     protected function getPackageProviders($app): array
     {
-        return [CoreServiceProvider::class, InertiaServiceProvider::class];
+        return [CurrentServiceProvider::class, InertiaServiceProvider::class];
     }
 }

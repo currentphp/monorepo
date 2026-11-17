@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WavyKit\Inertia\Tests\Fixtures;
+namespace Current\Inertia\Tests\Fixtures;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
 use LogicException;

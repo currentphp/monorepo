@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "wavykit/playground",
+    "name": "current/playground",
     "type": "project",
-    "description": "A Laravel app for exercising every WavyKit component from the monorepo.",
+    "description": "A Laravel app for exercising every Current component from the monorepo.",
     "keywords": [
         "laravel",
         "framework"
@@ -15,8 +15,8 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "wavykit/core": "^0.3@dev",
-        "wavykit/inertia": "^0.2@dev"
+        "current/current": "^0.3@dev",
+        "current/inertia": "^0.2@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -123,8 +123,8 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "wavykit/core": "0.3.x-dev",
-                    "wavykit/inertia": "0.2.x-dev"
+                    "current/current": "0.3.x-dev",
+                    "current/inertia": "0.2.x-dev"
                 }
             }
         }

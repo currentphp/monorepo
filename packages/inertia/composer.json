@@ -1,17 +1,17 @@
 {
-    "name": "wavykit/inertia",
-    "description": "Share WavyKit pages, breadcrumbs, and menus with Inertia, with TypeScript types.",
+    "name": "current/inertia",
+    "description": "Share Current pages, breadcrumbs, and menus with Inertia, with TypeScript types.",
     "type": "library",
     "license": "MIT",
     "require": {
         "php": "^8.3",
         "illuminate/container": "^13.0",
         "inertiajs/inertia-laravel": "^3.0",
-        "wavykit/core": "^0.3"
+        "current/current": "^0.3"
     },
     "autoload": {
         "psr-4": {
-            "WavyKit\\Inertia\\": "src/"
+            "Current\\Inertia\\": "src/"
         }
     }
 }

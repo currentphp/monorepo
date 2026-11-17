@@ -1,5 +1,5 @@
 import type { Auth } from '@/types/auth';
-import type { Current } from '@wavykit/inertia';
+import type { Current } from '@current/inertia';
 
 declare module 'react' {
     interface InputHTMLAttributes<T> {

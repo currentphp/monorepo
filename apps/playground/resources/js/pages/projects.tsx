@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import Breadcrumbs from '@/components/wavykit/breadcrumbs';
-import Menu from '@/components/wavykit/menu';
+import Breadcrumbs from '@/components/current/breadcrumbs';
+import Menu from '@/components/current/menu';
 import { home } from '@/routes';
 import type { Subject } from '@/types';
 
@@ -59,8 +59,8 @@ export default function Projects({ title, project, projects, tasks }: Props) {
                     </h1>
                     <p className="max-w-2xl text-stone-600 dark:text-stone-400">
                         Explore a project, its tasks, and its edit page.
-                        Breadcrumbs come from WavyKit Pages; the menus come from
-                        WavyKit Navigation, where the primary menu keeps
+                        Breadcrumbs come from Current Pages; the menus come from
+                        Current Navigation, where the primary menu keeps
                         Projects active without listing individual projects.
                     </p>
                     {subject ? (
