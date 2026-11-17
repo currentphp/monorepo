@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "227cf78d1839d3309e26f2652f3107f0",
+    "content-hash": "f0ec94e3a73491d6f05d5783052d0fe3",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -7434,11 +7434,11 @@
         },
         {
             "name": "wavykit/core",
-            "version": "0.2.x-dev",
+            "version": "0.3.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/core",
-                "reference": "b3833d7deaa1842e10b2c5f9e6386b1fd6e91ac5"
+                "reference": "8666ae36eb27be6c114aebffbc7d392d370a3547"
             },
             "require": {
                 "illuminate/console": "^13.0",
@@ -7471,17 +7471,17 @@
         },
         {
             "name": "wavykit/inertia",
-            "version": "0.1.x-dev",
+            "version": "0.2.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/inertia",
-                "reference": "8b770330810396bbd8ea998661ac90dea8eaab44"
+                "reference": "1c7fd4a9e2cac13943744cca40e868c0964ab543"
             },
             "require": {
                 "illuminate/container": "^13.0",
                 "inertiajs/inertia-laravel": "^3.0",
                 "php": "^8.3",
-                "wavykit/core": "^0.2"
+                "wavykit/core": "^0.3"
             },
             "type": "library",
             "autoload": {

@@ -1,6 +1,6 @@
 # WavyKit Inertia
 
-Share WavyKit's page ID, breadcrumbs, and menus with every Inertia page, with
+Share WavyKit's page ID, subject, breadcrumbs, and menus with every Inertia page, with
 TypeScript types for the shared data.
 
 [`wavykit/core`](https://github.com/wavykit/wavykit/tree/main/packages/core)
@@ -46,6 +46,7 @@ Every page then receives:
 ```json
 {
     "pageId": "projects.show",
+    "subject": { "kind": "project", "id": "42", "label": "Apollo", "url": "https://example.test/projects/42" },
     "breadcrumbs": [
         { "pageId": "projects", "label": "Projects", "url": "https://example.test/projects", "current": false, "icon": null },
         { "pageId": "projects.show", "label": "Apollo", "url": "https://example.test/projects/42", "current": true, "icon": null }
@@ -61,6 +62,8 @@ Every page then receives:
 
 - `pageId` is null, and `breadcrumbs` empty, on routes without a registered
   page. Menus still render, with no active items.
+- `subject` is the current subject from `wavykit/core` (the active page's, or
+  the nearest ancestor's that presents one), or null when there is none.
 - `menus` holds the menus passed to `menus()`, in that order. With no
   `menus()` call it is an empty object. Unknown menu names raise
   `WavyKit\Exceptions\ResolutionFailed` when the prop resolves.
@@ -101,7 +104,7 @@ declare module '@inertiajs/core' {
 }
 ```
 
-The file also exports `Breadcrumb`, `MenuItem`, and `MenuItemKind` for your
+The file also exports `Subject`, `Breadcrumb`, `MenuItem`, and `MenuItemKind` for your
 components.
 
 ## Development

@@ -15,8 +15,8 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "wavykit/core": "^0.2@dev",
-        "wavykit/inertia": "^0.1@dev"
+        "wavykit/core": "^0.3@dev",
+        "wavykit/inertia": "^0.2@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -123,8 +123,8 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "wavykit/core": "0.2.x-dev",
-                    "wavykit/inertia": "0.1.x-dev"
+                    "wavykit/core": "0.3.x-dev",
+                    "wavykit/inertia": "0.2.x-dev"
                 }
             }
         }

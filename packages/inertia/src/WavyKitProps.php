@@ -12,14 +12,15 @@ use WavyKit\Current;
 use WavyKit\Exceptions\InvalidDefinition;
 use WavyKit\Exceptions\ResolutionFailed;
 use WavyKit\Navigation\Breadcrumb;
+use WavyKit\Subjects\SubjectItem;
 
 /**
- * Shares the current page ID, breadcrumbs, and selected menus as one Inertia prop.
+ * Shares the current page ID and subject, breadcrumbs, and selected menus as one Inertia prop.
  *
  * Place it under a key of your choice in HandleInertiaRequests::share(). It
  * resolves when the response renders, after route-model binding, and not at
  * all when a partial reload excludes its key. The shape is
- * `{ pageId, breadcrumbs, menus }`, matching the package's TypeScript types.
+ * `{ pageId, subject, breadcrumbs, menus }`, matching the package's TypeScript types.
  */
 final class WavyKitProps implements ProvidesInertiaProperty
 {
@@ -56,7 +57,7 @@ final class WavyKitProps implements ProvidesInertiaProperty
     /**
      * @internal Called by Inertia when the response renders.
      *
-     * @return array{pageId: ?string, breadcrumbs: list<Breadcrumb>, menus: stdClass}
+     * @return array{pageId: ?string, subject: ?SubjectItem, breadcrumbs: list<Breadcrumb>, menus: stdClass}
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      * @throws ResolutionFailed If a menu is unknown, or callbacks or destination URLs cannot be resolved.
@@ -73,6 +74,7 @@ final class WavyKitProps implements ProvidesInertiaProperty
 
         return [
             'pageId' => $current->pageId(),
+            'subject' => $current->subject(),
             'breadcrumbs' => $current->breadcrumbs(),
             'menus' => $menus,
         ];

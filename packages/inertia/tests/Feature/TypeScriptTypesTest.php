@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use PHPUnit\Framework\AssertionFailedError;
 use WavyKit\Inertia\Tests\Fixtures\DeclaredTypes;
+use WavyKit\Inertia\Tests\Fixtures\Project;
 use WavyKit\Inertia\WavyKitProps;
 use WavyKit\Navigation\MenuEntry;
 use WavyKit\Navigation\MenuRegistry;
 use WavyKit\Pages\Page;
 use WavyKit\Pages\PageRegistry;
+use WavyKit\Subjects\Subject;
+use WavyKit\Subjects\SubjectRegistry;
 
 function declaredTypes(): DeclaredTypes
 {
@@ -18,7 +22,7 @@ function declaredTypes(): DeclaredTypes
 }
 
 test('the declaration file declares the shared types', function () {
-    expect(declaredTypes()->names())->toEqualCanonicalizing(['Breadcrumb', 'MenuItem', 'MenuItemKind', 'WavyKit']);
+    expect(declaredTypes()->names())->toEqualCanonicalizing(['Breadcrumb', 'MenuItem', 'MenuItemKind', 'Subject', 'WavyKit']);
 });
 
 test('the shared prop matches the TypeScript types', function () {
@@ -69,3 +73,20 @@ test('drift is reported with the path and the declared type', function (string $
     'wrong kind' => ['MenuItemKind', 'link', 'value does not match `MenuItemKind`: "link"'],
     'wrong scalar' => ['Breadcrumb', ['pageId' => 'a', 'label' => 'A', 'url' => null, 'current' => 'yes', 'icon' => null], 'value.current does not match `boolean`'],
 ]);
+
+test('a shared subject matches the TypeScript types', function () {
+    Route::bind('project', fn (string $id): Project => new Project($id, 'Apollo'));
+    Route::get('/projects/{project}', fn () => Inertia::render('Project'))
+        ->middleware(SubstituteBindings::class)->name('projects.show');
+    app(SubjectRegistry::class)->register(
+        Subject::make('project')->for(Project::class)->label(fn (Project $project): string => $project->name)->page('projects.show'),
+    );
+    app(PageRegistry::class)->register(Page::make('projects.show')->route('projects.show')->presents('project'));
+    Inertia::share('wavykit', WavyKitProps::make());
+
+    $prop = $this->getJson('/projects/42', ['X-Inertia' => 'true'])->assertOk()->json('props.wavykit');
+
+    expect($prop['subject'])->toBe(['kind' => 'project', 'id' => '42', 'label' => 'Apollo', 'url' => 'http://localhost/projects/42'])
+        ->and($prop['breadcrumbs'][0]['label'])->toBe('Apollo');
+    declaredTypes()->assertMatches('WavyKit', $prop, 'wavykit');
+});

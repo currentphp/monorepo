@@ -19,7 +19,8 @@ type Props = {
 };
 
 export default function Projects({ title, project, projects, tasks }: Props) {
-    const { auth, name, wavykit, subject } = usePage().props;
+    const { auth, name, wavykit } = usePage().props;
+    const subject = wavykit.subject;
     const selected = projects.find((item) => item.id === project?.id);
 
     return (
