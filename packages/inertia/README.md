@@ -15,7 +15,7 @@ minor releases may change the public API.
 
 ## Requirements
 
-PHP 8.3+, Laravel 13, `inertiajs/inertia-laravel` 3, and `current/current` 0.1.
+PHP 8.3+, Laravel 13, `inertiajs/inertia-laravel` 3, and `current/current` 0.3.
 
 ## Installation
 
