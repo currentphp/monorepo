@@ -18,15 +18,15 @@ Checked items record completed work.
 
 - [x] Create the read-only `wavykit/inertia` split repository and add it to the split GitHub App (2026-11-13).
 - [x] Confirm the split workflow mirrors `main` to `wavykit/inertia` (2026-11-14, `efb0218`).
-- [ ] Rebuild and inspect the final distribution, and smoke-test it in a fresh Laravel 13 application.
+- [x] Rebuild and inspect the final distribution, and smoke-test it in a fresh Laravel 13 application (2026-11-16, split `191b88bd`).
 
 ## Publication
 
-- [ ] Merge the reviewed release branch.
-- [ ] Remove the `v0.2.0` tag that the last lockstep release pushed to `wavykit/inertia` (never downloaded), so Packagist drops that version.
-- [ ] Create and push the `inertia/v0.1.0` tag; confirm the split workflow pushes `v0.1.0` to `wavykit/inertia` only.
+- [x] Merge the reviewed release changes (PR #11, then PR #12 for the 0.1.0 version).
+- [x] Remove the `v0.2.0` tag that the last lockstep release pushed to `wavykit/inertia` (never downloaded), so Packagist drops that version (2026-11-16).
+- [x] Create and push the `inertia/v0.1.0` tag; confirm the split workflow pushes `v0.1.0` to `wavykit/inertia` only (2026-11-16, on `242eb68a`).
 - [x] Register the `wavykit/inertia` split repository on Packagist, with its update webhook (2026-11-16).
-- [ ] Verify installation from the published version.
+- [x] Verify installation from the published version (2026-11-16: a Packagist-only install matched the reviewed build).
 
 Repository creation, commits, pushes, tags, and publication are separate
 actions requiring explicit authorization.
