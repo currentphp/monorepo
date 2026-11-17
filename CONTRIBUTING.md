@@ -1,12 +1,12 @@
-# Contributing to WavyKit
+# Contributing to Current
 
-**WavyKit is not accepting pull requests yet.** The public API is still being
+**Current is not accepting pull requests yet.** The public API is still being
 finalized before the first release, so pull requests are limited to
 maintainers for now. Feedback is welcome: please open an issue on this
 repository with questions, bug reports, or how you would use the packages.
 This section will change when contributions open.
 
-WavyKit is developed in this monorepo. Each package in `packages/` is published
+Current is developed in this monorepo. Each package in `packages/` is published
 through a read-only split repository, which closes pull requests automatically;
 open issues here instead.
 
@@ -17,7 +17,7 @@ Requires PHP 8.3+ and Composer 2. From the repository root:
 ```sh
 composer install
 composer check            # every package
-composer check core       # one package
+composer check current       # one package
 composer format [package] # apply Pint formatting
 composer format:check     # verify formatting only
 composer analyse          # PHPStan only
@@ -32,10 +32,10 @@ See [docs/monorepo.md](docs/monorepo.md) for the layout and release process.
 
 ## Design guidelines
 
-1. **Describe, don't execute.** WavyKit records identities, relationships,
+1. **Describe, don't execute.** Current records identities, relationships,
    labels, and availability. Routes, controllers, jobs, authorization, and
    rendering stay with the application.
-2. **Framework at the edges, plain PHP in the model.** WavyKit targets Laravel
+2. **Framework at the edges, plain PHP in the model.** Current targets Laravel
    only, but builders, definitions, and registries make no Laravel calls;
    Laravel-specific code lives in readers, the request context, and service
    providers. This keeps the model easy to test; it is not a portability
@@ -68,7 +68,7 @@ What the maintainers support, and what a release may change:
 - **Internal:** anything marked `@internal`, such as constructors of objects
   the package creates, registry methods only readers use, and builder hooks.
   It may change in any release. PHPStan's `internalTag` feature toggle reports
-  calls to it from outside the `WavyKit` namespace.
+  calls to it from outside the `Current` namespace.
 - **While on 0.x:** a minor release (for example 0.1 to 0.2) may change or
   remove supported API; a patch release does not. Every such change is listed
   under **Breaking** in the package's CHANGELOG. From 1.0, Semantic Versioning

@@ -4,4 +4,4 @@ export type {
     MenuItem,
     MenuItemKind,
     Subject,
-} from '@wavykit/inertia';
+} from '@current/inertia';

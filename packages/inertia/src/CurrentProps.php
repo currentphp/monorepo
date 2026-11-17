@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace WavyKit\Inertia;
+namespace Current\Inertia;
 
+use Current\Exceptions\InvalidDefinition;
+use Current\Exceptions\ResolutionFailed;
+use Current\Experience;
+use Current\Navigation\Breadcrumb;
+use Current\Subjects\SubjectItem;
 use Illuminate\Container\Container;
 use Inertia\PropertyContext;
 use Inertia\ProvidesInertiaProperty;
 use stdClass;
-use WavyKit\Current;
-use WavyKit\Exceptions\InvalidDefinition;
-use WavyKit\Exceptions\ResolutionFailed;
-use WavyKit\Navigation\Breadcrumb;
-use WavyKit\Subjects\SubjectItem;
 
 /**
  * Shares the current request's page ID, subject, breadcrumbs, and selected menus as one Inertia prop.
  *
- * The serialized form of the WavyKit\Facades\Current facade. Place it in
+ * The serialized form of the Current\Facades\Current facade. Place it in
  * HandleInertiaRequests::share() under a key of your choice; the documentation
  * uses `current`. It resolves when the response renders, after route-model binding, and not at
  * all when a partial reload excludes its key. The shape is
@@ -65,7 +65,7 @@ final class CurrentProps implements ProvidesInertiaProperty
      */
     public function toInertiaProperty(PropertyContext $prop): array
     {
-        $current = Container::getInstance()->make(Current::class);
+        $current = Container::getInstance()->make(Experience::class);
 
         // An object, so an empty set still serializes as `{}` for the TypeScript record.
         $menus = new stdClass;

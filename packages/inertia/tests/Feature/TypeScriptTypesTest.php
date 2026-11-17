@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
+use Current\Inertia\CurrentProps;
+use Current\Inertia\Tests\Fixtures\DeclaredTypes;
+use Current\Inertia\Tests\Fixtures\Project;
+use Current\Navigation\MenuEntry;
+use Current\Navigation\MenuRegistry;
+use Current\Pages\Page;
+use Current\Pages\PageRegistry;
+use Current\Subjects\Subject;
+use Current\Subjects\SubjectRegistry;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use PHPUnit\Framework\AssertionFailedError;
-use WavyKit\Inertia\CurrentProps;
-use WavyKit\Inertia\Tests\Fixtures\DeclaredTypes;
-use WavyKit\Inertia\Tests\Fixtures\Project;
-use WavyKit\Navigation\MenuEntry;
-use WavyKit\Navigation\MenuRegistry;
-use WavyKit\Pages\Page;
-use WavyKit\Pages\PageRegistry;
-use WavyKit\Subjects\Subject;
-use WavyKit\Subjects\SubjectRegistry;
 
 function declaredTypes(): DeclaredTypes
 {
-    return new DeclaredTypes(dirname(__DIR__, 2).'/resources/types/wavykit.d.ts');
+    return new DeclaredTypes(dirname(__DIR__, 2).'/resources/types/current.d.ts');
 }
 
 test('the declaration file declares the shared types', function () {

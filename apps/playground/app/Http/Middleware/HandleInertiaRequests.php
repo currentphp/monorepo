@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use Current\Inertia\CurrentProps;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use WavyKit\Inertia\CurrentProps;
 
 class HandleInertiaRequests extends Middleware
 {

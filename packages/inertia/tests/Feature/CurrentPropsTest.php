@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
+use Current\Context;
+use Current\Exceptions\InvalidDefinition;
+use Current\Exceptions\ResolutionFailed;
+use Current\Inertia\CurrentProps;
+use Current\Inertia\Tests\Fixtures\Project;
+use Current\Navigation\MenuEntry;
+use Current\Navigation\MenuRegistry;
+use Current\Pages\Page;
+use Current\Pages\PageRegistry;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use WavyKit\Context;
-use WavyKit\Exceptions\InvalidDefinition;
-use WavyKit\Exceptions\ResolutionFailed;
-use WavyKit\Inertia\CurrentProps;
-use WavyKit\Inertia\Tests\Fixtures\Project;
-use WavyKit\Navigation\MenuEntry;
-use WavyKit\Navigation\MenuRegistry;
-use WavyKit\Pages\Page;
-use WavyKit\Pages\PageRegistry;
 
 const INERTIA = ['X-Inertia' => 'true'];
 

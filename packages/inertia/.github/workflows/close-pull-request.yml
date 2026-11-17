@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: superbrothers/close-pull-request@v3
         with:
-          comment: "Thank you for your pull request. This repository is a read-only split of the WavyKit monorepo. Please submit your pull request to https://github.com/${{ github.repository_owner }}/wavykit instead.<br><br>Thanks!"
+          comment: "Thank you for your pull request. This repository is a read-only split of the Current monorepo. Please submit your pull request to https://github.com/${{ github.repository_owner }}/monorepo instead.<br><br>Thanks!"

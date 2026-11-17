@@ -1,6 +1,6 @@
 {
-    "name": "wavykit/monorepo",
-    "description": "Development install for the WavyKit monorepo. Not published.",
+    "name": "current/monorepo",
+    "description": "Development install for the Current monorepo. Not published.",
     "type": "project",
     "license": "MIT",
     "repositories": [
@@ -9,16 +9,16 @@
             "url": "packages/*",
             "options": {
                 "versions": {
-                    "wavykit/core": "0.3.x-dev",
-                    "wavykit/inertia": "0.2.x-dev"
+                    "current/current": "0.3.x-dev",
+                    "current/inertia": "0.2.x-dev"
                 }
             }
         }
     ],
     "require": {
         "php": "^8.3",
-        "wavykit/core": "^0.3@dev",
-        "wavykit/inertia": "^0.2@dev"
+        "current/current": "^0.3@dev",
+        "current/inertia": "^0.2@dev"
     },
     "require-dev": {
         "laravel/pint": "^1.27",
@@ -29,8 +29,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "WavyKit\\Tests\\": "packages/core/tests/",
-            "WavyKit\\Inertia\\Tests\\": "packages/inertia/tests/"
+            "Current\\Tests\\": "packages/current/tests/",
+            "Current\\Inertia\\Tests\\": "packages/inertia/tests/"
         }
     },
     "config": {

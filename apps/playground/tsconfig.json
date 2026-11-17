@@ -109,8 +109,8 @@
         "skipLibCheck": true /* Skip type checking all .d.ts files. */,
         "paths": {
             "@/*": ["./resources/js/*"],
-            "@wavykit/inertia": [
-                "./vendor/wavykit/inertia/resources/types/wavykit.d.ts"
+            "@current/inertia": [
+                "./vendor/current/inertia/resources/types/current.d.ts"
             ]
         },
         "jsx": "react-jsx"

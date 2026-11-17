@@ -1,6 +1,6 @@
 # Monorepo layout and releases
 
-WavyKit is developed in this repository and distributed as independent Composer
+Current is developed in this repository and distributed as independent Composer
 packages through read-only split repositories, the same model Laravel uses for
 its `illuminate/*` components.
 
@@ -31,7 +31,7 @@ directories under `packages/`.
 
 ## Development install
 
-The root `composer.json` is `wavykit/monorepo`, a development-only manifest
+The root `composer.json` is `current/monorepo`, a development-only manifest
 that is never published. It installs every package from `packages/*` through
 a path repository, each at its own development line (`0.3.x-dev` for core,
 `0.2.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
@@ -43,7 +43,7 @@ also holds the development dependencies, test autoloading, scripts, and the PHP
 ```sh
 composer install
 composer check            # every package
-composer check core       # one package
+composer check current       # one package
 composer format [package] # apply Pint
 ```
 
@@ -51,7 +51,7 @@ composer format [package] # apply Pint
 `monorepo-builder validate`, so packages cannot require shared dependencies
 with different constraints. Validation always includes the root manifest, so
 [monorepo-builder.php](../monorepo-builder.php) excludes the internal
-`wavykit/*` names, which the root requires with `@dev`. Then, for each package, it validates the package
+`current/*` names, which the root requires with `@dev`. Then, for each package, it validates the package
 manifest and runs Pint, PHPStan, and Pest with that package's configuration.
 Pint and PHPStan run in the package directory. Pest runs from the root,
 because it resolves its root from the `vendor/` location. monorepo-builder
@@ -61,24 +61,27 @@ not used: path repositories already install each package with its own
 
 ## Naming
 
-Every package is published under the `wavykit/` Composer vendor and the
-`WavyKit\` PHP namespace, and its folder matches its package name.
+Every package is published under the `current/` Composer vendor and the
+`Current\` PHP namespace, and its folder matches its package name.
 
-- **Packages** have generic, descriptive names: `wavykit/core`, and
-  integrations named after what they integrate, such as `wavykit/inertia`.
+- **Packages:** the core is `current/current`; integrations are named after
+  what they integrate, such as `current/inertia`.
   Namespaces inside a package are named after the concepts they hold, such as
-  `WavyKit\Pages\` and `WavyKit\Navigation\` in the core.
+  `Current\Pages\` and `Current\Navigation\` in the core.
 - **Composed products**, which combine packages with their own integration
   code and conventions, have brand names, chosen when a product is scoped.
-- **Current** names only the core's read-only facade, `WavyKit\Facades\Current`,
-  and the `WavyKit\Current` class behind it; it is not a package or product
-  name. A new concept adds a reader method to `Current`, such as a future
-  `Current::subject()`, rather than a facade of its own.
+- **The `Current` facade** (`Current\Facades\Current`, backed by
+  `Current\Experience`) reads the current request. A new concept adds a reader
+  method to it, such as `Current::subject()`, rather than a facade of its own.
+- **History:** the project was named WavyKit until 2026-11-16. Its packages
+  `wavykit/core` (0.1.0, 0.2.0) and `wavykit/inertia` (0.1.0) are abandoned on
+  Packagist in favour of `current/current` and `current/inertia`, whose first
+  releases continue the version numbers.
 
 ## Layout choice
 
 We use `packages/<name>/` rather than Laravel's `src/Illuminate/<Name>`. That
-layout suits a root framework package that `replace`s every component; WavyKit
+layout suits a root framework package that `replace`s every component; Current
 has no such package, and each component is meant to be installed on its own.
 
 ## Distribution
@@ -103,13 +106,13 @@ package under `packages/<name>/`; earlier history remains in this repository.
 
 Each package has its own version, released with a `<name>/vMAJOR.MINOR.PATCH`
 tag on this repository; its CHANGELOG records its changes, and a package
-releases only when it has changes. A package requires other WavyKit packages by
-their own versions, for example `wavykit/inertia` 0.1 requires
-`wavykit/core` `^0.2`.
+releases only when it has changes. A package requires other Current packages by
+their own versions, for example `current/inertia` 0.1 requires
+`current/current` `^0.2`.
 
 Until 2026-11-16, versions were lockstep: the `v0.1.0` and `v0.2.0` tags on this
 repository released every package at that version, and their split tags remain.
-`wavykit/inertia` first shipped with the `v0.2.0` tag; that split tag was
+`current/inertia` first shipped with the `v0.2.0` tag; that split tag was
 withdrawn before anyone installed it, and the package's first release is
 0.1.0.
 
@@ -139,7 +142,7 @@ report to the job summary. It never fails the pull request; see
    `versions` option at `0.1.x-dev` (a new package's first development line)
    and to `require` as `^0.1@dev`. Add its test namespace to `autoload-dev`, and add
    its name to the version-conflict exclusions in `monorepo-builder.php`.
-4. If the package depends on another WavyKit package, require it with a normal
+4. If the package depends on another Current package, require it with a normal
    constraint such as `^0.2`. The root path repository supplies the local copy.
    On 0.x a caret constraint pins the minor version (`^0.2` means
    `>=0.2.0 <0.3.0`), so when a package's minor release starts a new
@@ -149,13 +152,13 @@ report to the job summary. It never fails the pull request; see
 
 ## One-time setup
 
-Steps 1–3 were done on 2026-11-09 for `wavykit/wavykit` and `wavykit/core`,
+Steps 1–3 were done on 2026-11-09 for `currentphp/monorepo` and `current/current`,
 both public; the `core` split history starts at the commit that merged Pages
 and Navigation into the core. The former `wavykit/pages` and
 `wavykit/navigation` split repositories were deleted. Step 4 waits for the
 first release and needs separate approval:
 
-1. Create the monorepo on GitHub as `<owner>/wavykit` and push `main`.
+1. Create the monorepo on GitHub as `<owner>/monorepo` and push `main`.
 2. Create a read-only repository `<owner>/<name>` for each package, without
    initial commits.
 3. Create the split GitHub App and store its credentials (see
@@ -169,7 +172,7 @@ nothing depends on a personal account. Each job mints a one-hour installation
 token limited to its own split repository, with `actions/create-github-app-token`.
 
 1. In the organization's settings, open Developer settings → GitHub Apps → New
-   GitHub App. Name it, for example, `WavyKit Split`. Use the monorepo URL as
+   GitHub App. Name it, for example, `Current Split`. Use the monorepo URL as
    the homepage, turn off the webhook, and allow installation only on this
    account.
 2. Under repository permissions, grant **Contents: Read and write** and
@@ -182,8 +185,8 @@ token limited to its own split repository, with `actions/create-github-app-token
    `SPLIT_APP_PRIVATE_KEY`:
 
    ```sh
-   gh variable set SPLIT_APP_CLIENT_ID --repo <owner>/wavykit --body <client-id>
-   gh secret set SPLIT_APP_PRIVATE_KEY --repo <owner>/wavykit < path/to/private-key.pem
+   gh variable set SPLIT_APP_CLIENT_ID --repo <owner>/monorepo --body <client-id>
+   gh secret set SPLIT_APP_PRIVATE_KEY --repo <owner>/monorepo < path/to/private-key.pem
    ```
 
    Then delete the downloaded `.pem` file. To rotate the key, generate a new

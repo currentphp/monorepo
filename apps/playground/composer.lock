@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0ec94e3a73491d6f05d5783052d0fe3",
+    "content-hash": "08e12f3a1a8d0c5e6b8f99b6b01f4ac9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -193,6 +193,72 @@
                 }
             ],
             "time": "2026-09-06T14:11:38+00:00"
+        },
+        {
+            "name": "current/current",
+            "version": "0.3.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../../packages/current",
+                "reference": "dede861ddb8cb58b034081f8a7af9c8f2f768ced"
+            },
+            "require": {
+                "illuminate/console": "^13.0",
+                "illuminate/contracts": "^13.0",
+                "illuminate/routing": "^13.0",
+                "illuminate/support": "^13.0",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Current\\CurrentServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Current\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "One description of a Laravel application's experience: pages, breadcrumbs, and menus.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "current/inertia",
+            "version": "0.2.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../../packages/inertia",
+                "reference": "9d224aec45956886df586b1c9e4e4175398bd4f8"
+            },
+            "require": {
+                "current/current": "^0.3",
+                "illuminate/container": "^13.0",
+                "inertiajs/inertia-laravel": "^3.0",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Current\\Inertia\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Share Current pages, breadcrumbs, and menus with Inertia, with TypeScript types.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "dasprid/enum",
@@ -7433,72 +7499,6 @@
             "time": "2026-04-26T05:33:54+00:00"
         },
         {
-            "name": "wavykit/core",
-            "version": "0.3.x-dev",
-            "dist": {
-                "type": "path",
-                "url": "../../packages/core",
-                "reference": "8666ae36eb27be6c114aebffbc7d392d370a3547"
-            },
-            "require": {
-                "illuminate/console": "^13.0",
-                "illuminate/contracts": "^13.0",
-                "illuminate/routing": "^13.0",
-                "illuminate/support": "^13.0",
-                "php": "^8.3"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "WavyKit\\CoreServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "WavyKit\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "One description of a Laravel application's experience: pages, breadcrumbs, and menus.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "wavykit/inertia",
-            "version": "0.2.x-dev",
-            "dist": {
-                "type": "path",
-                "url": "../../packages/inertia",
-                "reference": "1c7fd4a9e2cac13943744cca40e868c0964ab543"
-            },
-            "require": {
-                "illuminate/container": "^13.0",
-                "inertiajs/inertia-laravel": "^3.0",
-                "php": "^8.3",
-                "wavykit/core": "^0.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "WavyKit\\Inertia\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "Share WavyKit pages, breadcrumbs, and menus with Inertia, with TypeScript types.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "web-auth/cose-lib",
             "version": "4.8.2",
             "source": {
@@ -11557,8 +11557,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "wavykit/core": 20,
-        "wavykit/inertia": 20
+        "current/current": 20,
+        "current/inertia": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

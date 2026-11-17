@@ -1,11 +1,11 @@
 <?php
 
 use App\Providers\AppServiceProvider;
+use App\Providers\ExperienceServiceProvider;
 use App\Providers\FortifyServiceProvider;
-use App\Providers\WavyKitServiceProvider;
 
 return [
     AppServiceProvider::class,
     FortifyServiceProvider::class,
-    WavyKitServiceProvider::class,
+    ExperienceServiceProvider::class,
 ];

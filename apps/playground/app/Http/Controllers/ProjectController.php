@@ -6,12 +6,12 @@ namespace App\Http\Controllers;
 
 use App\ProjectExample;
 use App\TaskExample;
+use Current\Subjects\SubjectItem;
+use Current\Subjects\Subjects;
 use Inertia\Inertia;
 use Inertia\Response;
-use WavyKit\Subjects\SubjectItem;
-use WavyKit\Subjects\Subjects;
 
-/** Projects demo: resource pages whose breadcrumbs and menus come from WavyKit shared props. */
+/** Projects demo: resource pages whose breadcrumbs and menus come from Current shared props. */
 final class ProjectController extends Controller
 {
     public function index(): Response

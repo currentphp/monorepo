@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace WavyKit\Inertia\Tests\Fixtures;
+namespace Current\Inertia\Tests\Fixtures;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\AssertionFailedError;
 
 /**
- * Reads the object and union types in resources/types/wavykit.d.ts and checks
+ * Reads the object and union types in resources/types/current.d.ts and checks
  * decoded JSON against them, so the hand-written types cannot drift from the
  * PHP output unnoticed.
  *
@@ -113,7 +113,7 @@ final class DeclaredTypes
         $actual = array_keys($value);
         sort($declared);
         sort($actual);
-        Assert::assertSame($declared, $actual, "{$path} has different fields from `{$name}` in wavykit.d.ts.");
+        Assert::assertSame($declared, $actual, "{$path} has different fields from `{$name}` in current.d.ts.");
         foreach ($this->objects[$name] as $field => $type) {
             $this->assertMatches($type, $value[$field], "{$path}.{$field}");
         }

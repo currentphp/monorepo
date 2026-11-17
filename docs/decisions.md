@@ -1,39 +1,39 @@
 # Direction and decisions
 
-Decisions about what WavyKit contains and how it grows. Recorded 2026-11-09 by
+Decisions about what Current contains and how it grows. Recorded 2026-11-09 by
 the maintainers. Plans below are intentions, not release promises; the
 [monorepo guide](monorepo.md) owns layout, versioning, and the release process.
 
-## What WavyKit is for
+## What Current is for
 
 Laravel has primitives for handling requests, but none for the experience
 around them: where users are, how they move around, what they are looking at,
 and what they can do. That knowledge usually ends up scattered across route
 names, breadcrumb arrays, menu configuration, page headings, and frontend
-code, and drifts. WavyKit gives an application one description of its
+code, and drifts. Current gives an application one description of its
 experience that every part of the interface reads.
 
-**WavyKit describes; Laravel and the application execute.** WavyKit records
+**Current describes; Laravel and the application execute.** Current records
 identities, relationships, labels, and availability. Routes, controllers,
 jobs, authorization, and rendering stay with the application. Hiding a menu
 entry, for example, is presentation and never replaces an authorization check.
 
 ## Package boundaries
 
-**One core package.** `wavykit/core` contains everything that needs only
+**One core package.** `current/current` contains everything that needs only
 Laravel, organized by namespace:
 
-- `WavyKit\Pages\`: places in the application, with stable IDs, hierarchy,
+- `Current\Pages\`: places in the application, with stable IDs, hierarchy,
   route association, labels, and icons;
-- `WavyKit\Navigation\`: breadcrumbs and menus, read from those places;
-- `WavyKit\Context`: the request context passed to every callback.
+- `Current\Navigation\`: breadcrumbs and menus, read from those places;
+- `Current\Context`: the request context passed to every callback.
 
 **Integrations are separate packages.** A package exists when it brings a
 third-party dependency that an application might not want, such as Inertia or
 a search engine, or serves a different kind of adopter. Concepts that share
 the core's dependencies stay in the core as namespaces.
 
-**Laravel at the edges.** WavyKit targets Laravel only. Builders,
+**Laravel at the edges.** Current targets Laravel only. Builders,
 definitions, and registries make no Laravel calls; readers, the request
 context, and service providers hold the Laravel-specific code. The full design
 guidelines are in [CONTRIBUTING.md](../CONTRIBUTING.md#design-guidelines).
@@ -43,7 +43,7 @@ ship with the package whose concepts they check, not in a shared testing or
 development package.
 
 **History.** Pages and menus were first developed as two packages,
-`wavykit/pages` and `wavykit/navigation`, and merged into `wavykit/core` before
+`wavykit/pages` and `wavykit/navigation`, and merged into `wavykit/core`, now `current/current`, before
 `v0.1.0`. Neither was published, so no installed application is affected.
 
 ## Supported versions
@@ -56,7 +56,7 @@ widening support means adding those versions to CI.
 
 ### v0.1
 
-The first release, `v0.1.0`, published `wavykit/core` on 2026-11-09 after an
+The first release, `v0.1.0`, published `current/current` on 2026-11-09 after an
 API review. The review decided every public class, method, and output shape
 deliberately, such as making breadcrumbs and menu items the same kind of
 object, so that the release marks an API the maintainers intend to keep. Releases stay on 0.x, and
@@ -70,16 +70,16 @@ feedback are open.
 
 ### v0.2
 
-Released 2026-11-16 as `wavykit/core` 0.2.0 and the first release of
-`wavykit/inertia`, 0.1.0 (packages are versioned independently since then):
+Released 2026-11-16 as `current/current` 0.2.0 and the first release of
+`current/inertia`, 0.1.0 (packages are versioned independently since then):
 
-- **`wavykit/inertia`**, a new package that shares breadcrumbs, the current
+- **`current/inertia`**, a new package that shares breadcrumbs, the current
   page, and menus with Inertia. Applications opt in with one explicit call in
   their `HandleInertiaRequests::share()` method, so they choose the prop name
   and which menus to send; the prop resolves at render time. The package ships
   hand-written TypeScript types for the shared data.
-- **Inspection commands and test assertions** in the core: `wavykit:pages`,
-  `wavykit:menus`, and `wavykit:check`, and a test trait asserting the current
+- **Inspection commands and test assertions** in the core: `current:pages`,
+  `current:menus`, and `current:check`, and a test trait asserting the current
   page, breadcrumbs, and menu contents for a request.
 - **A read-only `Current` facade** for reading the current request, and an
   explicit public API: everything else is marked `@internal`, as
@@ -91,7 +91,7 @@ Released 2026-11-16 as `wavykit/core` 0.2.0 and the first release of
 invoice, with their own identity, linked to the pages that present them. A
 subject would be the same thing in a breadcrumb, a search result, or a list of
 available actions. Subjects will be designed and prototyped before any API is
-fixed, and will live in the core under `WavyKit\Subjects\`.
+fixed, and will live in the core under `Current\Subjects\`.
 
 ### Later
 
@@ -110,6 +110,6 @@ direction; it will be named and scoped when it is planned.
 
 The maintainers are not shipping a content management system, an admin panel,
 a breadcrumbs-only package, or support for frameworks other than Laravel as
-official WavyKit products. CMSs and admin panels are exactly the kind of thing
-you can build with WavyKit's components; they are just not on the maintainers'
+official Current products. CMSs and admin panels are exactly the kind of thing
+you can build with Current's components; they are just not on the maintainers'
 roadmap. These are current decisions, and the maintainers may revisit them.

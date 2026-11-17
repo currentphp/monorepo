@@ -1,8 +1,0 @@
-parameters:
-    level: max
-    paths:
-        - src
-        # Traits are analysed only through a class that uses them.
-        - tests/Fixtures/UsesWavyKitAssertions.php
-    phpVersion: 80300
-    tmpDir: .phpstan-cache

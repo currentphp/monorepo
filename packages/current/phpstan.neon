@@ -1,0 +1,8 @@
+parameters:
+    level: max
+    paths:
+        - src
+        # Traits are analysed only through a class that uses them.
+        - tests/Fixtures/UsesCurrentAssertions.php
+    phpVersion: 80300
+    tmpDir: .phpstan-cache

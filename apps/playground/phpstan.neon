@@ -12,6 +12,6 @@ parameters:
 
     level: 7
 
-    # Report calls to WavyKit's @internal members, as an outside adopter would see them.
+    # Report calls to Current's @internal members, as an outside adopter would see them.
     featureToggles:
         internalTag: true
