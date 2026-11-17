@@ -1,4 +1,4 @@
-// WK-019 prototype: the `subject` shared prop (App\WavyKit\Subjects\Subject).
+// The `subject` shared prop: WavyKit\Subjects\SubjectItem from Current::subject().
 
 /** A subject such as a project or a task; the same in every reader. */
 export type Subject = {

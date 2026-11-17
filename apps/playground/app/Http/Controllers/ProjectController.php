@@ -6,9 +6,10 @@ namespace App\Http\Controllers;
 
 use App\ProjectExample;
 use App\TaskExample;
-use App\WavyKit\Subjects\SubjectRegistry;
 use Inertia\Inertia;
 use Inertia\Response;
+use WavyKit\Subjects\SubjectItem;
+use WavyKit\Subjects\Subjects;
 
 /** Projects demo: resource pages whose breadcrumbs and menus come from WavyKit shared props. */
 final class ProjectController extends Controller
@@ -28,7 +29,7 @@ final class ProjectController extends Controller
         return $this->render('Edit '.$project->name, $project);
     }
 
-    /** A task inside its project; the task is the page's subject (WK-019 prototype). */
+    /** A task inside its project; the task is the page's subject. */
     public function task(ProjectExample $project, TaskExample $task): Response
     {
         return $this->render($task->title, $project);
@@ -39,9 +40,9 @@ final class ProjectController extends Controller
         return Inertia::render('projects', [
             'title' => $title,
             'project' => $project === null ? null : ['id' => $project->id, 'name' => $project->name],
-            // Canonical subject links, built from the objects alone (WK-019 prototype).
+            // Canonical subject links, built from the objects alone.
             'tasks' => $project === null ? [] : array_map(
-                fn (TaskExample $task): array => app(SubjectRegistry::class)->of($task)->jsonSerialize(),
+                fn (TaskExample $task): SubjectItem => app(Subjects::class)->of($task),
                 TaskExample::forProject($project),
             ),
             'projects' => array_map(fn (ProjectExample $example): array => [
