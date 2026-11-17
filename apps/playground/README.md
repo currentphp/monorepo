@@ -11,6 +11,7 @@ this monorepo. Created from App Foundation `v0.1.0` (commit
 | `wavykit/core`: pages                 | `WavyKitServiceProvider::registerPages()`      | Page identity and resource-aware labels on every page; the projects demo.                     |
 | `wavykit/core`: breadcrumbs and menus | `WavyKitServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and user visibility, on every page. |
 | `wavykit/inertia`                     | `HandleInertiaRequests::share()`               | The `wavykit` prop on every page, typed by the package's `wavykit.d.ts`.                      |
+| Subjects (prototype, WK-019)          | `WavyKitServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and the `subject` prop.                 |
 
 [`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php) shares
 component output with every Inertia page as the `wavykit` prop, through
@@ -80,6 +81,16 @@ derived from Projects and excludes the project pages with `except()`, so
 Projects stays active without listing them. The footer places the same index
 under Resources with a different label. Guest and verified-user account links
 follow the foundation's existing authentication state.
+
+### Subjects prototype
+
+`app/WavyKit/Subjects/` prototypes the Subject primitive (WK-019) as application
+code on `wavykit/core`'s public API: a project or a task is described once, in
+`registerSubjects()`, and read by breadcrumbs (Projects › Apollo › Tasks ›
+Fix login, with no per-page label callback), by canonical links (the task list
+on a project page), and by the `subject` Inertia prop. It is a prototype: it
+will be replaced when core gains a Subject API, and nothing here is a
+supported WavyKit interface. Open `/projects/42/tasks/1`.
 
 ## Checks
 

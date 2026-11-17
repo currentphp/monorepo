@@ -2,6 +2,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import Breadcrumbs from '@/components/wavykit/breadcrumbs';
 import Menu from '@/components/wavykit/menu';
 import { home } from '@/routes';
+import type { Subject } from '@/types';
 
 type Project = {
     id: number;
@@ -14,10 +15,11 @@ type Props = {
     title: string;
     project: Pick<Project, 'id' | 'name'> | null;
     projects: Project[];
+    tasks: Subject[];
 };
 
-export default function Projects({ title, project, projects }: Props) {
-    const { auth, name, wavykit } = usePage().props;
+export default function Projects({ title, project, projects, tasks }: Props) {
+    const { auth, name, wavykit, subject } = usePage().props;
     const selected = projects.find((item) => item.id === project?.id);
 
     return (
@@ -55,11 +57,18 @@ export default function Projects({ title, project, projects }: Props) {
                         {title}
                     </h1>
                     <p className="max-w-2xl text-stone-600 dark:text-stone-400">
-                        Explore a project and its edit page. Breadcrumbs come
-                        from WavyKit Pages; the menus come from WavyKit
-                        Navigation, where the primary menu keeps Projects active
-                        without listing individual projects.
+                        Explore a project, its tasks, and its edit page.
+                        Breadcrumbs come from WavyKit Pages; the menus come from
+                        WavyKit Navigation, where the primary menu keeps
+                        Projects active without listing individual projects.
                     </p>
+                    {subject ? (
+                        <p className="text-sm text-stone-600 dark:text-stone-400">
+                            Viewing {subject.kind}{' '}
+                            <strong>{subject.label}</strong> ({subject.kind}:
+                            {subject.id}), from the subjects prototype.
+                        </p>
+                    ) : null}
                 </div>
                 {selected ? (
                     <section className="space-y-4 rounded-2xl border border-stone-200 bg-white p-6 dark:border-stone-800 dark:bg-stone-900">
@@ -85,6 +94,25 @@ export default function Projects({ title, project, projects }: Props) {
                                 Open edit page
                             </Link>
                         </div>
+                        {tasks.length > 0 ? (
+                            <div className="space-y-2">
+                                <h3 className="font-semibold">Tasks</h3>
+                                <ul className="list-disc space-y-1 pl-5">
+                                    {tasks.map((task) =>
+                                        task.url ? (
+                                            <li key={task.id}>
+                                                <Link
+                                                    href={task.url}
+                                                    className="underline underline-offset-4"
+                                                >
+                                                    {task.label}
+                                                </Link>
+                                            </li>
+                                        ) : null,
+                                    )}
+                                </ul>
+                            </div>
+                        ) : null}
                     </section>
                 ) : null}
                 <section

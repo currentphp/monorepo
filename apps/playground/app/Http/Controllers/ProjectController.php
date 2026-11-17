@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\ProjectExample;
+use App\TaskExample;
+use App\WavyKit\Subjects\SubjectRegistry;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,11 +28,22 @@ final class ProjectController extends Controller
         return $this->render('Edit '.$project->name, $project);
     }
 
+    /** A task inside its project; the task is the page's subject (WK-019 prototype). */
+    public function task(ProjectExample $project, TaskExample $task): Response
+    {
+        return $this->render($task->title, $project);
+    }
+
     private function render(string $title, ?ProjectExample $project = null): Response
     {
         return Inertia::render('projects', [
             'title' => $title,
             'project' => $project === null ? null : ['id' => $project->id, 'name' => $project->name],
+            // Canonical subject links, built from the objects alone (WK-019 prototype).
+            'tasks' => $project === null ? [] : array_map(
+                fn (TaskExample $task): array => app(SubjectRegistry::class)->of($task)->jsonSerialize(),
+                TaskExample::forProject($project),
+            ),
             'projects' => array_map(fn (ProjectExample $example): array => [
                 'id' => $example->id,
                 'name' => $example->name,
