@@ -7,7 +7,7 @@
         "php": "^8.3",
         "illuminate/container": "^13.0",
         "inertiajs/inertia-laravel": "^3.0",
-        "wavykit/core": "^0.2"
+        "wavykit/core": "^0.3"
     },
     "autoload": {
         "psr-4": {

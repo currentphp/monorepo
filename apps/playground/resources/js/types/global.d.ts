@@ -1,5 +1,4 @@
 import type { Auth } from '@/types/auth';
-import type { Subject } from '@/types/subject';
 import type { WavyKit } from '@wavykit/inertia';
 
 declare module 'react' {
@@ -14,7 +13,6 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             wavykit: WavyKit<'primary' | 'footer'>;
-            subject: Subject | null;
             [key: string]: unknown;
         };
     }

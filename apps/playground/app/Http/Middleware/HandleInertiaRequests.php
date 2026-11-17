@@ -4,9 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use WavyKit\Facades\Current;
 use WavyKit\Inertia\WavyKitProps;
-use WavyKit\Subjects\SubjectItem;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -47,8 +45,6 @@ class HandleInertiaRequests extends Middleware
             ],
             // Resolved at render time, after route-model binding.
             'wavykit' => WavyKitProps::make()->menus('primary', 'footer'),
-            // Until wavykit/inertia shares the subject itself (WK-032).
-            'subject' => fn (): ?SubjectItem => Current::subject(),
         ];
     }
 }

@@ -11,7 +11,7 @@ this monorepo. Created from App Foundation `v0.1.0` (commit
 | `wavykit/core`: pages                 | `WavyKitServiceProvider::registerPages()`      | Page identity and resource-aware labels on every page; the projects demo.                     |
 | `wavykit/core`: breadcrumbs and menus | `WavyKitServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and user visibility, on every page. |
 | `wavykit/inertia`                     | `HandleInertiaRequests::share()`               | The `wavykit` prop on every page, typed by the package's `wavykit.d.ts`.                      |
-| `wavykit/core`: subjects              | `WavyKitServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and the `subject` prop.                 |
+| `wavykit/core`: subjects              | `WavyKitServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and `wavykit.subject`.                  |
 
 [`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php) shares
 component output with every Inertia page as the `wavykit` prop, through
@@ -68,7 +68,7 @@ composer dev     # serve at http://localhost:8000 with Vite
 
 WavyKit packages are local Composer path dependencies, symlinked from the
 monorepo's `packages/` folder at each package's development line (core
-`0.2.x-dev`, inertia `0.1.x-dev`), so package changes are
+`0.3.x-dev`, inertia `0.2.x-dev`), so package changes are
 immediately available here and no package source is copied into the app.
 This app is not a standalone distributable application. The application keeps
 its Composer and npm lockfiles.
@@ -87,8 +87,7 @@ follow the foundation's existing authentication state.
 Projects and their tasks are subjects (`WavyKit\Subjects`), described once in
 `registerSubjects()` and read by breadcrumbs (Projects › Apollo › Tasks ›
 Fix login, with no per-page label callback), by canonical links (the task list
-on a project page), and by the `subject` Inertia prop, which shares
-`Current::subject()` until `wavykit/inertia` includes it. Open
+on a project page), and by `wavykit.subject` in the Inertia prop. Open
 `/projects/42/tasks/1`, or run `php artisan wavykit:subjects`.
 
 ## Checks

@@ -26,7 +26,7 @@ it('labels nested breadcrumbs from subjects', function () {
 
 it('shares the subject the active page presents', function () {
     $this->get(route('tasks.show', [77, 4]))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->where('subject', [
+        ->where('wavykit.subject', [
             'kind' => 'task',
             'id' => '4',
             'label' => 'Review budget',
@@ -34,12 +34,12 @@ it('shares the subject the active page presents', function () {
         ]));
 
     $this->get(route('projects.show', 77))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->where('subject.kind', 'project')
-        ->where('subject.label', 'Artemis'));
+        ->where('wavykit.subject.kind', 'project')
+        ->where('wavykit.subject.label', 'Artemis'));
 });
 
 it('shares no subject on pages that present none', function (string $uri) {
-    $this->get($uri)->assertOk()->assertInertia(fn (Assert $page) => $page->where('subject', null));
+    $this->get($uri)->assertOk()->assertInertia(fn (Assert $page) => $page->where('wavykit.subject', null));
 })->with([
     'project index' => fn () => route('projects.index'),
     'unregistered page' => fn () => route('password.request'),
@@ -47,8 +47,8 @@ it('shares no subject on pages that present none', function (string $uri) {
 
 it('takes the subject from the nearest presenting ancestor', function () {
     $this->get(route('projects.edit', 42))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->where('subject.kind', 'project')
-        ->where('subject.label', 'Apollo'));
+        ->where('wavykit.subject.kind', 'project')
+        ->where('wavykit.subject.label', 'Apollo'));
 
     $this->assertCurrentSubject('project', '42');
 });

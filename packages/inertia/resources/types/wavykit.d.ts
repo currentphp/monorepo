@@ -11,6 +11,16 @@ export type Breadcrumb = {
     icon: string | null;
 };
 
+/** A subject such as a project or a task; `kind:id` identifies it. */
+export type Subject = {
+    kind: string;
+    /** The object's route key. */
+    id: string;
+    label: string;
+    /** The subject's canonical page, or null for a kind without one. */
+    url: string | null;
+};
+
 /** `page` links to a page; `group` is a presentation group with no page or URL. */
 export type MenuItemKind = 'page' | 'group';
 
@@ -37,6 +47,8 @@ export type MenuItem = {
 export type WavyKit<MenuName extends string = string> = {
     /** Null on unregistered routes. */
     pageId: string | null;
+    /** The active page's subject, or the nearest ancestor's; null when none. */
+    subject: Subject | null;
     /** Empty on unregistered routes. */
     breadcrumbs: Breadcrumb[];
     menus: Record<MenuName, MenuItem[]>;

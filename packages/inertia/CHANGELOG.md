@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added
+
+- `subject` in the shared prop: the current subject from `wavykit/core`'s
+  `Current::subject()` (`{ kind, id, label, url }` or null), with a `Subject`
+  TypeScript type. Requires `wavykit/core` 0.3.
+
 ### Developer Experience
 
 - A test checks the shared prop's JSON against `resources/types/wavykit.d.ts`,
