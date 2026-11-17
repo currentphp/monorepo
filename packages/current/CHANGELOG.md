@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.3.0 - 2026-11-16
+
+The first release as `current/current`, continuing from `wavykit/core` 0.2.0.
+
 ### Breaking
 
 - Renamed from WavyKit to Current. The package is `current/current`
