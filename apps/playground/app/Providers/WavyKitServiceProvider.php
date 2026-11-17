@@ -7,8 +7,6 @@ namespace App\Providers;
 use App\Models\User;
 use App\ProjectExample;
 use App\TaskExample;
-use App\WavyKit\Subjects\SubjectKind;
-use App\WavyKit\Subjects\SubjectRegistry;
 use Illuminate\Routing\Route as RouteDefinition;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -17,6 +15,8 @@ use WavyKit\Navigation\MenuEntry;
 use WavyKit\Navigation\MenuRegistry;
 use WavyKit\Pages\Page;
 use WavyKit\Pages\PageRegistry;
+use WavyKit\Subjects\Subject;
+use WavyKit\Subjects\SubjectRegistry;
 
 /**
  * Registers the playground's declarations for each WavyKit component.
@@ -26,36 +26,28 @@ use WavyKit\Pages\PageRegistry;
  */
 final class WavyKitServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        $this->app->singleton(SubjectRegistry::class);
-    }
-
     public function boot(PageRegistry $pages, MenuRegistry $menus, SubjectRegistry $subjects): void
     {
         $this->registerSubjects($subjects);
-        $this->registerPages($pages, $subjects);
+        $this->registerPages($pages);
         $this->registerNavigation($menus);
     }
 
-    /**
-     * Subjects (WK-019 prototype, App\WavyKit\Subjects): projects and their
-     * tasks, each described once and read by breadcrumbs, links, and props.
-     */
+    /** Subjects (WavyKit\Subjects): projects and their tasks, described once and read by breadcrumbs, links, and props. */
     private function registerSubjects(SubjectRegistry $subjects): void
     {
         $subjects->register(
-            SubjectKind::make('project')->for(ProjectExample::class)
+            Subject::make('project')->for(ProjectExample::class)
                 ->label(fn (ProjectExample $project): string => $project->name)
                 ->page('projects.show'),
-            SubjectKind::make('task')->for(TaskExample::class)
+            Subject::make('task')->for(TaskExample::class)
                 ->label(fn (TaskExample $task): string => $task->title)
                 ->page('tasks.show', fn (TaskExample $task): array => ['project' => $task->project(), 'task' => $task]),
         );
     }
 
     /** Places (WavyKit\Pages): page identity, hierarchy, and resource-aware labels. */
-    private function registerPages(PageRegistry $pages, SubjectRegistry $subjects): void
+    private function registerPages(PageRegistry $pages): void
     {
         Route::bind('project', fn (string $id): ProjectExample => ProjectExample::findExample($id) ?? abort(404));
         Route::bind('task', function (string $id, RouteDefinition $route): TaskExample {
@@ -67,10 +59,10 @@ final class WavyKitServiceProvider extends ServiceProvider
         $pages->register(
             Page::make('home')->route('home')->label('Home'),
             Page::make('projects')->route('projects.index')->label('Projects')->children(
-                $subjects->presents(Page::make('projects.show')->route('projects.show'), 'project')->children(
+                Page::make('projects.show')->route('projects.show')->presents('project')->children(
                     Page::make('projects.edit')->route('projects.edit')->label('Edit'),
                     Page::make('projects.tasks')->label('Tasks')->children(
-                        $subjects->presents(Page::make('tasks.show')->route('tasks.show'), 'task'),
+                        Page::make('tasks.show')->route('tasks.show')->presents('task'),
                     ),
                 ),
             ),

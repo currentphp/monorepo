@@ -66,7 +66,7 @@ export default function Projects({ title, project, projects, tasks }: Props) {
                         <p className="text-sm text-stone-600 dark:text-stone-400">
                             Viewing {subject.kind}{' '}
                             <strong>{subject.label}</strong> ({subject.kind}:
-                            {subject.id}), from the subjects prototype.
+                            {subject.id}).
                         </p>
                     ) : null}
                 </div>

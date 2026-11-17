@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\ProjectExample;
 use App\TaskExample;
-use App\WavyKit\Subjects\SubjectRegistry;
 use Inertia\Testing\AssertableInertia as Assert;
+use WavyKit\Subjects\Subjects;
 
-// WK-019 prototype: subjects described once and read by breadcrumbs, links,
-// the current-subject reader, and the Inertia prop.
+// Subjects described once and read by breadcrumbs, links, the current
+// subject, and the Inertia prop.
 
 it('labels nested breadcrumbs from subjects', function () {
     $this->get(route('tasks.show', [42, 1]))->assertOk()->assertInertia(fn (Assert $page) => $page
@@ -42,9 +42,16 @@ it('shares no subject on pages that present none', function (string $uri) {
     $this->get($uri)->assertOk()->assertInertia(fn (Assert $page) => $page->where('subject', null));
 })->with([
     'project index' => fn () => route('projects.index'),
-    'edit page under a subject page' => fn () => route('projects.edit', 42),
     'unregistered page' => fn () => route('password.request'),
 ]);
+
+it('takes the subject from the nearest presenting ancestor', function () {
+    $this->get(route('projects.edit', 42))->assertOk()->assertInertia(fn (Assert $page) => $page
+        ->where('subject.kind', 'project')
+        ->where('subject.label', 'Apollo'));
+
+    $this->assertCurrentSubject('project', '42');
+});
 
 it('keeps explicit page labels under a subject page', function () {
     $this->get(route('projects.edit', 42))->assertOk();
@@ -56,7 +63,7 @@ it('links a subject from anywhere through its canonical page', function () {
     $task = TaskExample::findExample(ProjectExample::findExample('77') ?? throw new LogicException, '5')
         ?? throw new LogicException;
 
-    $subject = app(SubjectRegistry::class)->of($task);
+    $subject = app(Subjects::class)->of($task);
 
     expect($subject->key())->toBe('task:5')
         ->and($subject->label)->toBe('Book venue')
