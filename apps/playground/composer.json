@@ -15,8 +15,8 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "current/current": "^0.4@dev",
-        "current/inertia": "^0.3@dev"
+        "current/current": "^0.5@dev",
+        "current/inertia": "^0.4@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -123,8 +123,8 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "current/current": "0.4.x-dev",
-                    "current/inertia": "0.3.x-dev"
+                    "current/current": "0.5.x-dev",
+                    "current/inertia": "0.4.x-dev"
                 }
             }
         }

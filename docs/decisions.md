@@ -119,8 +119,8 @@ together once the core primitives are complete.
 
 ### v0.5
 
-Planned as `current/current` 0.5.0, the last core primitive before the
-integrations are designed together:
+Released 2026-11-17 as `current/current` 0.5.0 and `current/inertia` 0.4.0, the
+last core primitive before the integrations are designed together:
 
 - **Actions** (`Current\Actions\`): what users can do to a subject or on a
   page, described and never executed. Each action targets the application's

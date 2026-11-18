@@ -9,16 +9,16 @@
             "url": "packages/*",
             "options": {
                 "versions": {
-                    "current/current": "0.4.x-dev",
-                    "current/inertia": "0.3.x-dev"
+                    "current/current": "0.5.x-dev",
+                    "current/inertia": "0.4.x-dev"
                 }
             }
         }
     ],
     "require": {
         "php": "^8.3",
-        "current/current": "^0.4@dev",
-        "current/inertia": "^0.3@dev"
+        "current/current": "^0.5@dev",
+        "current/inertia": "^0.4@dev"
     },
     "require-dev": {
         "laravel/pint": "^1.27",

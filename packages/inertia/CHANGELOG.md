@@ -4,6 +4,15 @@
 
 No changes yet.
 
+## 0.4.0 - 2026-11-17
+
+### Changed
+
+- Requires `current/current` 0.5. The shared prop is unchanged: actions are
+  read on the server with `Current::actions()` and can be added to your own
+  shared props. The package remains in maintenance until the Blade,
+  Livewire, and Inertia integrations are designed together.
+
 ## 0.3.0 - 2026-11-17
 
 ### Changed
