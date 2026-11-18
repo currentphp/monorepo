@@ -45,21 +45,21 @@ final class TaskController extends Controller
 
     public function store(ProjectExample $project): RedirectResponse
     {
-        return $this->done($project, 'Prototype: the new task was not saved.');
+        return $this->done($project, 'Demo: the new task was not saved.');
     }
 
     public function update(ProjectExample $project, TaskExample $task): RedirectResponse
     {
         Gate::authorize('update', $task);
 
-        return $this->done($project, "Prototype: changes to “{$task->title}” were not saved.");
+        return $this->done($project, "Demo: changes to “{$task->title}” were not saved.");
     }
 
     public function archive(ProjectExample $project, TaskExample $task): RedirectResponse
     {
         Gate::authorize('archive', $task);
 
-        return $this->done($project, "Prototype: “{$task->title}” was not archived.");
+        return $this->done($project, "Demo: “{$task->title}” was not archived.");
     }
 
     private function form(string $url, string $method, string $value): Response

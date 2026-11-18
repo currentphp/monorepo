@@ -92,10 +92,10 @@ it('performs actions only through the app’s routes, which never write', functi
     $this->actingAs(User::factory()->create())
         ->post(route('tasks.archive', [42, 2]))
         ->assertRedirect(route('tasks.index', 42))
-        ->assertSessionHas('status', 'Prototype: “Write release notes” was not archived.');
+        ->assertSessionHas('status', 'Demo: “Write release notes” was not archived.');
 
     $this->put(route('tasks.update', [42, 2]), ['title' => 'Changed'])
-        ->assertSessionHas('status', 'Prototype: changes to “Write release notes” were not saved.');
+        ->assertSessionHas('status', 'Demo: changes to “Write release notes” were not saved.');
 
     $this->post(route('tasks.store', 42), ['title' => 'New'])->assertSessionHas('status');
 });
