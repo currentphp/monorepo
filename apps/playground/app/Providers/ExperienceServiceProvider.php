@@ -83,7 +83,10 @@ final class ExperienceServiceProvider extends ServiceProvider
     /** Wayfinding (Current\Navigation): menus shared with every page by HandleInertiaRequests. */
     private function registerNavigation(MenuRegistry $menus): void
     {
-        $menus->derive('primary', 'projects')->except('projects.show');
+        // Overview is listed only for signed-in users; its routes still require auth.
+        $menus->derive('primary', 'projects', 'dashboard')
+            ->except('projects.show')
+            ->exceptWhen('dashboard', fn (Context $context): bool => $context->user === null);
         $menus->define('footer',
             MenuEntry::group('resources')->label('Resources')->children(MenuEntry::page('home'), MenuEntry::page('projects')->label('All projects')),
             MenuEntry::group('account')->label('Your account')
