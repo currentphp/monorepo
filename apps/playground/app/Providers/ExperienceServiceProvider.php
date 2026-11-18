@@ -58,7 +58,8 @@ final class ExperienceServiceProvider extends ServiceProvider
             Action::make('edit')->for('task')
                 ->label('Edit')->icon('pencil')->order(1)
                 ->route('tasks.edit', 'GET', fn (TaskExample $task): array => ['project' => $task->project(), 'task' => $task])
-                ->visibleWhen($signedInForTask),
+                ->visibleWhen($signedInForTask)
+                ->can('update'),
             Action::make('archive')->for('task')
                 ->label('Archive')->icon('archive')->order(2)->destructive()
                 ->confirm(fn (TaskExample $task): string => "Archive “{$task->title}”?")

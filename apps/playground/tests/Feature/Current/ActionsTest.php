@@ -74,7 +74,7 @@ it('takes the current subject’s actions on pages below it', function () {
     $this->assertCurrentPage('tasks.edit')->assertBreadcrumbs(['Projects', 'Artemis', 'Tasks', 'Review budget', 'Edit']);
 });
 
-it('resolves one object’s actions outside the current request', function () {
+it('resolves one object’s actions for a table row', function () {
     $this->actingAs(User::factory()->create())->get(route('projects.index'))->assertOk();
 
     $task = TaskExample::findExample(ProjectExample::findExample('77') ?? throw new LogicException, '5');
