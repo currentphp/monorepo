@@ -32,3 +32,13 @@ it('resolves project labels and URLs from the active bound resource', function (
 it('returns 404 for an unknown project', function () {
     $this->get(route('projects.show', 'missing'))->assertNotFound();
 });
+
+it('takes each projects page title from Current', function (string $url, string $title) {
+    $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where('title', $title));
+
+    $this->assertTitle($title);
+})->with([
+    'index, from the label' => ['/projects', 'Projects'],
+    'project, from the subject' => ['/projects/42', 'Apollo'],
+    'edit, from its title callback' => ['/projects/77/edit', 'Edit Artemis'],
+]);

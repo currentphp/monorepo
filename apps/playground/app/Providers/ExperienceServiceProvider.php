@@ -60,7 +60,12 @@ final class ExperienceServiceProvider extends ServiceProvider
             Page::make('home')->route('home')->label('Home'),
             Page::make('projects')->route('projects.index')->label('Projects')->children(
                 Page::make('projects.show')->route('projects.show')->presents('project')->children(
-                    Page::make('projects.edit')->route('projects.edit')->label('Edit'),
+                    Page::make('projects.edit')->route('projects.edit')->label('Edit')
+                        ->title(function (Context $context): string {
+                            $project = $context->parameter('project');
+
+                            return 'Edit '.($project instanceof ProjectExample ? $project->name : 'project');
+                        }),
                     Page::make('projects.tasks')->label('Tasks')->children(
                         Page::make('tasks.show')->route('tasks.show')->presents('task'),
                     ),
