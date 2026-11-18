@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Current\Console;
 
 use Closure;
+use Current\Actions\ActionDefinition;
+use Current\Actions\ActionRegistry;
+use Current\Actions\Actions;
 use Current\Exceptions\InvalidDefinition;
 use Current\Navigation\MenuEntryDefinition;
 use Current\Navigation\MenuRegistry;
@@ -23,6 +26,7 @@ use Current\Subjects\Subjects;
  * @internal Shared by the current:pages, current:menus, and current:check commands.
  *
  * @phpstan-type PageNode array{id: string, label: ?string, dynamicLabel: bool, title: ?string, dynamicTitle: bool, description: ?string, dynamicDescription: bool, route: ?string, routeParameters: bool, icon: ?string, presents: ?string, children: list<mixed>}
+ * @phpstan-type ActionDescription array{id: string, name: string, subject: ?string, page: ?string, label: ?string, dynamicLabel: bool, route: string, method: string, routeParameters: bool, icon: ?string, destructive: bool, confirm: bool, order: int, visibility: bool, enabled: bool, ability: ?string}
  * @phpstan-type SubjectDescription array{name: string, class: ?string, page: ?string, routeParameters: bool, title: bool, description: bool, icon: ?string, presentedBy: list<string>}
  * @phpstan-type MenuNode array{kind: 'page'|'group', id: string, label: ?string, dynamicLabel: bool, icon: ?string, visibility: bool, children: list<mixed>}
  * @phpstan-type MenuDescription array{name: string, kind: 'derived'|'defined', roots: list<string>, except: list<string>, exceptWhen: list<string>, entries: list<MenuNode>}
@@ -35,6 +39,8 @@ final readonly class Inspector
         private Pages $pages,
         private SubjectRegistry $subjectRegistry,
         private Subjects $subjects,
+        private ActionRegistry $actionRegistry,
+        private Actions $actions,
     ) {}
 
     /**
@@ -67,7 +73,16 @@ final readonly class Inspector
             return $problems;
         }
 
-        return [...$problems, ...$this->subjects->problems()];
+        $problems = [...$problems, ...$this->subjects->problems()];
+        try {
+            $this->actionRegistry->finalize();
+        } catch (InvalidDefinition $exception) {
+            $problems[] = $exception->getMessage();
+
+            return $problems;
+        }
+
+        return [...$problems, ...$this->actions->problems()];
     }
 
     public function pageCount(): int
@@ -79,6 +94,29 @@ final readonly class Inspector
     public function pages(): array
     {
         return array_map($this->page(...), $this->registry->children(null));
+    }
+
+    /** @return list<ActionDescription> */
+    public function actions(): array
+    {
+        return array_map(fn (ActionDefinition $action): array => [
+            'id' => $action->id(),
+            'name' => $action->name,
+            'subject' => $action->kind,
+            'page' => $action->pageId,
+            'label' => is_string($action->label) ? $action->label : null,
+            'dynamicLabel' => ! is_string($action->label),
+            'route' => $action->routeName,
+            'method' => $action->method,
+            'routeParameters' => $action->routeParameters !== null,
+            'icon' => $action->icon,
+            'destructive' => $action->destructive,
+            'confirm' => $action->confirm !== null,
+            'order' => $action->order,
+            'visibility' => $action->visibleWhen !== null,
+            'enabled' => $action->enabledWhen !== null,
+            'ability' => $action->ability,
+        ], $this->actionRegistry->all());
     }
 
     /** @return list<SubjectDescription> */

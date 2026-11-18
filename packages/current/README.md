@@ -470,6 +470,80 @@ Subject::make('project')->for(Project::class)
   run only those callbacks. `SubjectItem` stays `{ kind, id, label, url }`, so
   lists of subjects don't resolve titles they don't show.
 
+## Actions
+
+An action is something a user can do to a subject or on a page, such as
+archiving a task or creating one. Current **describes** actions and never runs
+them: each action names your own route, which performs and authorizes it.
+Forms, confirmation dialogs, and progress stay in your interface.
+
+```php
+use Current\Actions\Action;
+use Current\Actions\ActionRegistry;
+use Current\Context;
+
+public function boot(ActionRegistry $actions): void
+{
+    $actions->register(
+        // A page's action: offered while that page is current.
+        Action::make('create')->on('projects.tasks')
+            ->label('New task')->icon('plus')
+            ->route('tasks.create'),
+
+        // A subject kind's actions: offered for each subject of that kind.
+        Action::make('edit')->for('task')
+            ->label('Edit')->order(1)
+            ->route('tasks.edit', 'GET', fn (Task $task): array => ['project' => $task->project, 'task' => $task])
+            ->can('update'),
+        Action::make('archive')->for('task')
+            ->label('Archive')->order(2)->destructive()
+            ->confirm(fn (Task $task): string => "Archive “{$task->title}”?")
+            ->route('tasks.archive', 'POST', fn (Task $task): array => ['project' => $task->project, 'task' => $task])
+            ->visibleWhen(fn (Task $task, Context $context): bool => $context->user !== null)
+            ->can('archive'),
+    );
+}
+```
+
+- Each action uses exactly one of `for()` (a subject kind) or `on()` (a page),
+  and needs a `label()` and a `route()`. Its ID is the kind or page and its
+  name, such as `task.archive`, and must be unique.
+- `route($name, $method = 'GET', $parameters = null)`: a subject action passes
+  the subject as the parameter named after its kind unless the callback maps
+  it; a page action forwards the current request's parameters. Only
+  parameters the route declares are used.
+- Callbacks receive the subject then the `Context` for subject actions, and
+  the `Context` alone for page actions.
+- `visibleWhen()` returns a bool; false leaves the action out entirely.
+- `can($ability)` checks `Gate::inspect($ability, $subject)` for the current
+  user, and `enabledWhen()` returns a bool or an
+  `Illuminate\Auth\Access\Response`. Either disables the action; a denied
+  response's message becomes its reason. `can()` runs first, and the first
+  denial wins. A guest denied by a policy that requires a user gets no reason.
+- `icon()`, `confirm()` (text for your own dialog), `destructive()`, and
+  `order()` are presentation only.
+
+Hiding or disabling an action is presentation, never authorization: your
+route must still authorize, as in the example's policy abilities.
+
+### Reading actions
+
+```php
+use Current\Actions\Actions;
+use Current\Facades\Current;
+
+Current::actions();                 // the current subject's actions, then the current page's
+app(Actions::class)->for($task);    // one object's actions, for a table row
+```
+
+Both return visible actions only, as `Current\Actions\ActionItem` objects
+with `id`, `name`, `label`, `url`, `method`, `icon`, `destructive`, `enabled`,
+`reason`, `confirm`, and `current`, which serialize to that object shape.
+`Current::actions()` uses the current subject as `Current::subject()` does, so
+a task's actions also appear on pages below the task's page; `current` marks a
+GET action whose target is the current request, such as Edit on the edit
+page, so you can hide or disable it.
+
 ## Errors
 
 Every exception implements `Current\Exceptions\CurrentException` and extends
@@ -514,10 +588,15 @@ request:
 php artisan current:pages          # the page tree: ID, label, route, icon
 php artisan current:menus          # every menu as a tree; or: current:menus primary
 php artisan current:subjects       # subject kinds: class, canonical page, presenting pages
+php artisan current:actions        # actions by subject kind and page: route, method, rules
 php artisan current:check          # validate everything; exits 1 on any problem
 ```
 
 `current:subjects` shows which kinds have a title, a description, or an icon.
+`current:actions` shows each action's route and method and which rules it has;
+`current:check` also reports actions on unknown kinds, pages, or routes, methods
+a route does not accept, and subject actions whose route lacks the kind's
+parameter without a mapping.
 Labels that come from callbacks are listed as `(dynamic)`; the commands never
 run label, parameter, or visibility callbacks. `current:menus` shows whether a
 menu is derived (with its roots, `except()` exclusions, and `exceptWhen()`
@@ -573,6 +652,9 @@ $this->assertMenuMissing('primary', 'admin');
   `assertMenuActive()` checks that the page is shown and active.
 - `assertCurrentSubject(?string $kind, ?string $id = null)` checks the current
   subject's kind, and its ID when given; pass null to assert there is none.
+- `assertActionHas()`, `assertActionMissing()`, `assertActionEnabled()`, and
+  `assertActionDisabled(string $id, ?string $reason = null)` check the
+  request's actions by ID, such as `task.archive`.
 - `assertTitle(string $title)` checks the active page's title, which falls
   back to its label; `assertDescription(?string $description)` checks its
   description, with null for none.

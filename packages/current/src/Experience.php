@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Current;
 
+use Current\Actions\ActionItem;
+use Current\Actions\Actions;
 use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
 use Current\Navigation\Breadcrumb;
@@ -138,6 +140,21 @@ final readonly class Experience
     public function subject(): ?SubjectItem
     {
         return $this->container->make(Subjects::class)->current();
+    }
+
+    /**
+     * Visible actions for the request: the current subject's, then the current
+     * page's, each in order; empty when no page is active. Current describes
+     * actions and never runs them.
+     *
+     * @return list<ActionItem>
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If the presented subject is not bound, or a callback or URL cannot be resolved.
+     */
+    public function actions(): array
+    {
+        return $this->container->make(Actions::class)->current();
     }
 
     /**

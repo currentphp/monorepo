@@ -2,7 +2,24 @@
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Actions (`Current\Actions\`): describe what users can do to a subject
+  kind (`Action::make()->for()`) or on a page (`->on()`), targeting the
+  application's own route and HTTP method, with `label()`, `icon()`,
+  `confirm()`, `destructive()`, `order()`, `visibleWhen()`, `enabledWhen()`
+  (bool or `Response`), and `can()` for a Gate ability. Current never runs
+  them. `Current::actions()` returns the current subject's and page's visible
+  actions, and `Actions::for($object)` one object's, as `ActionItem`
+  (`{ id, name, label, url, method, icon, destructive, enabled, reason,
+  confirm, current }`).
+- `current:actions` (with `--json`), action checks in `current:check`, and
+  `assertActionHas()`, `assertActionMissing()`, `assertActionEnabled()`, and
+  `assertActionDisabled()` in `InteractsWithCurrent`.
+
+### Changed
+
+- `current:check` counts actions in its summary line.
 
 ## 0.4.0 - 2026-11-17
 

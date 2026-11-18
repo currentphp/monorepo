@@ -26,14 +26,17 @@ final class CheckCommand extends InspectionCommand
         $pages = $inspector->pageCount();
         $menus = count($inspector->menuNames());
         $subjects = count($inspector->subjects());
+        $actions = count($inspector->actions());
         $this->components->info(sprintf(
-            'Current definitions are valid: %d %s, %d %s, %d %s.',
+            'Current definitions are valid: %d %s, %d %s, %d %s, %d %s.',
             $pages,
             $pages === 1 ? 'page' : 'pages',
             $menus,
             $menus === 1 ? 'menu' : 'menus',
             $subjects,
             $subjects === 1 ? 'subject' : 'subjects',
+            $actions,
+            $actions === 1 ? 'action' : 'actions',
         ));
 
         return self::SUCCESS;

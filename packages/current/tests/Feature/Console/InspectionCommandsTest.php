@@ -139,7 +139,7 @@ test('current:check passes valid definitions', function () {
     registerInspectionFixture();
 
     $this->artisan('current:check')
-        ->expectsOutputToContain('Current definitions are valid: 4 pages, 2 menus, 0 subjects.')
+        ->expectsOutputToContain('Current definitions are valid: 4 pages, 2 menus, 0 subjects, 0 actions.')
         ->assertExitCode(0);
 });
 

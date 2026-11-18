@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\ProjectExample;
-use App\Prototype\Actions\Actions;
 use App\TaskExample;
+use Current\Actions\Actions;
 use Current\Facades\Current;
 use Current\Subjects\Subjects;
 use Illuminate\Http\RedirectResponse;
@@ -15,7 +15,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Task admin for the actions prototype (WK-008). Every button on these pages
+ * Task admin built on Current\Actions. Every button on these pages
  * comes from the action description; the routes enforce authorization and
  * never write, because the demo data is fixtures.
  */
