@@ -12,6 +12,7 @@ this monorepo. Created from App Foundation `v0.1.0` (commit
 | `current/current`: breadcrumbs and menus | `ExperienceServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and user visibility, on every page. |
 | `current/inertia`                        | `HandleInertiaRequests::share()`                  | The `current` prop on every page, typed by the package's `current.d.ts`.                      |
 | `current/current`: subjects              | `ExperienceServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and `current.subject`.                  |
+| `current/current`: actions               | `ExperienceServiceProvider::registerActions()`    | The task admin: every button comes from the description; routes authorize and never write.    |
 
 [`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php) shares
 component output with every Inertia page as the `current` prop, through
