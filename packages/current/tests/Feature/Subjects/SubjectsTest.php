@@ -170,7 +170,7 @@ test('current:subjects lists kinds, and current:pages shows what pages present',
     ]);
 
     $this->artisan('current:pages')->expectsOutputToContain('(dynamic) · route projects.show · presents project')->assertExitCode(0);
-    $this->artisan('current:check')->expectsOutputToContain('5 pages, 0 menus, 2 subjects.')->assertExitCode(0);
+    $this->artisan('current:check')->expectsOutputToContain('5 pages, 0 menus, 2 subjects, 0 actions.')->assertExitCode(0);
 });
 
 test('current:check reports subject problems', function () {

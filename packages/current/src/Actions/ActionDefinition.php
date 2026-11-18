@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Prototype\Actions;
+namespace Current\Actions;
 
 use Closure;
 
-/** Prototype: an immutable registration snapshot of an action. */
+/** Immutable registration snapshot of an action; callbacks stay unevaluated until output is requested. */
 final readonly class ActionDefinition
 {
+    /** @internal Created by ActionRegistry from an Action builder. */
     public function __construct(
         public string $name,
         public ?string $kind,
@@ -26,7 +27,7 @@ final readonly class ActionDefinition
         public ?string $ability,
     ) {}
 
-    /** Identity in output: `task.archive` or `projects.tasks.create`. */
+    /** The action's identity: its kind or page, then its name, such as `task.archive`. */
     public function id(): string
     {
         return ($this->kind ?? $this->pageId).'.'.$this->name;

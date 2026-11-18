@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Models\User;
 use App\ProjectExample;
-use App\Prototype\Actions\Actions;
 use App\TaskExample;
+use Current\Actions\Actions;
 use Inertia\Testing\AssertableInertia as Assert;
 
-// Actions prototype (WK-008): what users can do, described once; the routes
+// Actions (Current\Actions): what users can do, described once; the routes
 // perform and authorize. Hidden actions are absent; disabled ones keep a reason.
 
 it('shows guests the task list without any actions', function () {
@@ -34,6 +34,7 @@ it('gives signed-in users the page action and each row its actions', function ()
             'enabled' => true,
             'reason' => null,
             'confirm' => null,
+            'current' => false,
         ])
         ->where('rows.0.actions.0.id', 'task.edit')
         ->where('rows.0.actions.0.url', route('tasks.edit', [42, 1]))
@@ -48,6 +49,7 @@ it('gives signed-in users the page action and each row its actions', function ()
             'enabled' => true,
             'reason' => null,
             'confirm' => 'Archive “Fix login”?',
+            'current' => false,
         ]));
 });
 
@@ -68,6 +70,7 @@ it('takes the current subject’s actions on pages below it', function () {
         ->component('tasks')
         ->where('title', 'Edit')
         ->where('actions.0.id', 'task.edit')
+        ->where('actions.0.current', true)
         ->where('actions.1.id', 'task.archive')
         ->where('form.method', 'put'));
 

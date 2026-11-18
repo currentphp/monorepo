@@ -117,6 +117,18 @@ finishing the description of each place and closing a menu gap:
 types matching. Integrations for Blade, Livewire, and Inertia are designed
 together once the core primitives are complete.
 
+### v0.5
+
+Planned as `current/current` 0.5.0, the last core primitive before the
+integrations are designed together:
+
+- **Actions** (`Current\Actions\`): what users can do to a subject or on a
+  page, described and never executed. Each action targets the application's
+  own route; visibility and enabled state, including Gate abilities, decide
+  what the readers return, and routes still authorize.
+
+`current/inertia` follows with a release that only requires core 0.5.
+
 ### Later
 
 These are candidates without a release target:
@@ -126,8 +138,6 @@ These are candidates without a release target:
 - a check that every named route has a page or is deliberately excluded;
 - optional route and view declarations alongside page definitions.
 
-Describing the actions available on a page or subject is a likely later
-direction; it will be named and scoped when it is planned.
 
 ## Not planned
 

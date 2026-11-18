@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Current;
 
+use Current\Actions\ActionRegistry;
+use Current\Actions\Actions;
+use Current\Console\ActionsCommand;
 use Current\Console\CheckCommand;
 use Current\Console\MenusCommand;
 use Current\Console\PagesCommand;
@@ -25,9 +28,11 @@ final class CurrentServiceProvider extends ServiceProvider
         $this->app->singleton(PageRegistry::class);
         $this->app->singleton(MenuRegistry::class);
         $this->app->singleton(SubjectRegistry::class);
+        $this->app->singleton(ActionRegistry::class);
         $this->app->scoped(Pages::class);
         $this->app->scoped(Navigation::class);
         $this->app->scoped(Subjects::class);
+        $this->app->scoped(Actions::class);
         // Stateless, so the facade's cached instance never holds request state.
         $this->app->singleton(Experience::class);
     }
@@ -36,7 +41,7 @@ final class CurrentServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([PagesCommand::class, MenusCommand::class, SubjectsCommand::class, CheckCommand::class]);
+            $this->commands([PagesCommand::class, MenusCommand::class, SubjectsCommand::class, ActionsCommand::class, CheckCommand::class]);
         }
     }
 }

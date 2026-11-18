@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Current\Testing;
 
+use Current\Actions\ActionItem;
 use Current\Facades\Current;
 use Current\Navigation\MenuItem;
 use PHPUnit\Framework\Assert;
 
 /**
- * Assertions about the last test request's page, breadcrumbs, and menus.
+ * Assertions about the last test request's page, breadcrumbs, menus, and actions.
  *
  * Add the trait to your application's TestCase, make a request, then assert:
  * `$this->get('/projects/42'); $this->assertCurrentPage('projects.show');`.
@@ -133,6 +134,83 @@ trait InteractsWithCurrent
         );
 
         return $this;
+    }
+
+    /** Assert that the request's actions include this action ID, such as `task.archive`. */
+    public function assertActionHas(string $id): static
+    {
+        Assert::assertNotNull($this->findAction($id), sprintf(
+            "Expected action '%s', but the actions were [%s].",
+            $id,
+            $this->describeActions(),
+        ));
+
+        return $this;
+    }
+
+    /** Assert that the request's actions leave out this action ID, as when visibleWhen() hides it. */
+    public function assertActionMissing(string $id): static
+    {
+        Assert::assertNull($this->findAction($id), sprintf(
+            "Expected no action '%s', but the actions were [%s].",
+            $id,
+            $this->describeActions(),
+        ));
+
+        return $this;
+    }
+
+    /** Assert that the action is shown and enabled. */
+    public function assertActionEnabled(string $id): static
+    {
+        $action = $this->findAction($id);
+        Assert::assertTrue($action?->enabled === true, sprintf(
+            "Expected action '%s' to be enabled, but %s.",
+            $id,
+            $action === null ? 'it was not shown' : 'it was disabled'.($action->reason === null ? '' : " ({$action->reason})"),
+        ));
+
+        return $this;
+    }
+
+    /** Assert that the action is shown and disabled, with this reason when one is given. */
+    public function assertActionDisabled(string $id, ?string $reason = null): static
+    {
+        $action = $this->findAction($id);
+        Assert::assertTrue($action !== null && ! $action->enabled, sprintf(
+            "Expected action '%s' to be disabled, but %s.",
+            $id,
+            $action === null ? 'it was not shown' : 'it was enabled',
+        ));
+        if ($reason !== null) {
+            Assert::assertSame($reason, $action->reason, sprintf(
+                "Expected action '%s' to be disabled because '%s', but the reason was %s.",
+                $id,
+                $reason,
+                $action->reason === null ? 'none' : "'{$action->reason}'",
+            ));
+        }
+
+        return $this;
+    }
+
+    private function findAction(string $id): ?ActionItem
+    {
+        foreach (Current::actions() as $action) {
+            if ($action->id === $id) {
+                return $action;
+            }
+        }
+
+        return null;
+    }
+
+    private function describeActions(): string
+    {
+        return implode(', ', array_map(
+            fn (ActionItem $action): string => $action->id.($action->enabled ? '' : ' (disabled)'),
+            Current::actions(),
+        ));
     }
 
     /** @param list<MenuItem> $items */

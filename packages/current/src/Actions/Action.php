@@ -2,21 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Prototype\Actions;
+namespace Current\Actions;
 
 use Closure;
-use LogicException;
+use Current\Exceptions\InvalidDefinition;
 
 /**
- * Prototype of Current\Actions\Action (WK-008): describes something a user can
- * do to a subject or on a page. Never executes it: the target is the app's own
- * route, and availability callbacks only decide what the reader returns.
+ * A declaration builder for something a user can do to a subject or on a page.
  *
- * Callbacks receive the subject object then the Context for subject actions,
- * and the Context alone for page actions.
+ * Current describes actions and never runs them: the target is the
+ * application's own route, which performs and authorizes the action.
+ * Registration takes a snapshot.
+ *
+ * Callbacks receive the subject object, then the request Context, for subject
+ * actions, and the Context alone for page actions. They run when output is
+ * requested and must be free of side effects.
  */
 final class Action
 {
+    private const array METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'];
+
     private ?string $kind = null;
 
     private ?string $pageId = null;
@@ -45,6 +50,7 @@ final class Action
 
     private function __construct(public readonly string $name) {}
 
+    /** Start a declaration with a name, unique within its subject kind or page, such as `archive`. */
     public static function make(string $name): self
     {
         return new self($name);
@@ -66,6 +72,9 @@ final class Action
         return $this;
     }
 
+    /**
+     * Set the label. Required.
+     */
     public function label(string|callable $label): self
     {
         $this->label = is_string($label) ? $label : Closure::fromCallable($label);
@@ -74,10 +83,13 @@ final class Action
     }
 
     /**
-     * The app's own route that performs the action, and its HTTP method.
+     * Name the application's route that performs the action, and its HTTP method. Required.
      *
-     * Subject actions pass the subject as the parameter named after its kind,
-     * unless a callback maps it; page actions forward the active request's parameters.
+     * A subject action passes the subject as the route parameter named after
+     * its kind, unless the callback maps the subject to parameters, such as
+     * `fn (Task $task) => ['project' => $task->project, 'task' => $task]`. A
+     * page action forwards the current request's parameters. Only parameters
+     * the route declares are used.
      */
     public function route(string $name, string $method = 'GET', ?callable $parameters = null): self
     {
@@ -88,6 +100,7 @@ final class Action
         return $this;
     }
 
+    /** Set an optional presentation identifier; the application renders it. */
     public function icon(string $icon): self
     {
         $this->icon = $icon;
@@ -95,7 +108,9 @@ final class Action
         return $this;
     }
 
-    /** Confirmation text for the app's own dialog; Current shows nothing itself. */
+    /**
+     * Set confirmation text for the application's own dialog; Current shows nothing.
+     */
     public function confirm(string|callable $confirm): self
     {
         $this->confirm = is_string($confirm) ? $confirm : Closure::fromCallable($confirm);
@@ -103,6 +118,7 @@ final class Action
         return $this;
     }
 
+    /** Mark the action as destructive, for emphasis. */
     public function destructive(bool $destructive = true): self
     {
         $this->destructive = $destructive;
@@ -110,6 +126,7 @@ final class Action
         return $this;
     }
 
+    /** Set ascending order among the subject's or page's actions; ties keep registration order. */
     public function order(int $order): self
     {
         $this->order = $order;
@@ -117,7 +134,12 @@ final class Action
         return $this;
     }
 
-    /** Hide the action when the callback returns false. */
+    /**
+     * Hide the action when the callback returns false. Presentation only:
+     * the route must still authorize.
+     *
+     * @param  callable  $visible  Receives the subject then the Context, or the Context alone.
+     */
     public function visibleWhen(callable $visible): self
     {
         $this->visibleWhen = Closure::fromCallable($visible);
@@ -125,7 +147,12 @@ final class Action
         return $this;
     }
 
-    /** Disable the action, with an optional reason, when the callback returns false or a denied Response. */
+    /**
+     * Disable the action when the callback returns false or a denied
+     * `Illuminate\Auth\Access\Response`, whose message becomes the reason.
+     *
+     * @param  callable  $enabled  Receives the subject then the Context, or the Context alone.
+     */
     public function enabledWhen(callable $enabled): self
     {
         $this->enabledWhen = Closure::fromCallable($enabled);
@@ -133,7 +160,11 @@ final class Action
         return $this;
     }
 
-    /** Shorthand for enabledWhen() with Gate::inspect($ability, $subject) for the current user. */
+    /**
+     * Disable the action unless the current user passes this Gate ability,
+     * checked with `Gate::inspect()` against the subject (or no arguments for a
+     * page action). It runs before enabledWhen(); the first denial wins.
+     */
     public function can(string $ability): self
     {
         $this->ability = $ability;
@@ -141,16 +172,31 @@ final class Action
         return $this;
     }
 
+    /**
+     * @internal Snapshot taken by ActionRegistry.
+     *
+     * @throws InvalidDefinition If the attachment, label, route, or method is invalid.
+     */
     public function toDefinition(): ActionDefinition
     {
+        if (trim($this->name) === '') {
+            throw new InvalidDefinition('Actions must have a non-empty name.');
+        }
         if (($this->kind === null) === ($this->pageId === null)) {
-            throw new LogicException("Action '{$this->name}' must use exactly one of for() or on().");
+            throw new InvalidDefinition("Action '{$this->name}' must use exactly one of for() or on().");
         }
-        if ($this->label === null) {
-            throw new LogicException("Action '{$this->name}' must have a label().");
+        $owner = ($this->kind ?? $this->pageId).'.'.$this->name;
+        if ($this->label === null || $this->label === '') {
+            throw new InvalidDefinition("Action '{$owner}' must have a label().");
         }
-        if ($this->routeName === null) {
-            throw new LogicException("Action '{$this->name}' must have a route().");
+        if ($this->routeName === null || trim($this->routeName) === '') {
+            throw new InvalidDefinition("Action '{$owner}' must have a route().");
+        }
+        if (! in_array($this->method, self::METHODS, true)) {
+            throw new InvalidDefinition("Action '{$owner}' has an unsupported method '{$this->method}'.");
+        }
+        if ($this->confirm === '') {
+            throw new InvalidDefinition("Action '{$owner}' has an empty confirmation.");
         }
 
         return new ActionDefinition(

@@ -1,0 +1,293 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Current\Actions;
+
+use Closure;
+use Current\Context;
+use Current\Exceptions\InvalidDefinition;
+use Current\Exceptions\ResolutionFailed;
+use Current\Pages\Pages;
+use Current\Subjects\SubjectRegistry;
+use Current\Support\RouteParameters;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Routing\Router;
+use Throwable;
+
+/**
+ * Resolves described actions for the current request; never runs them.
+ *
+ * Returns visible actions with their target URL and method, and whether each
+ * is enabled. Hidden actions are left out entirely; disabled ones keep their
+ * reason. Callbacks run only for the actions being resolved.
+ */
+final class Actions
+{
+    /** Route references are checked once per request or job; registries are frozen by then. */
+    private bool $validated = false;
+
+    /** @internal Resolved from the container, scoped to the request or job. */
+    public function __construct(
+        private readonly ActionRegistry $registry,
+        private readonly SubjectRegistry $subjects,
+        private readonly Pages $pages,
+        private readonly Router $router,
+        private readonly UrlGenerator $urls,
+        private readonly Gate $gate,
+    ) {}
+
+    /**
+     * Resolve one subject's actions, such as for a table row.
+     *
+     * Works wherever Laravel can generate URLs. Callbacks see the current
+     * request's context, or an empty one outside a request.
+     *
+     * @return list<ActionItem>
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If no subject kind accepts the object, or a callback or URL cannot be resolved.
+     */
+    public function for(object $subject): array
+    {
+        $kind = $this->subjects->forObject($subject)
+            ?? throw new ResolutionFailed('No subject kind accepts '.$subject::class.'.');
+        $this->validate();
+
+        return $this->resolve($this->registry->forKind($kind->name), $this->pages->context(), $subject);
+    }
+
+    /**
+     * Resolve the current subject's actions, then the current page's.
+     *
+     * The current subject is the one the active page presents, or else its
+     * nearest presenting ancestor's, as for `Current::subject()`. Empty when no
+     * page is active.
+     *
+     * @return list<ActionItem>
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If the presented subject is not bound, or a callback or URL cannot be resolved.
+     */
+    public function current(): array
+    {
+        $context = $this->pages->context();
+        if ($context->page === null) {
+            return [];
+        }
+        $this->validate();
+
+        $items = [];
+        foreach (array_reverse($this->pages->activeTrail($context)) as $page) {
+            if ($page->presents !== null) {
+                $items = $this->resolve($this->registry->forKind($page->presents), $context, $this->pages->presentedObject($page, $context));
+                break;
+            }
+        }
+
+        return [...$items, ...$this->resolve($this->registry->forPage($context->page->id), $context, null)];
+    }
+
+    /**
+     * Describe every problem that needs Laravel's routes: unknown routes,
+     * methods a route does not accept, and subject actions whose route lacks
+     * the kind's parameter.
+     *
+     * @internal Read by current:check; readers throw the first problem.
+     *
+     * @return list<string>
+     *
+     * @throws InvalidDefinition If the action registry cannot be finalized.
+     */
+    public function problems(): array
+    {
+        $problems = [];
+        foreach ($this->registry->all() as $action) {
+            $id = $action->id();
+            $route = $this->router->getRoutes()->getByName($action->routeName);
+            if ($route === null) {
+                $problems[] = "Action '{$id}' targets unknown route '{$action->routeName}'.";
+
+                continue;
+            }
+            $methods = self::strings($route->methods());
+            if (! in_array($action->method, $methods, true)) {
+                $problems[] = "Action '{$id}' uses {$action->method}, but route '{$action->routeName}' accepts ".implode(', ', $methods).'.';
+            }
+            if ($action->kind !== null && $action->routeParameters === null && ! in_array($action->kind, self::strings($route->parameterNames()), true)) {
+                $problems[] = "Action '{$id}' targets route '{$action->routeName}', which has no '{$action->kind}' parameter; map the subject with route()'s parameter callback.";
+            }
+        }
+
+        return $problems;
+    }
+
+    /**
+     * @param  list<ActionDefinition>  $actions
+     * @return list<ActionItem>
+     *
+     * @throws ResolutionFailed
+     */
+    private function resolve(array $actions, Context $context, ?object $subject): array
+    {
+        $items = [];
+        foreach ($actions as $action) {
+            $id = $action->id();
+            $arguments = $subject === null ? [$context] : [$subject, $context];
+            if ($action->visibleWhen !== null && ! $this->visible($action->visibleWhen, $arguments, $id)) {
+                continue;
+            }
+
+            [$enabled, $reason] = $this->availability($action, $arguments, $context, $subject);
+            $url = $this->url($action, $context, $subject);
+
+            $items[] = new ActionItem(
+                id: $id,
+                name: $action->name,
+                label: self::text($action->label, $arguments, $id, 'label'),
+                url: $url,
+                method: $action->method,
+                icon: $action->icon,
+                destructive: $action->destructive,
+                enabled: $enabled,
+                reason: $reason,
+                confirm: $action->confirm === null ? null : self::text($action->confirm, $arguments, $id, 'confirmation'),
+                current: $action->method === 'GET'
+                    && $this->router->current()?->getName() === $action->routeName
+                    && $url === $this->urls->current(),
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * Check can(), then enabledWhen(); the first denial wins and later checks do not run.
+     *
+     * @param  list<mixed>  $arguments
+     * @return array{bool, ?string}
+     *
+     * @throws ResolutionFailed
+     */
+    private function availability(ActionDefinition $action, array $arguments, Context $context, ?object $subject): array
+    {
+        $id = $action->id();
+        if ($action->ability !== null) {
+            try {
+                $gate = $context->user === null ? $this->gate : $this->gate->forUser($context->user);
+                $response = $gate->inspect($action->ability, $subject === null ? [] : [$subject]);
+            } catch (Throwable $exception) {
+                throw new ResolutionFailed("Could not check ability '{$action->ability}' for action '{$id}': {$exception->getMessage()}", 0, $exception);
+            }
+            if ($response->denied()) {
+                return [false, $response->message()];
+            }
+        }
+
+        if ($action->enabledWhen !== null) {
+            $result = self::call($action->enabledWhen, $arguments, $id, 'enabled');
+            if ($result instanceof Response) {
+                return $result->denied() ? [false, $result->message()] : [true, null];
+            }
+            if (! is_bool($result)) {
+                throw new ResolutionFailed("Enabled callback for action '{$id}' must return a bool or an Illuminate\\Auth\\Access\\Response.");
+            }
+            if (! $result) {
+                return [false, null];
+            }
+        }
+
+        return [true, null];
+    }
+
+    /** @throws ResolutionFailed */
+    private function url(ActionDefinition $action, Context $context, ?object $subject): string
+    {
+        $id = $action->id();
+        if ($subject === null) {
+            $available = $context->parameters();
+        } elseif ($action->routeParameters === null) {
+            $available = [(string) $action->kind => $subject];
+        } else {
+            $available = RouteParameters::resolve($action->routeParameters, $subject, "action '{$id}'");
+        }
+
+        $route = $this->router->getRoutes()->getByName($action->routeName)
+            ?? throw new ResolutionFailed("Action '{$id}' targets unknown route '{$action->routeName}'.");
+        // Forward only parameters the route declares; extras never become query strings.
+        $parameters = array_intersect_key($available, array_flip(self::strings($route->parameterNames())));
+
+        try {
+            return $this->urls->route($action->routeName, $parameters);
+        } catch (Throwable $exception) {
+            throw new ResolutionFailed("Could not generate URL for action '{$id}' and route '{$action->routeName}': {$exception->getMessage()}", 0, $exception);
+        }
+    }
+
+    /**
+     * @param  list<mixed>  $arguments
+     *
+     * @throws ResolutionFailed
+     */
+    private function visible(Closure $callback, array $arguments, string $id): bool
+    {
+        $visible = self::call($callback, $arguments, $id, 'visibility');
+
+        return is_bool($visible)
+            ? $visible
+            : throw new ResolutionFailed("Visibility callback for action '{$id}' must return a bool.");
+    }
+
+    /**
+     * @param  list<mixed>  $arguments
+     *
+     * @throws ResolutionFailed
+     */
+    private static function text(string|Closure $value, array $arguments, string $id, string $fact): string
+    {
+        $text = is_string($value) ? $value : self::call($value, $arguments, $id, $fact);
+        if (! is_string($text) || trim($text) === '') {
+            throw new ResolutionFailed(ucfirst($fact)." callback for action '{$id}' must return a non-empty string.");
+        }
+
+        return $text;
+    }
+
+    /**
+     * @param  list<mixed>  $arguments
+     *
+     * @throws ResolutionFailed
+     */
+    private static function call(Closure $callback, array $arguments, string $id, string $fact): mixed
+    {
+        try {
+            return $callback(...$arguments);
+        } catch (Throwable $exception) {
+            throw new ResolutionFailed("Could not resolve {$fact} for action '{$id}': {$exception->getMessage()}", 0, $exception);
+        }
+    }
+
+    /**
+     * @param  array<mixed>  $values
+     * @return list<string>
+     */
+    private static function strings(array $values): array
+    {
+        return array_values(array_filter($values, is_string(...)));
+    }
+
+    /** @throws InvalidDefinition */
+    private function validate(): void
+    {
+        if ($this->validated) {
+            return;
+        }
+        $problems = $this->problems();
+        if ($problems !== []) {
+            throw new InvalidDefinition($problems[0]);
+        }
+        $this->validated = true;
+    }
+}

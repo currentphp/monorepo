@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Current\Context context()
  * @method static \Illuminate\Contracts\Auth\Authenticatable|null user()
  * @method static \Current\Subjects\SubjectItem|null subject()
+ * @method static list<\Current\Actions\ActionItem> actions()
  *
  * @see \Current\Current
  */

@@ -6,9 +6,9 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\ProjectExample;
-use App\Prototype\Actions\Action;
-use App\Prototype\Actions\ActionRegistry;
 use App\TaskExample;
+use Current\Actions\Action;
+use Current\Actions\ActionRegistry;
 use Current\Context;
 use Current\Navigation\MenuEntry;
 use Current\Navigation\MenuRegistry;
@@ -28,11 +28,6 @@ use Illuminate\Support\ServiceProvider;
  */
 final class ExperienceServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        $this->app->singleton(ActionRegistry::class);
-    }
-
     public function boot(PageRegistry $pages, MenuRegistry $menus, SubjectRegistry $subjects, ActionRegistry $actions): void
     {
         $this->registerSubjects($subjects);
@@ -42,7 +37,7 @@ final class ExperienceServiceProvider extends ServiceProvider
     }
 
     /**
-     * Capability prototype (WK-008): what users can do to tasks and on the task list.
+     * Actions (Current\Actions): what users can do to tasks and on the task list.
      * Described only; TaskController performs and authorizes each action.
      */
     private function registerActions(ActionRegistry $actions): void

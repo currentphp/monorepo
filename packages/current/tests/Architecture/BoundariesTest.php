@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Current\Actions\Actions;
 use Current\Context;
 use Current\CurrentServiceProvider;
 use Current\Experience;
@@ -24,6 +25,7 @@ arch('only the edges use Laravel')
         Pages::class,
         Navigation::class,
         Subjects::class,
+        Actions::class,
         'Current\Tests',
     ]);
 
