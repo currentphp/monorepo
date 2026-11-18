@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Current\Navigation;
 
+use Closure;
 use Current\Context;
 use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
@@ -73,22 +74,29 @@ final readonly class Navigation
         $entries = $this->menus->entries($name);
 
         return $entries === null
-            ? $this->items($this->menus->roots($name), array_flip($this->menus->exclusions($name)), $context, $activeIds)
+            ? $this->items($name, $this->menus->roots($name), array_flip($this->menus->exclusions($name)), $this->menus->conditionalExclusions($name), $context, $activeIds)
             : $this->explicitItems($name, $entries, $context, $activeIds);
     }
 
     /**
      * @param  list<PageDefinition>  $pages
      * @param  array<string, int>  $excluded  Page IDs as keys.
+     * @param  array<string, list<Closure(Context): mixed>>  $excludedWhen  Request-time exclusions by page ID.
      * @param  list<string>  $activeIds
      * @return list<MenuItem>
      */
-    private function items(array $pages, array $excluded, Context $context, array $activeIds): array
+    private function items(string $name, array $pages, array $excluded, array $excludedWhen, Context $context, array $activeIds): array
     {
         $items = [];
         foreach ($pages as $page) {
             if (isset($excluded[$page->id])) {
                 continue;
+            }
+            // Guard before resolving the page's label, URL, or descendants.
+            foreach ($excludedWhen[$page->id] ?? [] as $predicate) {
+                if ($this->predicate($predicate, $context, "menu '{$name}' exclusion of page '{$page->id}'", 'exclusion')) {
+                    continue 2;
+                }
             }
             $items[] = new MenuItem(
                 $page->id,
@@ -96,7 +104,7 @@ final readonly class Navigation
                 $this->pages->url($page, $context),
                 $page->id === $context->page?->id,
                 in_array($page->id, $activeIds, true),
-                $this->items($this->registry->children($page->id), $excluded, $context, $activeIds),
+                $this->items($name, $this->registry->children($page->id), $excluded, $excludedWhen, $context, $activeIds),
                 $this->pages->icon($page),
             );
         }
@@ -115,18 +123,8 @@ final readonly class Navigation
         foreach ($entries as $entry) {
             $owner = "menu '{$name}' entry '{$entry->id}'";
             // Guard before resolving resource-dependent labels, URLs, or descendants.
-            if ($entry->visibility !== null) {
-                try {
-                    $visible = ($entry->visibility)($context);
-                } catch (Throwable $exception) {
-                    throw new ResolutionFailed("Could not resolve visibility for {$owner}: {$exception->getMessage()}", 0, $exception);
-                }
-                if (! is_bool($visible)) {
-                    throw new ResolutionFailed("Visibility callback for {$owner} must return a bool.");
-                }
-                if (! $visible) {
-                    continue;
-                }
+            if ($entry->visibility !== null && ! $this->predicate($entry->visibility, $context, $owner, 'visibility')) {
+                continue;
             }
 
             $children = $this->explicitItems($name, $entry->children, $context, $activeIds);
@@ -155,5 +153,23 @@ final readonly class Navigation
         }
 
         return $items;
+    }
+
+    /**
+     * Run a menu predicate, such as a visibility or exclusion callback.
+     *
+     * @param  Closure(Context): mixed  $predicate
+     *
+     * @throws ResolutionFailed If the callback throws or does not return a bool.
+     */
+    private function predicate(Closure $predicate, Context $context, string $owner, string $fact): bool
+    {
+        try {
+            $result = $predicate($context);
+        } catch (Throwable $exception) {
+            throw new ResolutionFailed("Could not resolve {$fact} for {$owner}: {$exception->getMessage()}", 0, $exception);
+        }
+
+        return is_bool($result) ? $result : throw new ResolutionFailed(ucfirst($fact)." callback for {$owner} must return a bool.");
     }
 }

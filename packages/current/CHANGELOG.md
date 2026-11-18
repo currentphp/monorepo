@@ -21,6 +21,11 @@
   page's icon with that fallback. `current:subjects` shows which kinds have
   each. `SubjectItem` output is unchanged.
 
+- Request-time visibility for derived menus: `DerivedMenu::exceptWhen($pageId,
+  $callback)` leaves a page and its subtree out of that menu when the callback
+  returns true for the request. `current:menus` lists these pages, and
+  `--json` adds `exceptWhen` to derived menus.
+
 ### Changed
 
 - `PageDefinition` has `title` and `description`, and `SubjectDefinition` has

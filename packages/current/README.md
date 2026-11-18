@@ -259,8 +259,22 @@ breadcrumbs, can appear in other menus, and still make their ancestors active:
 on a project's page, Projects is active even though the project is not listed.
 Excluded branches do not run label or parameter callbacks. Exclusion is
 presentation configuration, never an HTTP authorization rule. Overlapping
-roots that would list a page twice are rejected. Derived menus have no
-request-time visibility; use an explicit menu when entries depend on the user.
+roots that would list a page twice are rejected.
+
+To hide a page from some requests, add a callback with `exceptWhen()`:
+
+```php
+$menus->derive('primary', 'dashboard', 'projects', 'billing')
+    ->exceptWhen('billing', fn (Context $context): bool => ! $context->user?->can('manageBilling'));
+```
+
+The page and its subtree are left out of that menu whenever the callback
+returns true. The callback receives the request's `Context`, must return a
+bool, and runs only when the menu reaches the page, before its label or URL;
+callbacks below an excluded page never run. Several callbacks for one page
+hide it when any returns true. Like `except()`, it changes only this menu:
+breadcrumbs, other menus, and ancestor active state are unaffected, and it
+never replaces an authorization check on the route.
 
 ### Explicit menus
 
@@ -506,7 +520,8 @@ php artisan current:check          # validate everything; exits 1 on any problem
 `current:subjects` shows which kinds have a title, a description, or an icon.
 Labels that come from callbacks are listed as `(dynamic)`; the commands never
 run label, parameter, or visibility callbacks. `current:menus` shows whether a
-menu is derived (with its roots and `except()` exclusions) or defined, which
+menu is derived (with its roots, `except()` exclusions, and `exceptWhen()`
+pages, marked "hidden when") or defined, which
 entries are groups, and which have a `visibleWhen()` rule.
 
 `current:check` reports duplicate or cyclic pages, unknown parents, unknown
@@ -521,7 +536,8 @@ Pages are nested under `children`, with `label` null and `dynamicLabel` true
 for callback labels, and the same for `title`/`dynamicTitle` and
 `description`/`dynamicDescription` (a null `title` that is not dynamic means
 the title is the label); menus have `name`, `kind` (`derived` or `defined`),
-`roots`, `except`, and nested `entries`.
+`roots`, `except`, `exceptWhen`, and nested `entries`, where `visibility` is
+true for entries with a `visibleWhen()` or `exceptWhen()` rule.
 
 ## Testing
 

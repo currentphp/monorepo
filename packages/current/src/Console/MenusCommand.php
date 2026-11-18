@@ -46,10 +46,11 @@ final class MenusCommand extends InspectionCommand
         foreach ($menus as $menu) {
             $source = $menu['kind'] === 'derived'
                 ? 'derived from '.implode(', ', $menu['roots']).($menu['except'] === [] ? '' : '; except '.implode(', ', $menu['except']))
+                    .($menu['exceptWhen'] === [] ? '' : '; except when: '.implode(', ', $menu['exceptWhen']))
                 : 'defined';
             $this->newLine();
             $this->line("  <options=bold>{$menu['name']}</> <fg=gray>({$source})</>");
-            $this->render($menu['entries'], 1);
+            $this->render($menu['entries'], 1, $menu['kind'] === 'derived' ? 'hidden when' : 'visible when');
         }
         $this->newLine();
 
@@ -57,7 +58,7 @@ final class MenusCommand extends InspectionCommand
     }
 
     /** @param list<mixed> $entries */
-    private function render(array $entries, int $depth): void
+    private function render(array $entries, int $depth, string $rule): void
     {
         /** @var list<MenuNode> $entries */
         foreach ($entries as $entry) {
@@ -65,11 +66,11 @@ final class MenusCommand extends InspectionCommand
                 $entry['label'] ?? '(dynamic)',
                 $entry['kind'] === 'group' ? 'group' : null,
                 $entry['icon'] === null ? null : 'icon '.$entry['icon'],
-                $entry['visibility'] ? 'visible when' : null,
+                $entry['visibility'] ? $rule : null,
             ]);
             // Written directly: the two-column component trims the indentation.
             $this->line('  '.str_repeat('  ', $depth).$entry['id'].'  <fg=gray>'.implode(' · ', $details).'</>');
-            $this->render($entry['children'], $depth + 1);
+            $this->render($entry['children'], $depth + 1, $rule);
         }
     }
 }
