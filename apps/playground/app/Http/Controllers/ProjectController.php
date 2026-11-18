@@ -6,39 +6,41 @@ namespace App\Http\Controllers;
 
 use App\ProjectExample;
 use App\TaskExample;
+use Current\Facades\Current;
 use Current\Subjects\SubjectItem;
 use Current\Subjects\Subjects;
 use Inertia\Inertia;
 use Inertia\Response;
 
-/** Projects demo: resource pages whose breadcrumbs and menus come from Current shared props. */
+/** Projects demo: resource pages whose titles, breadcrumbs, and menus come from Current. */
 final class ProjectController extends Controller
 {
     public function index(): Response
     {
-        return $this->render('Projects');
+        return $this->render();
     }
 
     public function show(ProjectExample $project): Response
     {
-        return $this->render($project->name, $project);
+        return $this->render($project);
     }
 
     public function edit(ProjectExample $project): Response
     {
-        return $this->render('Edit '.$project->name, $project);
+        return $this->render($project);
     }
 
     /** A task inside its project; the task is the page's subject. */
     public function task(ProjectExample $project, TaskExample $task): Response
     {
-        return $this->render($task->title, $project);
+        return $this->render($project);
     }
 
-    private function render(string $title, ?ProjectExample $project = null): Response
+    private function render(?ProjectExample $project = null): Response
     {
         return Inertia::render('projects', [
-            'title' => $title,
+            // The page heading and document title: the page's title, else its label or subject.
+            'title' => Current::title(),
             'project' => $project === null ? null : ['id' => $project->id, 'name' => $project->name],
             // Canonical subject links, built from the objects alone.
             'tasks' => $project === null ? [] : array_map(
