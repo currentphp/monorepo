@@ -65,6 +65,33 @@ final readonly class Experience
     }
 
     /**
+     * The active page's title for headings and the document title, falling back
+     * to its label; null when no page is active.
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If a title or label callback cannot be resolved.
+     */
+    public function title(): ?string
+    {
+        $context = $this->pages()->context();
+
+        return $context->page === null ? null : $this->pages()->title($context->page, $context);
+    }
+
+    /**
+     * The active page's description; null when it has none or no page is active.
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If the description callback cannot be resolved.
+     */
+    public function description(): ?string
+    {
+        $context = $this->pages()->context();
+
+        return $context->page === null ? null : $this->pages()->description($context->page, $context);
+    }
+
+    /**
      * Breadcrumbs for the active page, root first; empty when no page is active.
      *
      * @return list<Breadcrumb>

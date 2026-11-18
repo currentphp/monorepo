@@ -24,6 +24,12 @@ final class Page
 
     private ?string $icon = null;
 
+    /** @var null|string|Closure(Context): mixed */
+    private string|Closure|null $title = null;
+
+    /** @var null|string|Closure(Context): mixed */
+    private string|Closure|null $description = null;
+
     private bool $labelled = false;
 
     private ?string $presents = null;
@@ -60,6 +66,36 @@ final class Page
     {
         $this->label = is_string($label) ? $label : Closure::fromCallable($label);
         $this->labelled = true;
+
+        return $this;
+    }
+
+    /**
+     * Set the title for headings and the document title; without one, the title is the label.
+     *
+     * The label stays the short name in breadcrumbs and menus. Callbacks must
+     * return a non-empty string and may run repeatedly when output is requested.
+     *
+     * @param  string|callable(Context): mixed  $title
+     */
+    public function title(string|callable $title): self
+    {
+        $this->title = is_string($title) ? $title : Closure::fromCallable($title);
+
+        return $this;
+    }
+
+    /**
+     * Set a short description, such as for a meta description or a lead paragraph.
+     *
+     * A page has no description unless it sets one; the label is never used.
+     * Callbacks must return a non-empty string, or null for no description.
+     *
+     * @param  string|callable(Context): mixed  $description
+     */
+    public function description(string|callable $description): self
+    {
+        $this->description = is_string($description) ? $description : Closure::fromCallable($description);
 
         return $this;
     }
@@ -188,6 +224,8 @@ final class Page
             $this->presents,
             $this->presentsParameter,
             $this->labelled,
+            $this->title,
+            $this->description,
         );
     }
 }

@@ -63,3 +63,21 @@ test('roots and siblings retain registration order on ties', function () {
     expect(array_column($registry->children(null), 'id'))->toBe(['a', 'b'])
         ->and(array_column($registry->children('a'), 'id'))->toBe(['first', 'second']);
 });
+
+test('empty titles and descriptions are rejected at registration', function (Page $page, string $message) {
+    expect(fn () => (new PageRegistry)->register($page))->toThrow(InvalidDefinition::class, $message);
+})->with([
+    'title' => [Page::make('settings')->title('  '), "Page 'settings' has an empty title."],
+    'description' => [Page::make('settings')->description(''), "Page 'settings' has an empty description."],
+]);
+
+test('titles and descriptions are snapshotted with the page', function () {
+    $registry = new PageRegistry;
+    $page = Page::make('settings')->label('Settings')->title('Your settings')->description('Preferences.');
+    $registry->register($page);
+    $page->title('Changed')->description('Changed.');
+
+    expect($registry->page('settings')->title)->toBe('Your settings')
+        ->and($registry->page('settings')->description)->toBe('Preferences.')
+        ->and($registry->page('settings')->label)->toBe('Settings');
+});

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Current\Console;
 
+use Closure;
 use Current\Exceptions\InvalidDefinition;
 use Current\Navigation\MenuEntryDefinition;
 use Current\Navigation\MenuRegistry;
@@ -21,7 +22,7 @@ use Current\Subjects\Subjects;
  *
  * @internal Shared by the current:pages, current:menus, and current:check commands.
  *
- * @phpstan-type PageNode array{id: string, label: ?string, dynamicLabel: bool, route: ?string, routeParameters: bool, icon: ?string, presents: ?string, children: list<mixed>}
+ * @phpstan-type PageNode array{id: string, label: ?string, dynamicLabel: bool, title: ?string, dynamicTitle: bool, description: ?string, dynamicDescription: bool, route: ?string, routeParameters: bool, icon: ?string, presents: ?string, children: list<mixed>}
  * @phpstan-type SubjectDescription array{name: string, class: ?string, page: ?string, routeParameters: bool, presentedBy: list<string>}
  * @phpstan-type MenuNode array{kind: 'page'|'group', id: string, label: ?string, dynamicLabel: bool, icon: ?string, visibility: bool, children: list<mixed>}
  * @phpstan-type MenuDescription array{name: string, kind: 'derived'|'defined', roots: list<string>, except: list<string>, entries: list<MenuNode>}
@@ -135,6 +136,11 @@ final readonly class Inspector
             // A page that presents a subject without its own label takes the subject's, per request.
             'label' => is_string($page->label) && ($page->presents === null || $page->labelled) ? $page->label : null,
             'dynamicLabel' => ! is_string($page->label) || ($page->presents !== null && ! $page->labelled),
+            // Null with dynamicTitle false means the title is the label.
+            'title' => is_string($page->title) ? $page->title : null,
+            'dynamicTitle' => $page->title instanceof Closure,
+            'description' => is_string($page->description) ? $page->description : null,
+            'dynamicDescription' => $page->description instanceof Closure,
             'route' => $page->routeName,
             'routeParameters' => $page->routeParameters !== null,
             'icon' => $page->icon,

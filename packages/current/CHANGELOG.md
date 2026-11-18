@@ -2,7 +2,22 @@
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Page titles and descriptions: `Page::title()` and `Page::description()`
+  take a string or a `Context` callback. `Current::title()` returns the active
+  page's title, falling back to its label; `Current::description()` returns
+  its description or null, never the label. `Pages::title()` and
+  `Pages::description()` resolve any page. Breadcrumbs and menus keep using
+  labels.
+- `current:pages` lists titles and descriptions, and `--json` adds `title`,
+  `dynamicTitle`, `description`, and `dynamicDescription`.
+- `assertTitle()` and `assertDescription()` in `InteractsWithCurrent`.
+
+### Changed
+
+- `PageDefinition` has `title` and `description`. Empty title or description
+  strings are rejected at registration.
 
 ## 0.3.0 - 2026-11-16
 

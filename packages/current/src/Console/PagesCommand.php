@@ -44,6 +44,8 @@ final class PagesCommand extends InspectionCommand
         foreach ($pages as $page) {
             $details = array_filter([
                 $page['label'] ?? '(dynamic)',
+                $page['dynamicTitle'] ? 'title (dynamic)' : ($page['title'] === null ? null : 'title "'.$page['title'].'"'),
+                $page['dynamicDescription'] ? 'description (dynamic)' : ($page['description'] === null ? null : 'description "'.$page['description'].'"'),
                 $page['route'] === null ? 'no route' : 'route '.$page['route'],
                 $page['icon'] === null ? null : 'icon '.$page['icon'],
                 $page['presents'] === null ? null : 'presents '.$page['presents'],

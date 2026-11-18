@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Current\Pages\PageDefinition|null page()
  * @method static string|null pageId()
  * @method static bool is(string ...$patterns)
+ * @method static string|null title()
+ * @method static string|null description()
  * @method static list<\Current\Navigation\Breadcrumb> breadcrumbs()
  * @method static list<\Current\Navigation\MenuItem> menu(string $name)
  * @method static \Current\Context context()

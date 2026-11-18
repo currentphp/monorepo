@@ -104,6 +104,37 @@ final class Pages
     }
 
     /**
+     * Resolve a page's title for headings and the document title, falling back to its label.
+     *
+     * @throws InvalidDefinition If subject definitions are invalid.
+     * @throws ResolutionFailed If a callback fails or returns an empty or non-string value.
+     */
+    public function title(PageDefinition $page, Context $context): string
+    {
+        if ($page->title === null) {
+            return $this->label($page, $context);
+        }
+
+        $title = Label::resolve($page->title, $context, "page '{$page->id}'", 'title');
+
+        return trim($title) !== ''
+            ? $title
+            : throw new ResolutionFailed("Title callback for page '{$page->id}' must return a non-empty string.");
+    }
+
+    /**
+     * Resolve a page's description, or null when it has none; never the label.
+     *
+     * @throws ResolutionFailed If a callback fails or returns anything but a non-empty string or null.
+     */
+    public function description(PageDefinition $page, Context $context): ?string
+    {
+        return $page->description === null
+            ? null
+            : Label::resolveOptional($page->description, $context, "page '{$page->id}'", 'description');
+    }
+
+    /**
      * Read the bound object a presenting page shows, from the context's route parameters.
      *
      * @internal Shared by label() and the Subjects reader.
