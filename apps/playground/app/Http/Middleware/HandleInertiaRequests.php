@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Prototype\Actions\Actions;
 use Current\Inertia\CurrentProps;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -45,6 +46,9 @@ class HandleInertiaRequests extends Middleware
             ],
             // Resolved at render time, after route-model binding.
             'current' => CurrentProps::make()->menus('primary', 'footer'),
+            // Actions prototype (WK-008): the current subject's and page's actions, shared by the app itself.
+            'actions' => fn (): array => app(Actions::class)->current(),
+            'status' => fn (): mixed => $request->session()->get('status'),
         ];
     }
 }

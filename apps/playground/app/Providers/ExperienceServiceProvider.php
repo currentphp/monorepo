@@ -6,6 +6,8 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\ProjectExample;
+use App\Prototype\Actions\Action;
+use App\Prototype\Actions\ActionRegistry;
 use App\TaskExample;
 use Current\Context;
 use Current\Navigation\MenuEntry;
@@ -26,11 +28,44 @@ use Illuminate\Support\ServiceProvider;
  */
 final class ExperienceServiceProvider extends ServiceProvider
 {
-    public function boot(PageRegistry $pages, MenuRegistry $menus, SubjectRegistry $subjects): void
+    public function register(): void
+    {
+        $this->app->singleton(ActionRegistry::class);
+    }
+
+    public function boot(PageRegistry $pages, MenuRegistry $menus, SubjectRegistry $subjects, ActionRegistry $actions): void
     {
         $this->registerSubjects($subjects);
         $this->registerPages($pages);
         $this->registerNavigation($menus);
+        $this->registerActions($actions);
+    }
+
+    /**
+     * Capability prototype (WK-008): what users can do to tasks and on the task list.
+     * Described only; TaskController performs and authorizes each action.
+     */
+    private function registerActions(ActionRegistry $actions): void
+    {
+        $signedIn = fn (Context $context): bool => $context->user !== null;
+        $signedInForTask = fn (TaskExample $task, Context $context): bool => $context->user !== null;
+
+        $actions->register(
+            Action::make('create')->on('projects.tasks')
+                ->label('New task')->icon('plus')
+                ->route('tasks.create')
+                ->visibleWhen($signedIn),
+            Action::make('edit')->for('task')
+                ->label('Edit')->icon('pencil')->order(1)
+                ->route('tasks.edit', 'GET', fn (TaskExample $task): array => ['project' => $task->project(), 'task' => $task])
+                ->visibleWhen($signedInForTask),
+            Action::make('archive')->for('task')
+                ->label('Archive')->icon('archive')->order(2)->destructive()
+                ->confirm(fn (TaskExample $task): string => "Archive “{$task->title}”?")
+                ->route('tasks.archive', 'POST', fn (TaskExample $task): array => ['project' => $task->project(), 'task' => $task])
+                ->visibleWhen($signedInForTask)
+                ->can('archive'),
+        );
     }
 
     /** Subjects (Current\Subjects): projects and their tasks, described once and read by breadcrumbs, links, and props. */
@@ -69,8 +104,11 @@ final class ExperienceServiceProvider extends ServiceProvider
 
                             return 'Edit '.($project instanceof ProjectExample ? $project->name : 'project');
                         }),
-                    Page::make('projects.tasks')->label('Tasks')->children(
-                        Page::make('tasks.show')->route('tasks.show')->presents('task'),
+                    Page::make('projects.tasks')->route('tasks.index')->label('Tasks')->children(
+                        Page::make('tasks.create')->route('tasks.create')->label('New task'),
+                        Page::make('tasks.show')->route('tasks.show')->presents('task')->children(
+                            Page::make('tasks.edit')->route('tasks.edit')->label('Edit'),
+                        ),
                     ),
                 ),
             ),

@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import Actions from '@/components/current/actions';
 import Breadcrumbs from '@/components/current/breadcrumbs';
 import Menu from '@/components/current/menu';
 import { home } from '@/routes';
@@ -19,7 +20,7 @@ type Props = {
 };
 
 export default function Projects({ title, project, projects, tasks }: Props) {
-    const { auth, name, current } = usePage().props;
+    const { auth, name, current, actions } = usePage().props;
     const subject = current.subject;
     const selected = projects.find((item) => item.id === project?.id);
 
@@ -57,6 +58,7 @@ export default function Projects({ title, project, projects, tasks }: Props) {
                     <h1 className="text-3xl font-semibold tracking-tight">
                         {title}
                     </h1>
+                    <Actions actions={actions} />
                     <p className="max-w-2xl text-stone-600 dark:text-stone-400">
                         Explore a project, its tasks, and its edit page.
                         Breadcrumbs come from Current Pages; the menus come from

@@ -1,3 +1,4 @@
+import type { Action } from '@/types/actions';
 import type { Auth } from '@/types/auth';
 import type { Current } from '@current/inertia';
 
@@ -13,6 +14,8 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             current: Current<'primary' | 'footer'>;
+            actions: Action[];
+            status: string | null;
             [key: string]: unknown;
         };
     }
