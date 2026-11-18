@@ -41,11 +41,43 @@ final class Subjects
      */
     public function of(object $object): SubjectItem
     {
-        $this->validate();
-        $kind = $this->registry->forObject($object)
-            ?? throw new ResolutionFailed('No subject kind accepts '.$object::class.'.');
+        return $this->item($this->kindOf($object), $object);
+    }
 
-        return $this->item($kind, $object);
+    /**
+     * @throws InvalidDefinition
+     * @throws ResolutionFailed
+     */
+    private function kindOf(object $object): SubjectDefinition
+    {
+        $this->validate();
+
+        return $this->registry->forObject($object)
+            ?? throw new ResolutionFailed('No subject kind accepts '.$object::class.'.');
+    }
+
+    /**
+     * Resolve an object's title for headings: its kind's title, else its label.
+     *
+     * Runs only the title callback, unlike of(), so it suits one object at a time.
+     *
+     * @throws InvalidDefinition If definitions are invalid.
+     * @throws ResolutionFailed If no kind accepts the object, or a callback fails or returns an empty or non-string value.
+     */
+    public function title(object $object): string
+    {
+        return $this->reader->subjectTitle($this->kindOf($object), $object);
+    }
+
+    /**
+     * Resolve an object's description, or null when its kind has none; never the label.
+     *
+     * @throws InvalidDefinition If definitions are invalid.
+     * @throws ResolutionFailed If no kind accepts the object, or the callback fails or returns anything but a non-empty string or null.
+     */
+    public function description(object $object): ?string
+    {
+        return $this->reader->subjectDescription($this->kindOf($object), $object);
     }
 
     /**

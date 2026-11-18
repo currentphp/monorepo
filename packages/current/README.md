@@ -430,6 +430,32 @@ outside a request or when no page in the trail presents a subject. `of()` works
 anywhere Laravel can generate URLs, including queue jobs and notifications.
 Current never loads or queries subjects; it reads objects your routes bind.
 
+### Subject titles, descriptions, and icons
+
+A kind can also give its subjects a title for headings, a description, and an
+icon:
+
+```php
+Subject::make('project')->for(Project::class)
+    ->label(fn (Project $project): string => $project->name)
+    ->title(fn (Project $project): string => "Project {$project->name}")
+    ->description(fn (Project $project): ?string => $project->summary)
+    ->icon('folder')
+    ->page('projects.show');
+```
+
+- A page that presents a subject takes its title and description unless it
+  sets its own: the title is the page's title, then the subject's title, then
+  the page's label; the description is the page's, then the subject's, or
+  null. On a project's page, `Current::title()` is "Project Apollo" while the
+  breadcrumb still reads "Apollo".
+- A subject's title falls back to its label; its description never does.
+- A page that presents a subject and has no icon of its own takes the kind's
+  icon in breadcrumbs and menus.
+- For any object, `app(Subjects::class)->title($task)` and `description($task)`
+  run only those callbacks. `SubjectItem` stays `{ kind, id, label, url }`, so
+  lists of subjects don't resolve titles they don't show.
+
 ## Errors
 
 Every exception implements `Current\Exceptions\CurrentException` and extends
@@ -477,6 +503,7 @@ php artisan current:subjects       # subject kinds: class, canonical page, prese
 php artisan current:check          # validate everything; exits 1 on any problem
 ```
 
+`current:subjects` shows which kinds have a title, a description, or an icon.
 Labels that come from callbacks are listed as `(dynamic)`; the commands never
 run label, parameter, or visibility callbacks. `current:menus` shows whether a
 menu is derived (with its roots and `except()` exclusions) or defined, which

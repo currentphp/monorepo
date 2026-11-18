@@ -13,10 +13,18 @@
 - `current:pages` lists titles and descriptions, and `--json` adds `title`,
   `dynamicTitle`, `description`, and `dynamicDescription`.
 - `assertTitle()` and `assertDescription()` in `InteractsWithCurrent`.
+- Subject titles, descriptions, and icons: `Subject::title()`,
+  `Subject::description()`, and `Subject::icon()`. A page that presents a
+  subject takes its title, description, and icon unless it sets its own;
+  breadcrumbs keep the subject's label. `Subjects::title()` and
+  `Subjects::description()` resolve any object, and `Pages::icon()` reads a
+  page's icon with that fallback. `current:subjects` shows which kinds have
+  each. `SubjectItem` output is unchanged.
 
 ### Changed
 
-- `PageDefinition` has `title` and `description`. Empty title or description
+- `PageDefinition` has `title` and `description`, and `SubjectDefinition` has
+  `title`, `description`, and `icon`. Empty title or description
   strings are rejected at registration.
 
 ## 0.3.0 - 2026-11-16

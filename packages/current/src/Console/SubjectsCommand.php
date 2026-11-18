@@ -33,6 +33,9 @@ final class SubjectsCommand extends InspectionCommand
             $details = array_filter([
                 $subject['class'],
                 $subject['page'] === null ? 'no page' : 'page '.$subject['page'],
+                $subject['title'] ? 'title' : null,
+                $subject['description'] ? 'description' : null,
+                $subject['icon'] === null ? null : 'icon '.$subject['icon'],
                 $subject['presentedBy'] === [] ? null : 'presented by '.implode(', ', $subject['presentedBy']),
             ]);
             $this->line('  '.$subject['name'].'  <fg=gray>'.implode(' · ', $details).'</>');
