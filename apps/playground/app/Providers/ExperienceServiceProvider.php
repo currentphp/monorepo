@@ -39,6 +39,9 @@ final class ExperienceServiceProvider extends ServiceProvider
         $subjects->register(
             Subject::make('project')->for(ProjectExample::class)
                 ->label(fn (ProjectExample $project): string => $project->name)
+                ->title(fn (ProjectExample $project): string => "Project {$project->name}")
+                ->description(fn (ProjectExample $project): string => "Tasks and links for the {$project->name} example project.")
+                ->icon('folder')
                 ->page('projects.show'),
             Subject::make('task')->for(TaskExample::class)
                 ->label(fn (TaskExample $task): string => $task->title)

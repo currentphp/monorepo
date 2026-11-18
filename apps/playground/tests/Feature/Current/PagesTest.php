@@ -39,6 +39,7 @@ it('takes each projects page title from Current', function (string $url, string 
     $this->assertTitle($title);
 })->with([
     'index, from the label' => ['/projects', 'Projects'],
-    'project, from the subject' => ['/projects/42', 'Apollo'],
+    'project, from the subject title' => ['/projects/42', 'Project Apollo'],
+    'task, from the subject label' => ['/projects/42/tasks/1', 'Fix login'],
     'edit, from its title callback' => ['/projects/77/edit', 'Edit Artemis'],
 ]);
