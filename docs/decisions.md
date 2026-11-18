@@ -101,11 +101,26 @@ the first releases under the name Current (formerly WavyKit):
   `WavyKitProps`) with its TypeScript type.
 - **The rename** to Current, and faster derived menus on large page trees.
 
+### v0.4
+
+Planned as `current/current` 0.4.0, finishing the description of each place
+and closing a menu gap:
+
+- **Titles and descriptions** for pages: a title for headings and the document
+  title, falling back to the label, and an optional description. Subjects get
+  the same facts, and a page that presents a subject takes its title and
+  description from it unless it has its own.
+- **Request-time visibility for derived menus**, so a derived menu can hide a
+  page from some users without becoming an explicit menu.
+
+`current/inertia` releases alongside only to require core 0.4 and keep its
+types matching. Integrations for Blade, Livewire, and Inertia are designed
+together once the core primitives are complete.
+
 ### Later
 
 These are candidates without a release target:
 
-- page titles and descriptions;
 - menu entries that link outside the application;
 - generated TypeScript types for an application's page IDs;
 - a check that every named route has a page or is deliberately excluded;

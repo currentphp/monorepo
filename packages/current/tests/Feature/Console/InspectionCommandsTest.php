@@ -29,7 +29,9 @@ function registerInspectionFixture(): void
             Page::make('projects.show')->route('projects.show')
                 ->label(fn (Context $context): string => throw new LogicException('Commands must not run callbacks.')),
         ),
-        Page::make('settings')->route('settings')->label('Settings')->order(10),
+        Page::make('settings')->route('settings')->label('Settings')->order(10)
+            ->title('Your settings')
+            ->description(fn (Context $context): ?string => throw new LogicException('Commands must not run callbacks.')),
         Page::make('help')->label('Help'),
     );
     app(MenuRegistry::class)->derive('primary', 'projects', 'settings')->except('projects.show');
@@ -47,6 +49,7 @@ test('current:pages prints the page tree without running callbacks', function ()
         ->expectsOutputToContain('Projects · route projects.index · icon folder')
         ->expectsOutputToContain('(dynamic) · route projects.show')
         ->expectsOutputToContain('Help · no route')
+        ->expectsOutputToContain('Settings · title "Your settings" · description (dynamic) · route settings')
         ->assertExitCode(0);
 });
 
@@ -62,6 +65,17 @@ test('current:pages --json prints the page tree as data', function () {
             'route' => 'projects.index',
             'routeParameters' => false,
             'icon' => 'folder',
+            'title' => null,
+            'dynamicTitle' => false,
+            'description' => null,
+            'dynamicDescription' => false,
+        ])
+        ->and($pages[2])->toMatchArray([
+            'id' => 'settings',
+            'title' => 'Your settings',
+            'dynamicTitle' => false,
+            'description' => null,
+            'dynamicDescription' => true,
         ])
         ->and($pages[0]['children'][0])->toMatchArray([
             'id' => 'projects.show',

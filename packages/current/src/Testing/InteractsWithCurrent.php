@@ -32,6 +32,32 @@ trait InteractsWithCurrent
         return $this;
     }
 
+    /** Assert the active page's title, which falls back to its label. */
+    public function assertTitle(string $title): static
+    {
+        $actual = Current::title();
+        Assert::assertSame($title, $actual, sprintf(
+            "Expected the title '%s', but it was %s.",
+            $title,
+            $actual === null ? 'none (no page is active)' : "'{$actual}'",
+        ));
+
+        return $this;
+    }
+
+    /** Assert the active page's description; null asserts that it has none. */
+    public function assertDescription(?string $description): static
+    {
+        $actual = Current::description();
+        Assert::assertSame($description, $actual, sprintf(
+            'Expected the description %s, but it was %s.',
+            $description === null ? 'to be empty' : "'{$description}'",
+            $actual === null ? 'empty' : "'{$actual}'",
+        ));
+
+        return $this;
+    }
+
     /**
      * Assert the breadcrumb labels, root first and in order.
      *

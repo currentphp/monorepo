@@ -15,6 +15,8 @@ final readonly class PageDefinition
      *
      * @param  string|Closure(Context): mixed  $label
      * @param  null|Closure(Context): mixed  $routeParameters
+     * @param  null|string|Closure(Context): mixed  $title  Null falls back to the label.
+     * @param  null|string|Closure(Context): mixed  $description  Null means no description.
      */
     public function __construct(
         public string $id,
@@ -27,5 +29,7 @@ final readonly class PageDefinition
         public ?string $presents = null,
         public ?string $presentsParameter = null,
         public bool $labelled = true,
+        public string|Closure|null $title = null,
+        public string|Closure|null $description = null,
     ) {}
 }

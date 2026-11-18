@@ -171,6 +171,36 @@ errors. Ancestor URL generation forwards matching destination path parameters
 only. Missing required parameters raise an exception identifying the page and
 route, with Laravel's URL-generation exception preserved as the cause.
 
+### Titles and descriptions
+
+A page's label is its short name in breadcrumbs and menus. For headings, the
+document `<title>`, and meta descriptions, give it a title and a description:
+
+```php
+Page::make('projects.show')
+    ->route('projects.show')
+    ->label(fn (Context $context): string => $context->parameter('project')->name)
+    ->title(fn (Context $context): string => 'Project '.$context->parameter('project')->name)
+    ->description('Milestones, tasks, and people for one project.');
+```
+
+```php
+use Current\Facades\Current;
+
+Current::title();        // 'Project Apollo'; the label when no title is set
+Current::description();  // the description, or null when the page has none
+```
+
+Both take a string or a callback receiving `Current\Context`, like labels. A
+title callback must return a non-empty string; a description callback returns
+a non-empty string or null for none. The description never falls back to the
+label. Both readers return null when no page is active. Current adds no site
+name or suffix: append your own, for example
+`{{ Current::title() }} · Acme`. Breadcrumbs and menus keep using labels.
+
+Packages that build on the core resolve any page with `Pages::title($page,
+$context)` and `Pages::description($page, $context)`.
+
 ## Breadcrumbs
 
 ```php
@@ -461,7 +491,9 @@ way.
 Add `--json` to `current:pages`, `current:menus`, or `current:subjects` for
 machine-readable output.
 Pages are nested under `children`, with `label` null and `dynamicLabel` true
-for callback labels; menus have `name`, `kind` (`derived` or `defined`),
+for callback labels, and the same for `title`/`dynamicTitle` and
+`description`/`dynamicDescription` (a null `title` that is not dynamic means
+the title is the label); menus have `name`, `kind` (`derived` or `defined`),
 `roots`, `except`, and nested `entries`.
 
 ## Testing
@@ -498,6 +530,9 @@ $this->assertMenuMissing('primary', 'admin');
   `assertMenuActive()` checks that the page is shown and active.
 - `assertCurrentSubject(?string $kind, ?string $id = null)` checks the current
   subject's kind, and its ID when given; pass null to assert there is none.
+- `assertTitle(string $title)` checks the active page's title, which falls
+  back to its label; `assertDescription(?string $description)` checks its
+  description, with null for none.
 
 The assertions read the last request through `Current\Facades\Current`, so
 callbacks see that request's bound models and user. Failure messages include

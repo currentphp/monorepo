@@ -177,7 +177,13 @@ final class PageRegistry
         if ($route !== null && trim($route) === '') {
             throw new InvalidDefinition("Page '{$page->id}' has an empty route name.");
         }
-        $pending[$page->id] = $page->toDefinition($nestedParent ?? $declaredParent);
+        $definition = $page->toDefinition($nestedParent ?? $declaredParent);
+        foreach (['title' => $definition->title, 'description' => $definition->description] as $fact => $value) {
+            if (is_string($value) && trim($value) === '') {
+                throw new InvalidDefinition("Page '{$page->id}' has an empty {$fact}.");
+            }
+        }
+        $pending[$page->id] = $definition;
         foreach ($page->declaredChildren() as $child) {
             $this->collect($child, $page->id, $pending);
         }
