@@ -38,3 +38,11 @@ it('omits verified-account navigation for an unverified user', function () {
 
     $this->assertMenuMissing('footer', 'profile')->assertMenuMissing('footer', 'login');
 });
+
+it('lists Overview in the primary menu only for signed-in users', function () {
+    $this->get(route('projects.index'))->assertOk();
+    $this->assertMenuMissing('primary', 'dashboard');
+
+    $this->actingAs(User::factory()->create())->get(route('projects.index'))->assertOk();
+    $this->assertMenuHas('primary', 'dashboard')->assertMenuHas('primary', 'profile');
+});
