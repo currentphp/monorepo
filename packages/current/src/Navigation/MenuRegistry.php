@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Current\Navigation;
 
+use Closure;
+use Current\Context;
 use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
 use Current\Pages\PageDefinition;
@@ -23,6 +25,9 @@ final class MenuRegistry
 
     /** @var array<string, list<string>> */
     private array $exclusions = [];
+
+    /** @var array<string, array<string, list<Closure(Context): mixed>>> */
+    private array $conditionalExclusions = [];
 
     /** @var array<string, list<MenuEntryDefinition>> */
     private array $defined = [];
@@ -88,6 +93,7 @@ final class MenuRegistry
         }
 
         $exclusions = [];
+        $conditional = [];
         foreach ($this->derived as $name => $roots) {
             $seen = [];
             foreach ($roots as $id) {
@@ -95,7 +101,8 @@ final class MenuRegistry
                 $this->validateBranch($name, $page, $seen);
             }
             $exclusions[$name] = $this->derivedMenus[$name]->exclusions();
-            foreach ($exclusions[$name] as $id) {
+            $conditional[$name] = $this->derivedMenus[$name]->conditionalExclusions();
+            foreach ([...$exclusions[$name], ...array_keys($conditional[$name])] as $id) {
                 if (! isset($pages[$id])) {
                     throw new InvalidDefinition("Menu '{$name}' excludes unknown page '{$id}'.");
                 }
@@ -108,6 +115,7 @@ final class MenuRegistry
         }
 
         $this->exclusions = $exclusions;
+        $this->conditionalExclusions = $conditional;
         $this->finalized = true;
     }
 
@@ -162,6 +170,23 @@ final class MenuRegistry
         $this->finalize();
 
         return $this->exclusions[$name] ?? throw new ResolutionFailed("Unknown menu '{$name}'.");
+    }
+
+    /**
+     * Read a derived menu's request-time exclusions: callbacks keyed by page ID.
+     *
+     * @internal Read by Navigation and the inspection commands.
+     *
+     * @return array<string, list<Closure(Context): mixed>>
+     *
+     * @throws InvalidDefinition If finalization fails.
+     * @throws ResolutionFailed If the name is not a derived menu.
+     */
+    public function conditionalExclusions(string $name): array
+    {
+        $this->finalize();
+
+        return $this->conditionalExclusions[$name] ?? throw new ResolutionFailed("Unknown menu '{$name}'.");
     }
 
     /**

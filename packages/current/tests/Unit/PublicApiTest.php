@@ -39,6 +39,7 @@ const SUPPORTED_API = [
     'Current\Navigation\DefinedMenu',
     'Current\Navigation\DerivedMenu',
     'Current\Navigation\DerivedMenu::except()',
+    'Current\Navigation\DerivedMenu::exceptWhen()',
     'Current\Navigation\MenuEntry',
     'Current\Navigation\MenuEntry::$id',
     'Current\Navigation\MenuEntry::children()',

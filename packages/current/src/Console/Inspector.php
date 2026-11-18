@@ -25,7 +25,7 @@ use Current\Subjects\Subjects;
  * @phpstan-type PageNode array{id: string, label: ?string, dynamicLabel: bool, title: ?string, dynamicTitle: bool, description: ?string, dynamicDescription: bool, route: ?string, routeParameters: bool, icon: ?string, presents: ?string, children: list<mixed>}
  * @phpstan-type SubjectDescription array{name: string, class: ?string, page: ?string, routeParameters: bool, title: bool, description: bool, icon: ?string, presentedBy: list<string>}
  * @phpstan-type MenuNode array{kind: 'page'|'group', id: string, label: ?string, dynamicLabel: bool, icon: ?string, visibility: bool, children: list<mixed>}
- * @phpstan-type MenuDescription array{name: string, kind: 'derived'|'defined', roots: list<string>, except: list<string>, entries: list<MenuNode>}
+ * @phpstan-type MenuDescription array{name: string, kind: 'derived'|'defined', roots: list<string>, except: list<string>, exceptWhen: list<string>, entries: list<MenuNode>}
  */
 final readonly class Inspector
 {
@@ -112,11 +112,13 @@ final readonly class Inspector
                 'kind' => 'defined',
                 'roots' => [],
                 'except' => [],
+                'exceptWhen' => [],
                 'entries' => array_map($this->entry(...), $entries),
             ];
         }
 
         $except = $this->menus->exclusions($name);
+        $exceptWhen = array_keys($this->menus->conditionalExclusions($name));
         $roots = array_values(array_filter(
             $this->menus->roots($name),
             fn (PageDefinition $page): bool => ! in_array($page->id, $except, true),
@@ -127,7 +129,8 @@ final readonly class Inspector
             'kind' => 'derived',
             'roots' => array_map(fn (PageDefinition $page): string => $page->id, $this->menus->roots($name)),
             'except' => $except,
-            'entries' => array_map(fn (PageDefinition $page): array => $this->derivedEntry($page, $except), $roots),
+            'exceptWhen' => $exceptWhen,
+            'entries' => array_map(fn (PageDefinition $page): array => $this->derivedEntry($page, $except, $exceptWhen), $roots),
         ];
     }
 
@@ -154,9 +157,10 @@ final readonly class Inspector
 
     /**
      * @param  list<string>  $except
+     * @param  list<string>  $exceptWhen  Pages hidden by a request-time exclusion, listed with visibility true.
      * @return MenuNode
      */
-    private function derivedEntry(PageDefinition $page, array $except): array
+    private function derivedEntry(PageDefinition $page, array $except, array $exceptWhen): array
     {
         $children = array_values(array_filter(
             $this->registry->children($page->id),
@@ -169,8 +173,8 @@ final readonly class Inspector
             'label' => is_string($page->label) ? $page->label : null,
             'dynamicLabel' => ! is_string($page->label),
             'icon' => $page->icon,
-            'visibility' => false,
-            'children' => array_map(fn (PageDefinition $child): array => $this->derivedEntry($child, $except), $children),
+            'visibility' => in_array($page->id, $exceptWhen, true),
+            'children' => array_map(fn (PageDefinition $child): array => $this->derivedEntry($child, $except, $exceptWhen), $children),
         ];
     }
 
