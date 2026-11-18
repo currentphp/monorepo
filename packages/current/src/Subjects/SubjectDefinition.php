@@ -20,5 +20,8 @@ final readonly class SubjectDefinition
         public Closure $label,
         public ?string $pageId,
         public ?Closure $routeParameters = null,
+        public ?Closure $title = null,
+        public ?Closure $description = null,
+        public ?string $icon = null,
     ) {}
 }

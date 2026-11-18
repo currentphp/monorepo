@@ -49,7 +49,7 @@ final readonly class Navigation
             $this->pages->label($page, $context),
             $this->pages->url($page, $context),
             $page->id === $current?->id,
-            $page->icon,
+            $this->pages->icon($page),
         ), $this->pages->activeTrail($context));
     }
 
@@ -97,7 +97,7 @@ final readonly class Navigation
                 $page->id === $context->page?->id,
                 in_array($page->id, $activeIds, true),
                 $this->items($this->registry->children($page->id), $excluded, $context, $activeIds),
-                $page->icon,
+                $this->pages->icon($page),
             );
         }
 
@@ -149,7 +149,7 @@ final readonly class Navigation
                 $page !== null && $page->id === $context->page?->id,
                 $activeChild || ($page !== null && in_array($page->id, $activeIds, true)),
                 $children,
-                $entry->icon ?? $page?->icon,
+                $entry->icon ?? ($page === null ? null : $this->pages->icon($page)),
                 $entry->isGroup ? MenuItemKind::Group : MenuItemKind::Page,
             );
         }

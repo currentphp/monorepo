@@ -23,7 +23,7 @@ use Current\Subjects\Subjects;
  * @internal Shared by the current:pages, current:menus, and current:check commands.
  *
  * @phpstan-type PageNode array{id: string, label: ?string, dynamicLabel: bool, title: ?string, dynamicTitle: bool, description: ?string, dynamicDescription: bool, route: ?string, routeParameters: bool, icon: ?string, presents: ?string, children: list<mixed>}
- * @phpstan-type SubjectDescription array{name: string, class: ?string, page: ?string, routeParameters: bool, presentedBy: list<string>}
+ * @phpstan-type SubjectDescription array{name: string, class: ?string, page: ?string, routeParameters: bool, title: bool, description: bool, icon: ?string, presentedBy: list<string>}
  * @phpstan-type MenuNode array{kind: 'page'|'group', id: string, label: ?string, dynamicLabel: bool, icon: ?string, visibility: bool, children: list<mixed>}
  * @phpstan-type MenuDescription array{name: string, kind: 'derived'|'defined', roots: list<string>, except: list<string>, entries: list<MenuNode>}
  */
@@ -89,6 +89,9 @@ final readonly class Inspector
             'class' => $kind->class,
             'page' => $kind->pageId,
             'routeParameters' => $kind->routeParameters !== null,
+            'title' => $kind->title !== null,
+            'description' => $kind->description !== null,
+            'icon' => $kind->icon,
             'presentedBy' => array_map(fn (PageDefinition $page): string => $page->id, $this->subjectRegistry->presentingPages($kind->name)),
         ], $this->subjectRegistry->all());
     }

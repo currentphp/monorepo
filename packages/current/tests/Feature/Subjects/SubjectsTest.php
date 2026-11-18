@@ -163,6 +163,9 @@ test('current:subjects lists kinds, and current:pages shows what pages present',
         'class' => Task::class,
         'page' => 'tasks.show',
         'routeParameters' => true,
+        'title' => false,
+        'description' => false,
+        'icon' => null,
         'presentedBy' => ['tasks.show'],
     ]);
 

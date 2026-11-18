@@ -25,6 +25,12 @@ final class Subject
 
     private ?Closure $routeParameters = null;
 
+    private ?Closure $title = null;
+
+    private ?Closure $description = null;
+
+    private ?string $icon = null;
+
     private function __construct(public readonly string $name) {}
 
     /** Start a declaration with a unique, non-empty kind name, such as `project`. */
@@ -59,6 +65,42 @@ final class Subject
     }
 
     /**
+     * Title a subject from its object, for headings and the document title,
+     * for example `fn (Task $task) => "Fix login in {$task->project->name}"`.
+     *
+     * Optional; without one the title is the label. Pages that present this kind
+     * without their own title use it. Breadcrumbs keep the label. Must return a
+     * non-empty string.
+     */
+    public function title(callable $title): self
+    {
+        $this->title = Closure::fromCallable($title);
+
+        return $this;
+    }
+
+    /**
+     * Describe a subject from its object; return a non-empty string, or null for none.
+     *
+     * Pages that present this kind without their own description use it. The
+     * description never falls back to the label.
+     */
+    public function description(callable $description): self
+    {
+        $this->description = Closure::fromCallable($description);
+
+        return $this;
+    }
+
+    /** Set an optional presentation identifier for every subject of this kind; the application renders it. */
+    public function icon(string $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
      * Name the canonical page that shows a subject of this kind; that page must present it.
      *
      * By default the route parameter named after the kind receives the object.
@@ -88,6 +130,15 @@ final class Subject
             throw new InvalidDefinition("Subject '{$this->name}' must have a label().");
         }
 
-        return new SubjectDefinition($this->name, $this->class, $this->label, $this->pageId, $this->routeParameters);
+        return new SubjectDefinition(
+            $this->name,
+            $this->class,
+            $this->label,
+            $this->pageId,
+            $this->routeParameters,
+            $this->title,
+            $this->description,
+            $this->icon,
+        );
     }
 }

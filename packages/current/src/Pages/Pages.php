@@ -104,34 +104,88 @@ final class Pages
     }
 
     /**
-     * Resolve a page's title for headings and the document title, falling back to its label.
+     * Resolve a page's title for headings and the document title.
+     *
+     * The page's own title wins; a page that presents a subject then takes the
+     * subject's title; otherwise the title is the page's label.
      *
      * @throws InvalidDefinition If subject definitions are invalid.
-     * @throws ResolutionFailed If a callback fails or returns an empty or non-string value.
+     * @throws ResolutionFailed If a callback fails or returns an empty or non-string value, or the presented subject is not bound.
      */
     public function title(PageDefinition $page, Context $context): string
     {
-        if ($page->title === null) {
-            return $this->label($page, $context);
+        if ($page->title !== null) {
+            return self::nonEmpty(Label::resolve($page->title, $context, "page '{$page->id}'", 'title'), "page '{$page->id}'");
         }
 
-        $title = Label::resolve($page->title, $context, "page '{$page->id}'", 'title');
+        if ($page->presents !== null) {
+            return $this->subjectTitle($this->subjects->kind($page->presents), $this->presentedObject($page, $context));
+        }
 
-        return trim($title) !== ''
-            ? $title
-            : throw new ResolutionFailed("Title callback for page '{$page->id}' must return a non-empty string.");
+        return $this->label($page, $context);
     }
 
     /**
-     * Resolve a page's description, or null when it has none; never the label.
+     * Resolve a page's description: its own, else that of the subject it presents; never the label.
      *
-     * @throws ResolutionFailed If a callback fails or returns anything but a non-empty string or null.
+     * @throws InvalidDefinition If subject definitions are invalid.
+     * @throws ResolutionFailed If a callback fails or returns anything but a non-empty string or null, or the presented subject is not bound.
      */
     public function description(PageDefinition $page, Context $context): ?string
     {
-        return $page->description === null
+        if ($page->description !== null) {
+            return Label::resolveOptional($page->description, $context, "page '{$page->id}'", 'description');
+        }
+
+        return $page->presents === null
             ? null
-            : Label::resolveOptional($page->description, $context, "page '{$page->id}'", 'description');
+            : $this->subjectDescription($this->subjects->kind($page->presents), $this->presentedObject($page, $context));
+    }
+
+    /**
+     * Read a page's icon: its own, else that of the subject kind it presents.
+     *
+     * @throws InvalidDefinition If the presented subject kind is unknown.
+     */
+    public function icon(PageDefinition $page): ?string
+    {
+        return $page->icon ?? ($page->presents === null ? null : $this->subjects->kind($page->presents)->icon);
+    }
+
+    /**
+     * Resolve a subject's title from its object, falling back to its label.
+     *
+     * @internal Shared by title() and the Subjects reader.
+     *
+     * @throws ResolutionFailed If a callback fails or returns an empty or non-string value.
+     */
+    public function subjectTitle(SubjectDefinition $kind, object $object): string
+    {
+        return $kind->title === null
+            ? $this->subjectLabel($kind, $object)
+            : self::nonEmpty(Label::resolve($kind->title, $object, "subject '{$kind->name}'", 'title'), "subject '{$kind->name}'");
+    }
+
+    /**
+     * Resolve a subject's description from its object, or null when it has none.
+     *
+     * @internal Shared by description() and the Subjects reader.
+     *
+     * @throws ResolutionFailed If the callback fails or returns anything but a non-empty string or null.
+     */
+    public function subjectDescription(SubjectDefinition $kind, object $object): ?string
+    {
+        return $kind->description === null
+            ? null
+            : Label::resolveOptional($kind->description, $object, "subject '{$kind->name}'", 'description');
+    }
+
+    /** @throws ResolutionFailed */
+    private static function nonEmpty(string $title, string $owner): string
+    {
+        return trim($title) !== ''
+            ? $title
+            : throw new ResolutionFailed("Title callback for {$owner} must return a non-empty string.");
     }
 
     /**
