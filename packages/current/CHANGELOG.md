@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.5.0 - 2026-11-17
+
 ### Added
 
 - Actions (`Current\Actions\`): describe what users can do to a subject

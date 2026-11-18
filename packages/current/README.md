@@ -1,7 +1,8 @@
 # Current
 
 One description of your Laravel application's experience: its pages, the
-breadcrumbs and menus that read from them, and the subjects users look at.
+breadcrumbs and menus that read from them, the subjects users look at, and the
+actions they can take.
 
 Each page is defined once, with a stable ID, a place in the hierarchy, a label
 that can come from the bound resource, and an optional association with an
@@ -17,7 +18,7 @@ returns plain data for Blade, Inertia, or any other frontend.
 
 Package: `current/current`. Namespaces: `Current\Pages\` (pages),
 `Current\Navigation\` (breadcrumbs and menus), `Current\Subjects\`
-(subjects), and `Current\Context`.
+(subjects), `Current\Actions\` (actions), and `Current\Context`.
 Current is a Wavy project. It was released as `wavykit/core` up to 0.2.0; the
 first release as `current/current` is 0.3.0. While Current is on 0.x, minor
 releases may change the public API; see [Versioning](#versioning).

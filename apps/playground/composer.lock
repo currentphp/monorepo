@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b664d02780e47789a60ede68038c075",
+    "content-hash": "539b7d2c555915837ffca8e44279c46e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -196,11 +196,11 @@
         },
         {
             "name": "current/current",
-            "version": "0.4.x-dev",
+            "version": "0.5.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/current",
-                "reference": "b1fcf81ca49999da1a71c10e3bcfd452de2127bb"
+                "reference": "9668408850c203e6555151a3986f714e3d2e9e8c"
             },
             "require": {
                 "illuminate/console": "^13.0",
@@ -233,14 +233,14 @@
         },
         {
             "name": "current/inertia",
-            "version": "0.3.x-dev",
+            "version": "0.4.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/inertia",
-                "reference": "03e9967453d0f0a45b8fe8a271408f1c58e4960e"
+                "reference": "5cd85aaf8681fa967d6ddb4351c12e59aa074f18"
             },
             "require": {
-                "current/current": "^0.4",
+                "current/current": "^0.5",
                 "illuminate/container": "^13.0",
                 "inertiajs/inertia-laravel": "^3.0",
                 "php": "^8.3"
