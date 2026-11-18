@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@source '../views';
+@source '../../app';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --color-accent-50: oklch(0.98 0.02 195);
+    --color-accent-100: oklch(0.95 0.05 195);
+    --color-accent-400: oklch(0.79 0.13 195);
+    --color-accent-500: oklch(0.7 0.13 200);
+    --color-accent-600: oklch(0.6 0.12 205);
+    --color-accent-700: oklch(0.52 0.1 207);
+}
+
+@layer base {
+    html {
+        scroll-padding-top: 5rem;
+    }
+}
+
+/* Highlighted code: Phiki writes light colours inline and dark ones as variables. */
+.phiki {
+    @apply overflow-x-auto rounded-lg border border-zinc-200 p-4 text-sm leading-relaxed dark:border-zinc-800;
+}
+
+.dark .phiki,
+.dark .phiki span {
+    color: var(--phiki-dark-color) !important;
+    background-color: var(--phiki-dark-background-color) !important;
+}
+
+.prose :where(pre.phiki) {
+    margin: 0;
+}
+
+.code-block {
+    @apply relative my-6;
+}
+
+.copy-button {
+    @apply absolute top-2 right-2 rounded-md border border-zinc-200 bg-white/90 px-2 py-1 text-xs text-zinc-600 opacity-0 transition hover:text-zinc-900 focus:opacity-100 dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-300 dark:hover:text-white;
+}
+
+.code-block:hover .copy-button {
+    @apply opacity-100;
+}
+
+.heading-anchor {
+    @apply ml-2 font-normal text-zinc-400 no-underline opacity-0 hover:text-accent-600;
+}
+
+:where(h2, h3):hover > .heading-anchor,
+.heading-anchor:focus {
+    @apply opacity-100;
+}
+
+.alert {
+    @apply my-6 rounded-lg border-l-4 px-4 py-1;
+}
+
+.alert-title {
+    @apply font-semibold;
+}
+
+.alert-note,
+.alert-tip {
+    @apply border-accent-500 bg-accent-50 dark:bg-accent-500/10;
+}
+
+.alert-important {
+    @apply border-violet-500 bg-violet-50 dark:bg-violet-500/10;
+}
+
+.alert-warning,
+.alert-caution {
+    @apply border-amber-500 bg-amber-50 dark:bg-amber-500/10;
+}
