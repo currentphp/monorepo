@@ -4,6 +4,18 @@
 
 No changes yet.
 
+## 0.3.0 - 2026-11-17
+
+### Changed
+
+- Requires `current/current` 0.4. The shared prop is unchanged: page and
+  subject titles and descriptions are read on the server with
+  `Current::title()` and `Current::description()`, and can be added to your
+  own shared props.
+- `current/inertia` is in maintenance: it follows each `current/current`
+  release, and new fields wait until the Blade, Livewire, and Inertia
+  integrations are designed together.
+
 ## 0.2.0 - 2026-11-16
 
 The first release as `current/inertia`, continuing from `wavykit/inertia` 0.1.0.

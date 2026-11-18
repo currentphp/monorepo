@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.4.0 - 2026-11-17
+
 ### Added
 
 - Page titles and descriptions: `Page::title()` and `Page::description()`

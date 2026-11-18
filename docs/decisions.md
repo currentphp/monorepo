@@ -103,8 +103,8 @@ the first releases under the name Current (formerly WavyKit):
 
 ### v0.4
 
-Planned as `current/current` 0.4.0, finishing the description of each place
-and closing a menu gap:
+Released 2026-11-17 as `current/current` 0.4.0 and `current/inertia` 0.3.0,
+finishing the description of each place and closing a menu gap:
 
 - **Titles and descriptions** for pages: a title for headings and the document
   title, falling back to the label, and an optional description. Subjects get

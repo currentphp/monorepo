@@ -33,8 +33,8 @@ directories under `packages/`.
 
 The root `composer.json` is `current/monorepo`, a development-only manifest
 that is never published. It installs every package from `packages/*` through
-a path repository, each at its own development line (`0.3.x-dev` for core,
-`0.2.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
+a path repository, each at its own development line (`0.4.x-dev` for core,
+`0.3.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
 line. The `@dev` flag lets only these packages resolve to development
 versions; everything else stays stable, including `--prefer-lowest` runs. It
 also holds the development dependencies, test autoloading, scripts, and the PHP

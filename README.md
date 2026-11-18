@@ -23,7 +23,8 @@ PHP 8.3+; Inertia apps add `composer require current/inertia`. Current was
 named WavyKit until 2026-11-16: its earlier releases are `wavykit/core` 0.2.0
 and `wavykit/inertia` 0.1.0, and the first releases under the new names,
 `current/current` 0.3.0 and `current/inertia` 0.2.0, were released on the same
-day. Pull
+day. The latest releases are `current/current` 0.4.0 and `current/inertia`
+0.3.0 (2026-11-17). Pull
 requests are not open yet; issues and feedback are welcome (see
 [CONTRIBUTING.md](CONTRIBUTING.md)).
 

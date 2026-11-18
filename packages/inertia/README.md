@@ -10,12 +10,17 @@ their own breadcrumb arrays and navigation lists.
 
 Package: `current/inertia`. Namespace: `Current\Inertia\`. Current is a Wavy
 project. Version 0.1.0 was released as `wavykit/inertia`; the first release as
-`current/inertia` is 0.2.0, for `current/current` 0.3. While Current is on 0.x,
-minor releases may change the public API.
+`current/inertia` is 0.2.0. Version 0.3.0 is for `current/current` 0.4. While
+Current is on 0.x, minor releases may change the public API.
+
+**Maintenance:** `current/inertia` follows each `current/current` release, and
+new fields wait until the Blade, Livewire, and Inertia integrations are
+designed together. Until then, share anything else the core offers, such as
+`Current::title()`, through your own props.
 
 ## Requirements
 
-PHP 8.3+, Laravel 13, `inertiajs/inertia-laravel` 3, and `current/current` 0.1.
+PHP 8.3+, Laravel 13, `inertiajs/inertia-laravel` 3, and `current/current` 0.4.
 
 ## Installation
 
