@@ -1,3 +1,4 @@
+import type { Method } from '@inertiajs/core';
 import { Link } from '@inertiajs/react';
 import type { Action } from '@/types';
 
@@ -16,7 +17,7 @@ export default function Actions({ actions }: { actions: Action[] }) {
                 <li key={action.id}>
                     <Link
                         href={action.url}
-                        method={action.method.toLowerCase() as 'get'}
+                        method={action.method.toLowerCase() as Method}
                         as="button"
                         disabled={!action.enabled}
                         title={action.reason ?? undefined}
