@@ -5,3 +5,4 @@ export type {
     MenuItemKind,
     Subject,
 } from '@current/inertia';
+export type * from './actions';

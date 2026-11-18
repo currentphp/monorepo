@@ -17,7 +17,7 @@ it('labels nested breadcrumbs from subjects', function () {
         ->where('current.breadcrumbs.1.label', 'Apollo')
         ->where('current.breadcrumbs.1.url', route('projects.show', 42))
         ->where('current.breadcrumbs.2.label', 'Tasks')
-        ->where('current.breadcrumbs.2.url', null)
+        ->where('current.breadcrumbs.2.url', route('tasks.index', 42))
         ->where('current.breadcrumbs.3.label', 'Fix login'));
 
     $this->assertBreadcrumbs(['Projects', 'Apollo', 'Tasks', 'Fix login'])
