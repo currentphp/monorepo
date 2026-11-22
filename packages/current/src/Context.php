@@ -9,16 +9,17 @@ use Current\Pages\PageDefinition;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**
- * Request snapshot passed to every Current label, parameter, and visibility callback.
+ * Experience snapshot passed to every Current label, parameter, and visibility callback.
  *
- * Page is the active page, not necessarily the ancestor or menu entry being
- * resolved. Page may be null on unregistered routes; user is null for guests.
+ * Page is the selected page (the active page for ambient readers), not necessarily
+ * the ancestor or menu entry being resolved. Page may be null on unregistered
+ * routes; user is null for guests and explicit readers outside HTTP.
  * Bound objects are references, not deep copies; do not retain across requests.
  */
 final readonly class Context
 {
     /**
-     * @internal Created by Pages::context().
+     * @internal Created by Pages::context() or Pages::contextFor().
      *
      * @param  array<string, mixed>  $parameters
      */

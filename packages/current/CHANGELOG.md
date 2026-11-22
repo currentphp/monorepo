@@ -9,6 +9,20 @@
   reading pages; late registration and invalid declarations previously missed
   by page readers now fail consistently with subject and action readers.
 
+### Added
+
+- `Current::forPage($pageId, $parameters)` returns a separate `Experience`
+  reader for a registered page and server-resolved bindings, without changing
+  ambient Current reads or Laravel's actual request. It supports the same
+  page, subject, navigation, and action reads, with selective evaluation.
+- `Current::subjectTitle()` and `Current::subjectDescription()` read the
+  nearest presented subject's own presentation independently of page overrides,
+  without resolving its URL or unrelated output. Both are available on explicit
+  readers too; existing `SubjectItem` output stays unchanged.
+- Explicit readers resolve menu/action callbacks against their local context
+  and GET action current-state against their selected page's route and URL.
+  The server supplies the user; outside HTTP the explicit user is null.
+
 ### Fixed
 
 - Reject bound objects that do not match a page's declared subject class before
@@ -20,8 +34,9 @@
 ### Developer Experience
 
 - Centralize subject selection and presentation, destination URL generation,
-  and required presentation-text validation internally. The supported public
-  symbols and serialized output shapes are unchanged.
+  and required presentation-text validation internally. Existing supported
+  symbols and serialized output shapes are retained; new reader methods are
+  listed above.
 
 ## 0.5.0 - 2026-11-17
 

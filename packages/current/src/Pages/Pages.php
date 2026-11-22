@@ -64,12 +64,33 @@ final class Pages
             $parameters[$name] = $value;
         }
 
-        $user = $this->router->current() === null ? null : $this->router->getCurrentRequest()->user();
-        if ($user !== null && ! $user instanceof Authenticatable) {
-            throw new ResolutionFailed('The current request user must implement Authenticatable.');
-        }
+        $user = $this->requestUser();
 
         return new Context($this->current(), $parameters, $user);
+    }
+
+    /**
+     * @internal Creates a local page context without evaluating presentation callbacks.
+     *
+     * @param  array<array-key, mixed>  $parameters  Raw caller input; names are validated before the Context is created.
+     *
+     * @throws InvalidDefinition If page or subject declarations or route references are invalid.
+     * @throws ResolutionFailed If the page is unknown, parameter names are invalid, or the request user is invalid.
+     */
+    public function contextFor(string $pageId, array $parameters): Context
+    {
+        $this->validateRoutes();
+        $this->subjects->validate();
+        $page = $this->registry->page($pageId);
+        $named = [];
+        foreach ($parameters as $name => $value) {
+            if (! is_string($name) || trim($name) === '') {
+                throw new ResolutionFailed("Page '{$pageId}' route parameters must be keyed by non-empty names.");
+            }
+            $named[$name] = $value;
+        }
+
+        return new Context($page, $named, $this->requestUser());
     }
 
     /**
@@ -215,6 +236,17 @@ final class Pages
             throw new InvalidDefinition($problems[0]);
         }
         $this->routesChecked = true;
+    }
+
+    /** @throws ResolutionFailed If the request user does not implement Authenticatable. */
+    private function requestUser(): ?Authenticatable
+    {
+        $user = $this->router->current() === null ? null : $this->router->getCurrentRequest()->user();
+        if ($user !== null && ! $user instanceof Authenticatable) {
+            throw new ResolutionFailed('The current request user must implement Authenticatable.');
+        }
+
+        return $user;
     }
 
     private function activeRoute(): ?Route

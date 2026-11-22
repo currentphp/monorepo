@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Current\Subjects;
 
+use Current\Context;
 use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
 use Current\Pages\PageRegistry;
@@ -75,9 +76,46 @@ final class Subjects
      */
     public function current(): ?SubjectItem
     {
-        $subject = $this->resolver->current($this->reader->context());
+        return $this->currentFor($this->reader->context());
+    }
+
+    /**
+     * @internal Shared resolution for ambient and explicit experiences.
+     *
+     * @throws InvalidDefinition If subject declarations are invalid.
+     * @throws ResolutionFailed If the presented subject or its output cannot be resolved.
+     */
+    public function currentFor(Context $context): ?SubjectItem
+    {
+        $subject = $this->resolver->current($context);
 
         return $subject === null ? null : $this->item($subject['kind'], $subject['object']);
+    }
+
+    /**
+     * @internal Resolves only the selected subject's title-or-label.
+     *
+     * @throws InvalidDefinition If subject declarations are invalid.
+     * @throws ResolutionFailed If the subject or its title cannot be resolved.
+     */
+    public function titleFor(Context $context): ?string
+    {
+        $subject = $this->resolver->current($context);
+
+        return $subject === null ? null : $this->resolver->title($subject['kind'], $subject['object']);
+    }
+
+    /**
+     * @internal Resolves only the selected subject's nullable description.
+     *
+     * @throws InvalidDefinition If subject declarations are invalid.
+     * @throws ResolutionFailed If the subject or its description cannot be resolved.
+     */
+    public function descriptionFor(Context $context): ?string
+    {
+        $subject = $this->resolver->current($context);
+
+        return $subject === null ? null : $this->resolver->description($subject['kind'], $subject['object']);
     }
 
     /**

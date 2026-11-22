@@ -23,27 +23,47 @@ use Illuminate\Support\Str;
  * Reads the current request's page presentation, subject, actions, navigation, and context.
  *
  * Read-only; register declarations through their owning registries.
- * Inject this class or use the Current\Facades\Current facade. It holds no
- * request state: every call resolves the request-scoped readers from the
- * container, so it stays correct across requests, queue jobs, and Octane.
+ * Inject this class or use the Current\Facades\Current facade. The container's
+ * singleton holds no request state. forPage() returns a separate reader holding
+ * an explicit context snapshot; do not retain that reader across requests/jobs.
  */
 final readonly class Experience
 {
     /** @internal Resolved from the container as a singleton. */
-    public function __construct(private Container $container) {}
+    public function __construct(private Container $container, private ?Context $boundContext = null) {}
 
     /**
-     * The active page, or null on unmatched or unregistered routes.
+     * Describe a registered page using server-resolved route parameters.
+     *
+     * Validates page/subject declarations and parameter names without evaluating
+     * presentation callbacks. Binding values and URLs are resolved only when a
+     * read needs them. The user is taken from the current request, or null
+     * outside HTTP. Leaves this reader and the actual request unchanged.
+     * Objects remain references: load/refresh them and recreate the reader after
+     * mutations. Never retain across requests, or trust client data as authorization.
+     *
+     * @param  array<string, mixed>  $parameters  Bound values keyed by route parameter name.
+     *
+     * @throws InvalidDefinition If page/subject declarations or route references are invalid.
+     * @throws ResolutionFailed If the page is unknown, parameter names are invalid, or the current user is invalid.
+     */
+    public function forPage(string $pageId, array $parameters = []): self
+    {
+        return new self($this->container, $this->pages()->contextFor($pageId, $parameters));
+    }
+
+    /**
+     * The selected page; ambient reads return null on unmatched or unregistered routes.
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      */
     public function page(): ?PageDefinition
     {
-        return $this->pages()->current();
+        return $this->boundContext === null ? $this->pages()->current() : $this->boundContext->page;
     }
 
     /**
-     * The active page's ID, or null on unmatched or unregistered routes.
+     * The selected page's ID; ambient reads return null on unmatched or unregistered routes.
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      */
@@ -53,9 +73,9 @@ final readonly class Experience
     }
 
     /**
-     * Whether the active page's ID matches any pattern; `*` is a wildcard.
+     * Whether the selected page's ID matches any pattern; `*` is a wildcard.
      *
-     * Checks the active page only, not its ancestors. False when no page is active.
+     * Checks the selected page only, not its ancestors. False when no page is selected.
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      */
@@ -67,34 +87,34 @@ final readonly class Experience
     }
 
     /**
-     * The active page's title for headings and the document title, falling back
-     * to its label; null when no page is active.
+     * The selected page's title for headings and the document title, including
+     * subject/label fallbacks; null when no page is selected.
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      * @throws ResolutionFailed If a title or label callback cannot be resolved.
      */
     public function title(): ?string
     {
-        $context = $this->pages()->context();
+        $context = $this->context();
 
         return $context->page === null ? null : $this->pages()->title($context->page, $context);
     }
 
     /**
-     * The active page's description; null when it has none or no page is active.
+     * The selected page's description; null when it has none or no page is selected.
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      * @throws ResolutionFailed If the description callback cannot be resolved.
      */
     public function description(): ?string
     {
-        $context = $this->pages()->context();
+        $context = $this->context();
 
         return $context->page === null ? null : $this->pages()->description($context->page, $context);
     }
 
     /**
-     * Breadcrumbs for the active page, root first; empty when no page is active.
+     * Breadcrumbs for the selected page, root first; empty when no page is selected.
      *
      * @return list<Breadcrumb>
      *
@@ -103,11 +123,11 @@ final readonly class Experience
      */
     public function breadcrumbs(): array
     {
-        return $this->navigation()->breadcrumbs();
+        return $this->navigation()->breadcrumbsFor($this->context());
     }
 
     /**
-     * A named menu resolved for this request.
+     * A named menu resolved for this experience's context.
      *
      * @return list<MenuItem>
      *
@@ -116,22 +136,22 @@ final readonly class Experience
      */
     public function menu(string $name): array
     {
-        return $this->navigation()->menu($name);
+        return $this->navigation()->menuFor($name, $this->context());
     }
 
     /**
-     * The request context passed to label, parameter, and visibility callbacks.
+     * The context passed to label, parameter, and visibility callbacks.
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      * @throws ResolutionFailed If route parameters or the current user are invalid.
      */
     public function context(): Context
     {
-        return $this->pages()->context();
+        return $this->boundContext ?? $this->pages()->context();
     }
 
     /**
-     * The subject the request is about: the active page's, or else the nearest
+     * The selected page's subject, or else the nearest
      * ancestor page's that presents one; null when none does.
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
@@ -139,13 +159,43 @@ final readonly class Experience
      */
     public function subject(): ?SubjectItem
     {
-        return $this->container->make(Subjects::class)->current();
+        return $this->container->make(Subjects::class)->currentFor($this->context());
     }
 
     /**
-     * Visible actions for the request: the current subject's, then the current
-     * page's, each in order; empty when no page is active. Current describes
-     * actions and never runs them.
+     * The selected subject's own title-or-label, independent of page overrides.
+     *
+     * Uses the nearest presenting ancestor; null when no subject exists. Does
+     * not resolve the subject's URL, description, or unrelated callbacks.
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If the subject or its title cannot be resolved.
+     */
+    public function subjectTitle(): ?string
+    {
+        return $this->container->make(Subjects::class)->titleFor($this->context());
+    }
+
+    /**
+     * The selected subject's own description, independent of page overrides.
+     *
+     * Uses the nearest presenting ancestor; null without a subject or description.
+     * Does not resolve its label, title, URL, or unrelated callbacks.
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If the subject or its description cannot be resolved.
+     */
+    public function subjectDescription(): ?string
+    {
+        return $this->container->make(Subjects::class)->descriptionFor($this->context());
+    }
+
+    /**
+     * Visible actions for this experience: the selected subject's, then the
+     * selected page's, each in order; empty when no page is selected. Current
+     * describes actions and never runs them. Explicit readers mark GET actions
+     * current by the selected page's route and resolved URL; ambient readers
+     * use the actual request route and URL.
      *
      * @return list<ActionItem>
      *
@@ -154,7 +204,7 @@ final readonly class Experience
      */
     public function actions(): array
     {
-        return $this->container->make(Actions::class)->current();
+        return $this->container->make(Actions::class)->currentFor($this->context(), $this->boundContext !== null);
     }
 
     /**

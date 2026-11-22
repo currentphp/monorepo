@@ -8,8 +8,9 @@ use Current\Experience;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Reads the experience of the current request; see Current\Current.
+ * Reads the current request or creates a local page experience; see Current\Experience.
  *
+ * @method static \Current\Experience forPage(string $pageId, array<string, mixed> $parameters = [])
  * @method static \Current\Pages\PageDefinition|null page()
  * @method static string|null pageId()
  * @method static bool is(string ...$patterns)
@@ -20,9 +21,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Current\Context context()
  * @method static \Illuminate\Contracts\Auth\Authenticatable|null user()
  * @method static \Current\Subjects\SubjectItem|null subject()
+ * @method static string|null subjectTitle()
+ * @method static string|null subjectDescription()
  * @method static list<\Current\Actions\ActionItem> actions()
  *
- * @see \Current\Current
+ * @see Experience
  */
 final class Current extends Facade
 {

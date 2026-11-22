@@ -75,16 +75,28 @@ final class Actions
      */
     public function current(): array
     {
-        $context = $this->pages->context();
+        return $this->currentFor($this->pages->context());
+    }
+
+    /**
+     * @internal Shared resolution; explicit experiences use their logical page for GET current-state.
+     *
+     * @return list<ActionItem>
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If a subject, callback, or URL cannot be resolved.
+     */
+    public function currentFor(Context $context, bool $explicit = false): array
+    {
         if ($context->page === null) {
             return [];
         }
         $this->validate();
 
         $subject = $this->subjects->current($context);
-        $items = $subject === null ? [] : $this->resolve($this->registry->forKind($subject['kind']->name), $context, $subject['object']);
+        $items = $subject === null ? [] : $this->resolve($this->registry->forKind($subject['kind']->name), $context, $subject['object'], $explicit);
 
-        return [...$items, ...$this->resolve($this->registry->forPage($context->page->id), $context, null)];
+        return [...$items, ...$this->resolve($this->registry->forPage($context->page->id), $context, null, $explicit)];
     }
 
     /**
@@ -127,7 +139,7 @@ final class Actions
      *
      * @throws ResolutionFailed
      */
-    private function resolve(array $actions, Context $context, ?object $subject): array
+    private function resolve(array $actions, Context $context, ?object $subject, bool $explicit = false): array
     {
         $items = [];
         foreach ($actions as $action) {
@@ -137,7 +149,7 @@ final class Actions
                 continue;
             }
 
-            [$enabled, $reason] = $this->availability($action, $arguments, $context, $subject);
+            [$enabled, $reason] = $this->availability($action, $arguments, $context, $subject, $explicit);
             $url = $this->url($action, $context, $subject);
 
             $items[] = new ActionItem(
@@ -151,13 +163,25 @@ final class Actions
                 enabled: $enabled,
                 reason: $reason,
                 confirm: $action->confirm === null ? null : self::text($action->confirm, $arguments, $id, 'confirmation'),
-                current: $action->method === 'GET'
-                    && $this->router->current()?->getName() === $action->routeName
-                    && $url === $this->urls->current(),
+                current: $this->isCurrent($action, $url, $context, $explicit),
             );
         }
 
         return $items;
+    }
+
+    /** @throws ResolutionFailed If the explicit page destination cannot be resolved. */
+    private function isCurrent(ActionDefinition $action, string $url, Context $context, bool $explicit): bool
+    {
+        if ($action->method !== 'GET') {
+            return false;
+        }
+        if (! $explicit) {
+            return $this->router->current()?->getName() === $action->routeName && $url === $this->urls->current();
+        }
+        $page = $context->page;
+
+        return $page !== null && $page->routeName === $action->routeName && $url === $this->pages->url($page, $context);
     }
 
     /**
@@ -168,12 +192,12 @@ final class Actions
      *
      * @throws ResolutionFailed
      */
-    private function availability(ActionDefinition $action, array $arguments, Context $context, ?object $subject): array
+    private function availability(ActionDefinition $action, array $arguments, Context $context, ?object $subject, bool $explicit): array
     {
         $id = $action->id();
         if ($action->ability !== null) {
             try {
-                $gate = $context->user === null ? $this->gate : $this->gate->forUser($context->user);
+                $gate = $explicit || $context->user !== null ? $this->gate->forUser($context->user) : $this->gate;
                 $response = $gate->inspect($action->ability, $subject === null ? [] : [$subject]);
             } catch (Throwable $exception) {
                 throw new ResolutionFailed("Could not check ability '{$action->ability}' for action '{$id}': {$exception->getMessage()}", 0, $exception);
