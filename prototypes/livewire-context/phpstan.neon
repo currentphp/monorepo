@@ -1,0 +1,11 @@
+# Fixture boundary check, not a replacement for the core's maximum-level analysis.
+parameters:
+    level: 7
+    paths:
+        - src
+        - server.php
+    bootstrapFiles:
+        - vendor/autoload.php
+    featureToggles:
+        internalTag: true
+    tmpDir: .runtime/phpstan
