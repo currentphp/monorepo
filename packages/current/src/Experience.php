@@ -20,9 +20,9 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Str;
 
 /**
- * Reads the experience of the current request: page, breadcrumbs, menus, and context.
+ * Reads the current request's page presentation, subject, actions, navigation, and context.
  *
- * Read-only; register pages and menus through PageRegistry and MenuRegistry.
+ * Read-only; register declarations through their owning registries.
  * Inject this class or use the Current\Facades\Current facade. It holds no
  * request state: every call resolves the request-scoped readers from the
  * container, so it stays correct across requests, queue jobs, and Octane.

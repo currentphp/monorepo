@@ -2,7 +2,26 @@
 
 ## Unreleased
 
-No changes yet.
+### Breaking
+
+- Page reads now finalize and validate subject declarations too, including reads
+  of page IDs and explicit page titles. Complete subject registration before
+  reading pages; late registration and invalid declarations previously missed
+  by page readers now fail consistently with subject and action readers.
+
+### Fixed
+
+- Reject bound objects that do not match a page's declared subject class before
+  resolving subject presentation or actions.
+- Apply the same subject declaration checks through page, subject, and action
+  readers, without evaluating unrelated callbacks.
+- Identify the subject and canonical page when its destination URL cannot be generated.
+
+### Developer Experience
+
+- Centralize subject selection and presentation, destination URL generation,
+  and required presentation-text validation internally. The supported public
+  symbols and serialized output shapes are unchanged.
 
 ## 0.5.0 - 2026-11-17
 

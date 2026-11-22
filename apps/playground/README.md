@@ -29,7 +29,7 @@ component, plus `SharedPropsTest.php` for pages outside the demos.
 Demo content comes from JSON files in [`database/fixtures/`](database/fixtures/),
 loaded with `App\Fixtures::load('<name>')`. Fixtures need no migrations or
 seeding, and the app and tests read the same data. Edit
-`database/fixtures/projects.json` to change the example projects. PostgreSQL
+`database/fixtures/projects.json` to change the example projects. SQLite
 holds only the foundation's application data, such as users and sessions.
 
 ## Adding a component
@@ -49,7 +49,7 @@ holds only the foundation's application data, such as users and sessions.
 
 `php artisan current:pages`, `current:menus`, and `current:check` list and
 validate what `ExperienceServiceProvider` registers; add `--json` to the listings
-for machine-readable output. Run them through Sail like any Artisan command.
+for machine-readable output. Run them directly from this application directory.
 
 The base `TestCase` uses `Current\Testing\InteractsWithCurrent`, so tests can
 assert the current page, breadcrumbs, and menu visibility after a request, for
@@ -69,7 +69,7 @@ composer dev     # serve at http://localhost:8000 with Vite
 
 Current packages are local Composer path dependencies, symlinked from the
 monorepo's `packages/` folder at each package's development line (core
-`0.3.x-dev`, inertia `0.2.x-dev`), so package changes are
+`0.5.x-dev`, inertia `0.4.x-dev`), so package changes are
 immediately available here and no package source is copied into the app.
 This app is not a standalone distributable application. The application keeps
 its Composer and npm lockfiles.
@@ -92,6 +92,11 @@ on a project page), and by `current.subject` in the Inertia prop. Open
 `/projects/42/tasks/1`, or run `php artisan current:subjects`.
 
 ## Checks
+
+The app's action type represents all core HTTP methods. Its Inertia navigation
+buttons omit `HEAD` actions, which have no page response; the installed Inertia
+transport supports GET, POST, PUT, PATCH, and DELETE. Other execution behavior
+belongs to the application.
 
 ```sh
 composer check

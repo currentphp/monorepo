@@ -5,7 +5,7 @@ export type Action = {
     name: string;
     label: string;
     url: string;
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     icon: string | null;
     destructive: boolean;
     enabled: boolean;

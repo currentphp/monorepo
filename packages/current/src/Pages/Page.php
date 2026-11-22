@@ -71,7 +71,8 @@ final class Page
     }
 
     /**
-     * Set the title for headings and the document title; without one, the title is the label.
+     * Set the title for headings and the document title; otherwise use the
+     * presented subject's title-or-label, or this page's label when it presents none.
      *
      * The label stays the short name in breadcrumbs and menus. Callbacks must
      * return a non-empty string and may run repeatedly when output is requested.
@@ -88,7 +89,8 @@ final class Page
     /**
      * Set a short description, such as for a meta description or a lead paragraph.
      *
-     * A page has no description unless it sets one; the label is never used.
+     * Without one, use the presented subject's description, or null when the
+     * page presents none. The label is never used.
      * Callbacks must return a non-empty string, or null for no description.
      *
      * @param  string|callable(Context): mixed  $description

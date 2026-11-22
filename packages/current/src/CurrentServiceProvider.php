@@ -16,6 +16,7 @@ use Current\Navigation\Navigation;
 use Current\Pages\PageRegistry;
 use Current\Pages\Pages;
 use Current\Subjects\SubjectRegistry;
+use Current\Subjects\SubjectResolver;
 use Current\Subjects\Subjects;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,6 +33,7 @@ final class CurrentServiceProvider extends ServiceProvider
         $this->app->scoped(Pages::class);
         $this->app->scoped(Navigation::class);
         $this->app->scoped(Subjects::class);
+        $this->app->scoped(SubjectResolver::class);
         $this->app->scoped(Actions::class);
         // Stateless, so the facade's cached instance never holds request state.
         $this->app->singleton(Experience::class);

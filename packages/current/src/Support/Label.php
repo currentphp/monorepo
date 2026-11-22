@@ -32,6 +32,14 @@ final class Label
         return $resolved;
     }
 
+    /** @throws ResolutionFailed If a required presentation value is not a non-empty string. */
+    public static function nonEmpty(mixed $value, string $owner, string $fact): string
+    {
+        return is_string($value) && trim($value) !== ''
+            ? $value
+            : throw new ResolutionFailed(ucfirst($fact)." callback for {$owner} must return a non-empty string.");
+    }
+
     /**
      * Resolve a value whose callback may return null, such as a description.
      *

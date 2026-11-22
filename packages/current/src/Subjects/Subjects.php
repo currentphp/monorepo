@@ -8,9 +8,9 @@ use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
 use Current\Pages\PageRegistry;
 use Current\Pages\Pages;
+use Current\Support\DestinationUrls;
 use Current\Support\RouteParameters;
 use Illuminate\Contracts\Routing\UrlRoutable;
-use Illuminate\Routing\Router;
 
 /**
  * Resolves subjects: any object's subject, and the current request's.
@@ -19,15 +19,12 @@ use Illuminate\Routing\Router;
  */
 final class Subjects
 {
-    /** Reader checks run once per request or job; registries are frozen by then. */
-    private bool $validated = false;
-
     /** @internal Resolved from the container, scoped to the request or job. */
     public function __construct(
-        private readonly SubjectRegistry $registry,
+        private readonly SubjectResolver $resolver,
         private readonly PageRegistry $pages,
         private readonly Pages $reader,
-        private readonly Router $router,
+        private readonly DestinationUrls $urls,
     ) {}
 
     /**
@@ -41,19 +38,7 @@ final class Subjects
      */
     public function of(object $object): SubjectItem
     {
-        return $this->item($this->kindOf($object), $object);
-    }
-
-    /**
-     * @throws InvalidDefinition
-     * @throws ResolutionFailed
-     */
-    private function kindOf(object $object): SubjectDefinition
-    {
-        $this->validate();
-
-        return $this->registry->forObject($object)
-            ?? throw new ResolutionFailed('No subject kind accepts '.$object::class.'.');
+        return $this->item($this->resolver->kindOf($object), $object);
     }
 
     /**
@@ -66,7 +51,7 @@ final class Subjects
      */
     public function title(object $object): string
     {
-        return $this->reader->subjectTitle($this->kindOf($object), $object);
+        return $this->resolver->title($this->resolver->kindOf($object), $object);
     }
 
     /**
@@ -77,7 +62,7 @@ final class Subjects
      */
     public function description(object $object): ?string
     {
-        return $this->reader->subjectDescription($this->kindOf($object), $object);
+        return $this->resolver->description($this->resolver->kindOf($object), $object);
     }
 
     /**
@@ -90,17 +75,9 @@ final class Subjects
      */
     public function current(): ?SubjectItem
     {
-        $context = $this->reader->context();
-        foreach (array_reverse($this->reader->activeTrail($context)) as $page) {
-            if ($page->presents === null) {
-                continue;
-            }
-            $this->validate();
+        $subject = $this->resolver->current($this->reader->context());
 
-            return $this->item($this->registry->kind($page->presents), $this->reader->presentedObject($page, $context));
-        }
-
-        return null;
+        return $subject === null ? null : $this->item($subject['kind'], $subject['object']);
     }
 
     /**
@@ -115,40 +92,7 @@ final class Subjects
      */
     public function problems(): array
     {
-        $problems = [];
-        foreach ($this->registry->all() as $kind) {
-            if (! is_a($kind->class, UrlRoutable::class, true)) {
-                $problems[] = "Subject '{$kind->name}' class {$kind->class} must be routable (implement UrlRoutable) to have an identity.";
-            }
-        }
-        foreach ($this->pages->all() as $page) {
-            if ($page->presents === null) {
-                continue;
-            }
-            $parameter = (string) $page->presentsParameter;
-            $route = $page->routeName === null ? null : $this->router->getRoutes()->getByName($page->routeName);
-            if ($page->routeName !== null && $route === null) {
-                continue; // Reported as an unknown route by Pages.
-            }
-            if ($route === null || ! in_array($parameter, $route->parameterNames(), true)) {
-                $problems[] = "Page '{$page->id}' presents subject '{$page->presents}', but its route has no '{$parameter}' parameter.";
-            }
-        }
-
-        return $problems;
-    }
-
-    /** @throws InvalidDefinition */
-    private function validate(): void
-    {
-        if ($this->validated) {
-            return;
-        }
-        $problems = $this->problems();
-        if ($problems !== []) {
-            throw new InvalidDefinition($problems[0]);
-        }
-        $this->validated = true;
+        return $this->resolver->problems();
     }
 
     /** @throws ResolutionFailed */
@@ -165,7 +109,7 @@ final class Subjects
         return new SubjectItem(
             $kind->name,
             (string) $key,
-            $this->reader->subjectLabel($kind, $object),
+            $this->resolver->label($kind, $object),
             $this->url($kind, $object),
         );
     }
@@ -180,6 +124,8 @@ final class Subjects
             ? [$kind->name => $object]
             : RouteParameters::resolve($kind->routeParameters, $object, "subject '{$kind->name}'");
 
-        return $this->reader->urlWith($this->pages->page($kind->pageId), $parameters);
+        $page = $this->pages->page($kind->pageId);
+
+        return $page->routeName === null ? null : $this->urls->generate($page->routeName, $parameters, "subject '{$kind->name}' on page '{$page->id}'");
     }
 }
