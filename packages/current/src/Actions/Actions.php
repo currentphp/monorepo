@@ -9,7 +9,9 @@ use Current\Context;
 use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
 use Current\Pages\Pages;
-use Current\Subjects\SubjectRegistry;
+use Current\Subjects\SubjectResolver;
+use Current\Support\DestinationUrls;
+use Current\Support\Label;
 use Current\Support\RouteParameters;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -32,11 +34,12 @@ final class Actions
     /** @internal Resolved from the container, scoped to the request or job. */
     public function __construct(
         private readonly ActionRegistry $registry,
-        private readonly SubjectRegistry $subjects,
+        private readonly SubjectResolver $subjects,
         private readonly Pages $pages,
         private readonly Router $router,
         private readonly UrlGenerator $urls,
         private readonly Gate $gate,
+        private readonly DestinationUrls $destinations,
     ) {}
 
     /**
@@ -52,8 +55,7 @@ final class Actions
      */
     public function for(object $subject): array
     {
-        $kind = $this->subjects->forObject($subject)
-            ?? throw new ResolutionFailed('No subject kind accepts '.$subject::class.'.');
+        $kind = $this->subjects->kindOf($subject);
         $this->validate();
 
         return $this->resolve($this->registry->forKind($kind->name), $this->pages->context(), $subject);
@@ -79,13 +81,8 @@ final class Actions
         }
         $this->validate();
 
-        $items = [];
-        foreach (array_reverse($this->pages->activeTrail($context)) as $page) {
-            if ($page->presents !== null) {
-                $items = $this->resolve($this->registry->forKind($page->presents), $context, $this->pages->presentedObject($page, $context));
-                break;
-            }
-        }
+        $subject = $this->subjects->current($context);
+        $items = $subject === null ? [] : $this->resolve($this->registry->forKind($subject['kind']->name), $context, $subject['object']);
 
         return [...$items, ...$this->resolve($this->registry->forPage($context->page->id), $context, null)];
     }
@@ -214,16 +211,7 @@ final class Actions
             $available = RouteParameters::resolve($action->routeParameters, $subject, "action '{$id}'");
         }
 
-        $route = $this->router->getRoutes()->getByName($action->routeName)
-            ?? throw new ResolutionFailed("Action '{$id}' targets unknown route '{$action->routeName}'.");
-        // Forward only parameters the route declares; extras never become query strings.
-        $parameters = array_intersect_key($available, array_flip(self::strings($route->parameterNames())));
-
-        try {
-            return $this->urls->route($action->routeName, $parameters);
-        } catch (Throwable $exception) {
-            throw new ResolutionFailed("Could not generate URL for action '{$id}' and route '{$action->routeName}': {$exception->getMessage()}", 0, $exception);
-        }
+        return $this->destinations->generate($action->routeName, $available, "action '{$id}'");
     }
 
     /**
@@ -248,11 +236,8 @@ final class Actions
     private static function text(string|Closure $value, array $arguments, string $id, string $fact): string
     {
         $text = is_string($value) ? $value : self::call($value, $arguments, $id, $fact);
-        if (! is_string($text) || trim($text) === '') {
-            throw new ResolutionFailed(ucfirst($fact)." callback for action '{$id}' must return a non-empty string.");
-        }
 
-        return $text;
+        return Label::nonEmpty($text, "action '{$id}'", $fact);
     }
 
     /**
@@ -284,6 +269,7 @@ final class Actions
         if ($this->validated) {
             return;
         }
+        $this->subjects->validate();
         $problems = $this->problems();
         if ($problems !== []) {
             throw new InvalidDefinition($problems[0]);

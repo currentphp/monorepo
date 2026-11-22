@@ -1,7 +1,7 @@
 # Contributing to Current
 
 **Current is not accepting pull requests yet.** The public API is still being
-finalized before the first release, so pull requests are limited to
+finalized during the 0.x releases, so pull requests are limited to
 maintainers for now. Feedback is welcome: please open an issue on this
 repository with questions, bug reports, or how you would use the packages.
 This section will change when contributions open.

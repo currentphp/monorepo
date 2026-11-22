@@ -7,15 +7,13 @@ namespace Current\Pages;
 use Current\Context;
 use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
-use Current\Subjects\SubjectDefinition;
-use Current\Subjects\SubjectRegistry;
+use Current\Subjects\SubjectResolver;
+use Current\Support\DestinationUrls;
 use Current\Support\Label;
 use Current\Support\RouteParameters;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use Throwable;
 
 /** Resolves registered pages for the current Laravel request; does not create routes or enforce access. */
 final class Pages
@@ -27,8 +25,8 @@ final class Pages
     public function __construct(
         private readonly PageRegistry $registry,
         private readonly Router $router,
-        private readonly UrlGenerator $urls,
-        private readonly SubjectRegistry $subjects,
+        private readonly DestinationUrls $urls,
+        private readonly SubjectResolver $subjects,
     ) {}
 
     /**
@@ -42,6 +40,7 @@ final class Pages
     public function current(): ?PageDefinition
     {
         $this->validateRoutes();
+        $this->subjects->validate();
 
         return $this->registry->forRoute($this->activeRoute()?->getName());
     }
@@ -78,10 +77,12 @@ final class Pages
      *
      * @return list<PageDefinition>
      *
-     * @throws InvalidDefinition If registry finalization fails.
+     * @throws InvalidDefinition If page or subject definitions are invalid.
      */
     public function activeTrail(Context $context): array
     {
+        $this->subjects->validate();
+
         return $context->page === null ? [] : $this->registry->trail($context->page->id);
     }
 
@@ -96,11 +97,13 @@ final class Pages
      */
     public function label(PageDefinition $page, Context $context): string
     {
+        $this->subjects->validate();
+
         if ($page->presents === null || $page->labelled) {
             return Label::resolve($page->label, $context, "page '{$page->id}'");
         }
 
-        return $this->subjectLabel($this->subjects->kind($page->presents), $this->presentedObject($page, $context));
+        return $this->subjects->label($this->subjects->kind($page->presents), $this->subjects->presentedObject($page, $context));
     }
 
     /**
@@ -114,12 +117,14 @@ final class Pages
      */
     public function title(PageDefinition $page, Context $context): string
     {
+        $this->subjects->validate();
+
         if ($page->title !== null) {
-            return self::nonEmpty(Label::resolve($page->title, $context, "page '{$page->id}'", 'title'), "page '{$page->id}'");
+            return Label::nonEmpty(Label::resolve($page->title, $context, "page '{$page->id}'", 'title'), "page '{$page->id}'", 'title');
         }
 
         if ($page->presents !== null) {
-            return $this->subjectTitle($this->subjects->kind($page->presents), $this->presentedObject($page, $context));
+            return $this->subjects->title($this->subjects->kind($page->presents), $this->subjects->presentedObject($page, $context));
         }
 
         return $this->label($page, $context);
@@ -133,88 +138,27 @@ final class Pages
      */
     public function description(PageDefinition $page, Context $context): ?string
     {
+        $this->subjects->validate();
+
         if ($page->description !== null) {
             return Label::resolveOptional($page->description, $context, "page '{$page->id}'", 'description');
         }
 
         return $page->presents === null
             ? null
-            : $this->subjectDescription($this->subjects->kind($page->presents), $this->presentedObject($page, $context));
+            : $this->subjects->description($this->subjects->kind($page->presents), $this->subjects->presentedObject($page, $context));
     }
 
     /**
      * Read a page's icon: its own, else that of the subject kind it presents.
      *
-     * @throws InvalidDefinition If the presented subject kind is unknown.
+     * @throws InvalidDefinition If subject definitions are invalid.
      */
     public function icon(PageDefinition $page): ?string
     {
+        $this->subjects->validate();
+
         return $page->icon ?? ($page->presents === null ? null : $this->subjects->kind($page->presents)->icon);
-    }
-
-    /**
-     * Resolve a subject's title from its object, falling back to its label.
-     *
-     * @internal Shared by title() and the Subjects reader.
-     *
-     * @throws ResolutionFailed If a callback fails or returns an empty or non-string value.
-     */
-    public function subjectTitle(SubjectDefinition $kind, object $object): string
-    {
-        return $kind->title === null
-            ? $this->subjectLabel($kind, $object)
-            : self::nonEmpty(Label::resolve($kind->title, $object, "subject '{$kind->name}'", 'title'), "subject '{$kind->name}'");
-    }
-
-    /**
-     * Resolve a subject's description from its object, or null when it has none.
-     *
-     * @internal Shared by description() and the Subjects reader.
-     *
-     * @throws ResolutionFailed If the callback fails or returns anything but a non-empty string or null.
-     */
-    public function subjectDescription(SubjectDefinition $kind, object $object): ?string
-    {
-        return $kind->description === null
-            ? null
-            : Label::resolveOptional($kind->description, $object, "subject '{$kind->name}'", 'description');
-    }
-
-    /** @throws ResolutionFailed */
-    private static function nonEmpty(string $title, string $owner): string
-    {
-        return trim($title) !== ''
-            ? $title
-            : throw new ResolutionFailed("Title callback for {$owner} must return a non-empty string.");
-    }
-
-    /**
-     * Read the bound object a presenting page shows, from the context's route parameters.
-     *
-     * @internal Shared by label() and the Subjects reader.
-     *
-     * @throws ResolutionFailed If the page presents nothing, or the parameter is not a bound object.
-     */
-    public function presentedObject(PageDefinition $page, Context $context): object
-    {
-        $parameter = $page->presentsParameter ?? throw new ResolutionFailed("Page '{$page->id}' presents no subject.");
-        $object = $context->parameters()[$parameter] ?? null;
-
-        return is_object($object)
-            ? $object
-            : throw new ResolutionFailed("Page '{$page->id}' presents subject '{$page->presents}', but route parameter '{$parameter}' is not a bound object.");
-    }
-
-    /**
-     * Resolve a subject's label from its object.
-     *
-     * @internal Shared by label() and the Subjects reader.
-     *
-     * @throws ResolutionFailed If the callback throws or does not return a string.
-     */
-    public function subjectLabel(SubjectDefinition $kind, object $object): string
-    {
-        return Label::resolve($kind->label, $object, "subject '{$kind->name}'");
     }
 
     /**
@@ -223,11 +167,13 @@ final class Pages
      * Forwards only parameters the destination route declares, from the page's
      * route-parameter mapping when present, otherwise from the active route.
      *
-     * @throws InvalidDefinition If the page references an unknown route.
+     * @throws InvalidDefinition If subject definitions are invalid or the page references an unknown route.
      * @throws ResolutionFailed If the mapping is invalid or URL generation fails.
      */
     public function url(PageDefinition $page, Context $context): ?string
     {
+        $this->subjects->validate();
+
         if ($page->routeName === null) {
             return null;
         }
@@ -235,41 +181,7 @@ final class Pages
             ? $context->parameters()
             : RouteParameters::resolve($page->routeParameters, $context, "page '{$page->id}'");
 
-        return $this->urlWith($page, $parameters);
-    }
-
-    /**
-     * Generate a page's URL from explicit parameters, forwarding only those its route declares.
-     *
-     * @internal Shared by url() and the Subjects reader.
-     *
-     * @param  array<string, mixed>  $activeParameters
-     *
-     * @throws InvalidDefinition If the page references an unknown route.
-     * @throws ResolutionFailed If URL generation fails.
-     */
-    public function urlWith(PageDefinition $page, array $activeParameters): ?string
-    {
-        if ($page->routeName === null) {
-            return null;
-        }
-        $route = $this->router->getRoutes()->getByName($page->routeName)
-            ?? throw new InvalidDefinition("Page '{$page->id}' references unknown route '{$page->routeName}'.");
-        $parameters = [];
-        foreach ($route->parameterNames() as $name) {
-            if (! is_string($name)) {
-                throw new InvalidDefinition("Route '{$page->routeName}' contains an invalid parameter name.");
-            }
-            if (array_key_exists($name, $activeParameters)) {
-                $parameters[$name] = $activeParameters[$name];
-            }
-        }
-
-        try {
-            return $this->urls->route($page->routeName, $parameters);
-        } catch (Throwable $exception) {
-            throw new ResolutionFailed("Could not generate URL for page '{$page->id}' and route '{$page->routeName}': {$exception->getMessage()}", 0, $exception);
-        }
+        return $this->urls->generate($page->routeName, $parameters, "page '{$page->id}'");
     }
 
     /**

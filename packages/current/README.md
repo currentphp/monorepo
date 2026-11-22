@@ -427,6 +427,14 @@ public function boot(SubjectRegistry $subjects, PageRegistry $pages): void
   identity is the kind plus the route key, `project:42`. Two kinds cannot
   share a class or a class hierarchy.
 
+Subject declaration validity is shared by page, subject, and action readers:
+classes must be routable, and presenting routes must declare their subject
+parameter. Complete all registration before reading, even when reading only a
+page ID or an explicit page title. These checks never evaluate callbacks.
+When a reader needs a presented object, it must be an instance of the kind's
+registered class; a wrong binding raises `ResolutionFailed` naming the page,
+parameter, expected class, and actual class before subject or action callbacks run.
+
 Read subjects as `Current\Subjects\SubjectItem` objects with `kind`, `id`,
 `label`, nullable `url`, and `key()`; they serialize to
 `{ kind, id, label, url }`:
@@ -460,9 +468,9 @@ Subject::make('project')->for(Project::class)
 ```
 
 - A page that presents a subject takes its title and description unless it
-  sets its own: the title is the page's title, then the subject's title, then
-  the page's label; the description is the page's, then the subject's, or
-  null. On a project's page, `Current::title()` is "Project Apollo" while the
+  sets its own: its title is the page's explicit title, otherwise the subject's
+  title falling back to the subject's label; the description is the page's,
+  then the subject's, or null. On a project's page, `Current::title()` is "Project Apollo" while the
   breadcrumb still reads "Apollo".
 - A subject's title falls back to its label; its description never does.
 - A page that presents a subject and has no icon of its own takes the kind's
@@ -470,6 +478,13 @@ Subject::make('project')->for(Project::class)
 - For any object, `app(Subjects::class)->title($task)` and `description($task)`
   run only those callbacks. `SubjectItem` stays `{ kind, id, label, url }`, so
   lists of subjects don't resolve titles they don't show.
+
+Page overrides do not replace the current subject's own presentation. A page
+below a presenting page keeps its own title and description, while
+`Current::subject()` and `Current::actions()` use the nearest presenting ancestor.
+Reading a title resolves only its title callback or label fallback, without
+resolving a subject URL, description, or actions. Callbacks may run repeatedly
+and must remain free of side effects.
 
 ## Actions
 
