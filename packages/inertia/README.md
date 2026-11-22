@@ -8,8 +8,8 @@ describes your application's pages once; this package hands that description
 to your React or Vue frontend as one shared prop, so components stop keeping
 their own breadcrumb arrays and navigation lists.
 
-Package: `current/inertia`. Namespace: `Current\Inertia\`. Current is a Wavy
-project. Version 0.1.0 was released as `wavykit/inertia`; the first release as
+Package: `current/inertia`. Namespace: `Current\Inertia\`. Version 0.1.0 was
+released as `wavykit/inertia`; the first release as
 `current/inertia` is 0.2.0. Version 0.4.0 is for `current/current` 0.5. While
 Current is on 0.x, minor releases may change the public API.
 

@@ -19,7 +19,7 @@ returns plain data for Blade, Inertia, or any other frontend.
 Package: `current/current`. Namespaces: `Current\Pages\` (pages),
 `Current\Navigation\` (breadcrumbs and menus), `Current\Subjects\`
 (subjects), `Current\Actions\` (actions), and `Current\Context`.
-Current is a Wavy project. It was released as `wavykit/core` up to 0.2.0; the
+It was released as `wavykit/core` up to 0.2.0; the
 first release as `current/current` is 0.3.0. While Current is on 0.x, minor
 releases may change the public API; see [Versioning](#versioning).
 

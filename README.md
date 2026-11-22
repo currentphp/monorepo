@@ -28,8 +28,6 @@ day. The latest releases are `current/current` 0.5.0 and `current/inertia`
 requests are not open yet; issues and feedback are welcome (see
 [CONTRIBUTING.md](CONTRIBUTING.md)).
 
-Current is a [Wavy](https://wavy.dev) project.
-
 | Package | Purpose |
 | --- | --- |
 | [`current/current`](packages/current/README.md) | Pages (identity, hierarchy, route association, request context), breadcrumbs, menus, and subjects. |
