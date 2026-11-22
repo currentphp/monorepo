@@ -104,8 +104,10 @@ current user, which `Current::user()` also returns. `Current::subject()`
 returns the subject the request is about; see [Subjects](#subjects).
 
 `Current` only reads. To inject it instead, type-hint `Current\Experience`, the
-class behind the facade. It holds no request state, so it is safe in queue
-workers and Octane. Register pages and menus through `PageRegistry` and
+class behind the facade. The container's ambient singleton holds no request
+state, so it is safe in queue workers and Octane. Explicit readers created with
+`forPage()` hold a local context and must not be retained across requests or jobs.
+Register pages and menus through `PageRegistry` and
 `MenuRegistry`, as shown above.
 
 Packages that build on the core read pages through `Current\Pages\Pages`,
@@ -201,6 +203,65 @@ name or suffix: append your own, for example
 
 Packages that build on the core resolve any page with `Pages::title($page,
 $context)` and `Pages::description($page, $context)`.
+
+## Explicit page experiences
+
+When the HTTP request does not identify the page you are describing, select it
+explicitly. This includes a Livewire component's later update requests, which
+use Livewire's endpoint rather than the original page route:
+
+```php
+use Current\Facades\Current;
+
+// The application loads and authorizes its objects.
+$experience = Current::forPage('projects.edit', ['project' => $project]);
+
+$experience->pageId();              // projects.edit
+$experience->title();               // the page's title
+$experience->subjectTitle();        // the subject's own title-or-label
+$experience->subjectDescription();  // the subject's own description, or null
+$experience->breadcrumbs();
+$experience->menu('primary');
+$experience->actions();
+```
+
+The returned `Current\Experience` has the same read methods as the ambient
+reader, including `page()`, `is()`, `context()`, `subject()`, and `user()`. It
+uses the same resolution rules and leaves ambient `Current::…` reads, the
+actual request, and other explicit readers unchanged. Route-less registered
+pages are valid. It works outside HTTP after Laravel and routes have booted;
+the user is null there. During an HTTP request, the user comes from the server's
+request resolver, never from the supplied route-parameter map.
+
+Construction validates page/subject declarations, route references, the page
+ID, and non-empty parameter names without running presentation callbacks.
+An unknown page or malformed parameter map raises `ResolutionFailed`.
+Menu and action declarations are checked when those reads are requested, as
+for ambient readers. Bound objects, callbacks, and destination URLs are resolved
+only when the requested output needs them: an explicit page title can work
+without a subject binding, while reading that subject fails clearly if its
+binding is missing or has the wrong class.
+
+Menu predicates and action callbacks see the selected page and supplied bound
+values. Callbacks must use their supplied `Context`: an ambient facade call
+inside a callback still describes the actual request. A GET action is `current`
+only when both its named route and resolved
+URL match the selected page's route and resolved URL. Ambient action reads
+continue to compare against the actual request.
+
+Models remain references, not deep copies. Current never queries or refreshes
+them. Load fresh objects and recreate the reader after mutations, authentication
+changes, or a new request; callbacks may run repeatedly. Page selection and
+action availability do not authorize access or execution. The application must
+establish trusted page/subject identity and authorize its operations.
+
+For Livewire, retain trusted identity (for example a locked model ID), then
+reload the object, authorize, and construct the reader when rendering. A
+child-only update does not rerender the parent shell: coordinate parent refreshes
+in the application when headings, breadcrumbs, menus, or actions must update.
+HTTP lifecycle behavior has been exercised with Laravel 13.42.0 and Livewire
+4.4.9; this does not establish browser event wiring or `wire:navigate` support.
+Core has no Livewire runtime dependency.
 
 ## Breadcrumbs
 
@@ -482,6 +543,10 @@ Subject::make('project')->for(Project::class)
 Page overrides do not replace the current subject's own presentation. A page
 below a presenting page keeps its own title and description, while
 `Current::subject()` and `Current::actions()` use the nearest presenting ancestor.
+`Current::subjectTitle()` and `Current::subjectDescription()` read that subject's
+own presentation independently of page overrides; both return null when there
+is no subject. The title falls back to the subject's label; its description
+remains nullable. These methods also exist on explicit experience readers.
 Reading a title resolves only its title callback or label fallback, without
 resolving a subject URL, description, or actions. Callbacks may run repeatedly
 and must remain free of side effects.

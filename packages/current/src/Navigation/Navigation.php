@@ -42,7 +42,19 @@ final readonly class Navigation
      */
     public function breadcrumbs(): array
     {
-        $context = $this->pages->context();
+        return $this->breadcrumbsFor($this->pages->context());
+    }
+
+    /**
+     * @internal Shared resolution for ambient and explicit experiences.
+     *
+     * @return list<Breadcrumb>
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If callbacks or destination URLs cannot be resolved.
+     */
+    public function breadcrumbsFor(Context $context): array
+    {
         $current = $context->page;
 
         return array_map(fn (PageDefinition $page): Breadcrumb => new Breadcrumb(
@@ -68,7 +80,19 @@ final readonly class Navigation
      */
     public function menu(string $name): array
     {
-        $context = $this->pages->context();
+        return $this->menuFor($name, $this->pages->context());
+    }
+
+    /**
+     * @internal Shared resolution for ambient and explicit experiences.
+     *
+     * @return list<MenuItem>
+     *
+     * @throws InvalidDefinition If definitions or route references are invalid.
+     * @throws ResolutionFailed If the menu is unknown, or callbacks or URLs cannot be resolved.
+     */
+    public function menuFor(string $name, Context $context): array
+    {
         $activeIds = array_map(fn (PageDefinition $page): string => $page->id, $this->pages->activeTrail($context));
 
         $entries = $this->menus->entries($name);
