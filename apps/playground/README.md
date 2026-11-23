@@ -125,7 +125,8 @@ and coordinated parent-shell refresh remain unverified.
 Inertia, Blade, and Livewire share a user-facing markup contract: the same shell,
 landmarks, content order, tags, classes, links, action controls, labeled fields,
 validation messages, disabled reasons, pending controls, and feedback focus.
-Livewire's signed-snapshot probes are hidden test instrumentation.
+Project-specific pages and actions enforce the same view policy across every
+renderer. Livewire's signed-snapshot probes are hidden test instrumentation.
 
 `npm run test:parity` builds current assets, starts the actual app with an isolated
 SQLite database, and runs pinned Chromium through Playwright. Install its browser
@@ -140,7 +141,8 @@ parameters, framework bindings, and CSRF/method fields. Separate assertions veri
 the correct selected marker. No renderer navigation or content is masked.
 
 Interaction tests cover keyboard order, validation focus, pending read-only fields
-and disabled submit controls, successful rename feedback, confirmation cancellation,
+and disabled submit controls, rename validation recovery, fresh document titles,
+successful rename feedback, confirmation cancellation,
 onboarding completion, and reset. Native full-page navigation, Inertia requests,
 and Livewire operations retain their own transport mechanisms. Runtime references,
 diffs, and failure traces live under ignored `tests/browser/.runtime/`. Open a

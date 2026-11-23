@@ -84,3 +84,22 @@ it('opens directly in demo mode without account routes', function () {
 it('has no account entry points', function (string $path) {
     $this->get($path)->assertNotFound();
 })->with(['/login', '/register', '/email/verify', '/forgot-password', '/settings/profile', '/dashboard']);
+
+it('denies hidden project routes in every renderer', function (string $view) {
+    ProjectExample::query()->whereKey(42)->update(['is_visible' => false]);
+    foreach (['/projects/42', '/projects/42/edit', '/projects/42/tasks', '/projects/42/tasks/create', '/projects/42/tasks/1', '/projects/42/tasks/1/edit', '/api/projects/42/experience'] as $path) {
+        $this->get($path.'?view='.$view)->assertForbidden();
+    }
+    $this->post('/projects/42/rename?view='.$view, ['name' => 'Denied'])->assertForbidden();
+    $this->post('/projects/42/tasks?view='.$view, ['title' => 'Denied'])->assertForbidden();
+    $this->put('/projects/42/tasks/1?view='.$view, ['title' => 'Denied'])->assertForbidden();
+    $this->post('/projects/42/tasks/1/archive?view='.$view)->assertForbidden();
+    expect(ProjectExample::findExample('42')->name)->toBe('Apollo');
+})->with(['inertia', 'blade', 'livewire', 'json']);
+
+it('clears a failed rename validation error after correction', function () {
+    Livewire::test(ProjectPage::class, ['project' => ProjectExample::findExample('42')])
+        ->set('name', '   ')->call('saveName')->assertHasErrors(['name' => 'required'])
+        ->set('name', 'Corrected')->call('saveName')->assertHasNoErrors()->assertSee('Corrected');
+    expect(ProjectExample::findExample('42')->name)->toBe('Corrected');
+});

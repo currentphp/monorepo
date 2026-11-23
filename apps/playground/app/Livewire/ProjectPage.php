@@ -15,6 +15,7 @@ use Current\Subjects\Subjects;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Js;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -64,6 +65,7 @@ final class ProjectPage extends Component
         Gate::authorize('rename', $project);
         $this->name = trim($name);
         $data = validator(['name' => $this->name], ['name' => ['required', 'string', 'max:100']])->validate();
+        $this->resetValidation('name');
         $project->update($data);
         session()->flash('status', 'Project renamed.');
     }
@@ -80,6 +82,9 @@ final class ProjectPage extends Component
         }
         $experience = Current::forPage($this->pageId, $parameters);
         $rendering = Rendering::Livewire;
+        if (! $this->nested) {
+            $this->js('document.title = '.Js::from(($experience->title() ?? config('app.name')).' - '.config('app.name')).';');
+        }
         $probe = [
             'component' => $this->nested ? 'child' : 'parent',
             'ambientRoute' => request()->route()?->getName(),
