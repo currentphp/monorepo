@@ -1,61 +1,81 @@
-import type { Method } from '@inertiajs/core';
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import type { Action } from '@/types';
-
-const methods = {
-    GET: 'get',
-    HEAD: null,
-    POST: 'post',
-    PUT: 'put',
-    PATCH: 'patch',
-    DELETE: 'delete',
-} satisfies Record<Action['method'], Method | null>;
-
-/**
- * Renders described actions as buttons. Current only describes them; the
- * request goes to the app's own route, which authorizes and performs it.
- */
 export default function Actions({ actions }: { actions: Action[] }) {
-    if (actions.length === 0) {
-        return null;
-    }
-
+    const visible = actions.filter(
+        (action) => !action.current && action.method !== 'HEAD',
+    );
+    if (visible.length === 0) return null;
     return (
-        <ul className="flex flex-wrap gap-2">
-            {actions
-                .filter((action) => !action.current)
-                .map((action) => {
-                    // HEAD describes a valid HTTP action but cannot render an Inertia page.
-                    const method = methods[action.method];
-                    if (method === null) {
-                        return null;
-                    }
-
-                    return (
-                        <li key={action.id}>
-                            <Link
-                                href={action.url}
-                                method={method}
-                                as="button"
-                                disabled={!action.enabled}
-                                title={action.reason ?? undefined}
-                                onBefore={() =>
-                                    action.confirm === null ||
-                                    window.confirm(action.confirm)
-                                }
-                                className={`rounded-lg border px-3 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${action.destructive ? 'border-red-300 text-red-700 dark:border-red-800 dark:text-red-300' : 'border-stone-300 dark:border-stone-700'}`}
-                            >
-                                {action.label}
-                            </Link>
-                            {!action.enabled && action.reason ? (
-                                <span className="sr-only">
-                                    {' '}
-                                    ({action.reason})
-                                </span>
-                            ) : null}
-                        </li>
-                    );
-                })}
+        <ul className="actions">
+            {visible.map((action) => (
+                <li data-action-id={action.id} key={action.id}>
+                    <ActionControl action={action} />
+                    {action.reason ? (
+                        <p id={`${action.id}-reason`} className="help">
+                            {action.reason}
+                        </p>
+                    ) : null}
+                    {action.confirm ? (
+                        <p className="help">{action.confirm}</p>
+                    ) : null}
+                </li>
+            ))}
         </ul>
+    );
+}
+function ActionControl({ action }: { action: Action }) {
+    const form = useForm({});
+    const describedBy = action.reason ? `${action.id}-reason` : undefined;
+    const destructive = action.destructive ? 'true' : undefined;
+    if (action.method === 'GET') {
+        return action.enabled ? (
+            <Link
+                className="button-link"
+                href={action.url}
+                data-destructive={destructive}
+                aria-describedby={describedBy}
+                onBefore={() =>
+                    !action.confirm || window.confirm(action.confirm)
+                }
+            >
+                {action.label}
+            </Link>
+        ) : (
+            <button
+                type="button"
+                className="button-link"
+                disabled
+                data-destructive={destructive}
+                aria-describedby={describedBy}
+            >
+                {action.label}
+            </button>
+        );
+    }
+    const method = action.method.toLowerCase() as
+        | 'post'
+        | 'put'
+        | 'patch'
+        | 'delete';
+    return (
+        <form
+            action={action.url}
+            method="post"
+            aria-busy={form.processing ? 'true' : undefined}
+            onSubmit={(event) => {
+                event.preventDefault();
+                if (action.confirm && !window.confirm(action.confirm)) return;
+                form.submit(method, action.url, { preserveScroll: true });
+            }}
+        >
+            <button
+                type="submit"
+                disabled={!action.enabled || form.processing}
+                data-destructive={destructive}
+                aria-describedby={describedBy}
+            >
+                {action.label}
+            </button>
+        </form>
     );
 }

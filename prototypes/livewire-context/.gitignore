@@ -1,5 +1,0 @@
-/vendor/
-/.runtime/
-/composer.lock
-/bootstrap/cache/*
-/__pycache__/

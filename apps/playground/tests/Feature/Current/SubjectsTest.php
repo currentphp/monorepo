@@ -31,6 +31,8 @@ it('shares the subject the active page presents', function () {
             'id' => '4',
             'label' => 'Review budget',
             'url' => route('tasks.show', [77, 4]),
+            'title' => 'Review budget',
+            'description' => null,
         ]));
 
     $this->get(route('projects.show', 77))->assertOk()->assertInertia(fn (Assert $page) => $page
@@ -42,7 +44,6 @@ it('shares no subject on pages that present none', function (string $uri) {
     $this->get($uri)->assertOk()->assertInertia(fn (Assert $page) => $page->where('current.subject', null));
 })->with([
     'project index' => fn () => route('projects.index'),
-    'unregistered page' => fn () => route('password.request'),
 ]);
 
 it('takes the subject from the nearest presenting ancestor', function () {

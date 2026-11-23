@@ -34,7 +34,7 @@ it('returns 404 for an unknown project', function () {
 });
 
 it('takes each projects page title from Current', function (string $url, string $title) {
-    $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where('title', $title));
+    $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where('current.title', $title));
 
     $this->assertTitle($title);
 })->with([

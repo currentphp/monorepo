@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use Current\Facades\Current;
+use App\Rendering;
 use Current\Inertia\CurrentProps;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -40,15 +40,11 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'auth' => [
-                'user' => $request->user()?->only(['id', 'name', 'email', 'email_verified_at']),
-                'canRegister' => (bool) config('fortify.registration_enabled'),
-            ],
+            'renderingChoices' => fn (): array => preg_match('~^(projects|onboarding)(/|$)~', $request->path()) === 1
+                ? Rendering::forRequest($request)->choices($request) : [],
             // Resolved at render time, after route-model binding.
-            'current' => CurrentProps::make()->menus('primary', 'footer'),
-            // The current subject's and page's actions, shared by the app itself while
-            // current/inertia is in maintenance.
-            'actions' => fn (): array => Current::actions(),
+            'current' => CurrentProps::make()->menus('primary', 'footer')
+                ->pagePresentation()->subjectPresentation()->actions(),
             'status' => fn (): mixed => $request->session()->get('status'),
         ];
     }

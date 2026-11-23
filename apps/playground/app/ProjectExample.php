@@ -8,28 +8,34 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Demo projects from database/fixtures/projects.json; no project table or persisted changes are used.
+ * Shared demo projects, initially populated from database/fixtures/projects.json.
  *
  * @property int $id
  * @property string $name
+ * @property bool $is_visible
+ * @property bool $is_editable
  */
 #[Fillable(['id', 'name'])]
 final class ProjectExample extends Model
 {
+    protected $table = 'projects';
+
+    public $timestamps = false;
+
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return ['is_visible' => 'boolean', 'is_editable' => 'boolean'];
+    }
+
     /** @return list<self> */
     public static function examples(): array
     {
-        return array_map(fn (array $record): self => new self($record), Fixtures::load('projects'));
+        return array_values(self::query()->orderBy('id')->get()->all());
     }
 
     public static function findExample(string $id): ?self
     {
-        foreach (self::examples() as $project) {
-            if ((string) $project->id === $id) {
-                return $project;
-            }
-        }
-
-        return null;
+        return ctype_digit($id) ? self::query()->find((int) $id) : null;
     }
 }

@@ -1,8 +1,7 @@
-export type * from './auth';
 export type {
+    Action,
     Breadcrumb,
     MenuItem,
     MenuItemKind,
     Subject,
 } from '@current/inertia';
-export type * from './actions';

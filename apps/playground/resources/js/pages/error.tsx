@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import AuthLayout from '@/layouts/auth-layout';
+import PageLayout from '@/layouts/page-layout';
 import { home } from '@/routes';
 
 export default function ErrorPage({
@@ -25,7 +25,7 @@ export default function ErrorPage({
     };
     const [title, description] = messages[status] ?? messages[500];
     return (
-        <AuthLayout title={title} description={description}>
+        <PageLayout title={title} description={description}>
             {requestId && (
                 <p className="text-xs break-all text-stone-600 dark:text-stone-400">
                     Request ID: {requestId}
@@ -37,6 +37,6 @@ export default function ErrorPage({
             >
                 Return home
             </Link>
-        </AuthLayout>
+        </PageLayout>
     );
 }
