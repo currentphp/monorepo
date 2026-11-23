@@ -11,6 +11,11 @@
 
 ### Added
 
+- Blade and Livewire rendering guides, backed by a playground HTTP
+  suite using supported core calls. The Blade guide's example is rendered
+  in the playground; native forms, escaping, authorization, and component
+  lifecycle behavior are exercised without a core runtime Livewire dependency.
+
 - `Current::forPage($pageId, $parameters)` returns a separate `Experience`
   reader for a registered page and server-resolved bindings, without changing
   ambient Current reads or Laravel's actual request. It supports the same

@@ -23,6 +23,10 @@ It was released as `wavykit/core` up to 0.2.0; the
 first release as `current/current` is 0.3.0. While Current is on 0.x, minor
 releases may change the public API; see [Versioning](#versioning).
 
+**Unreleased development:** this branch develops core 0.6, including explicit
+experience and subject-presentation readers. Published core 0.5.0 does not include
+those additions; see the Unreleased changelog. No version tag is created here.
+
 ## Requirements
 
 PHP 8.3+, Laravel / Illuminate 13, and Composer 2 for development. No Livewire
@@ -259,9 +263,17 @@ For Livewire, retain trusted identity (for example a locked model ID), then
 reload the object, authorize, and construct the reader when rendering. A
 child-only update does not rerender the parent shell: coordinate parent refreshes
 in the application when headings, breadcrumbs, menus, or actions must update.
-HTTP lifecycle behavior has been exercised with Laravel 13.42.0 and Livewire
-4.4.9; this does not establish browser event wiring or `wire:navigate` support.
+HTTP lifecycle behavior is exercised by the playground (Laravel 13.43.0 and
+Livewire 4.4.9); this does not establish browser event wiring or `wire:navigate` support.
 Core has no Livewire runtime dependency.
+
+## Rendering guides
+
+Use [Blade](docs/blade.md) to render escaped experience data and application-owned
+route forms. The [Livewire guide](docs/livewire.md) explains explicit context,
+fresh models, authorization, and parent-shell refresh responsibilities. The
+playground HTTP suite tests one documented Laravel/Livewire/PHP combination;
+this is not a claim of browser-navigation support.
 
 ## Breadcrumbs
 
@@ -759,7 +771,7 @@ composer check current
 The package keeps its own `phpunit.xml`, `phpstan.neon`, and `pint.json`.
 `composer check current` validates this manifest, checks Pint formatting, runs
 PHPStan at maximum level on source, and executes Pest unit, Testbench feature,
-and route-cache integration tests. `composer format core` applies formatting.
+and route-cache integration tests. `composer format current` applies formatting.
 The root `composer.lock` is local and ignored; fresh checkouts resolve
 dependencies within the declared constraints.
 
