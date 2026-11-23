@@ -2,7 +2,23 @@
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Independent `CurrentProps::pagePresentation()`, `subjectPresentation()`, and
+  `actions()` opt-ins. The default four-field prop and evaluation timing remain
+  unchanged. Requested fields preserve core semantics, nullability, errors,
+  partial reload exclusion, and deferred-prop behavior.
+- `Current<MenuName, Features>` types with an optional feature-selection generic;
+  existing single-generic uses keep their default shape. Export action and
+  presentation types matching selected serialized output.
+- Package-owned TypeScript compiler checks against real PHP JSON for all eight
+  opt-in combinations, with strict and negative type assertions.
+
+### Changed
+
+- The development line is 0.5 and requires core `^0.6`, which contains the
+  subject-presentation readers. These are unreleased development changes.
+- End maintenance-only behavior after the coordinated integration design review.
 
 ## 0.4.0 - 2026-11-17
 

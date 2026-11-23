@@ -7,7 +7,7 @@
         "php": "^8.3",
         "illuminate/container": "^13.0",
         "inertiajs/inertia-laravel": "^3.0",
-        "current/current": "^0.5"
+        "current/current": "^0.6"
     },
     "autoload": {
         "psr-4": {

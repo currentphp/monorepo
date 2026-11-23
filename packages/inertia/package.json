@@ -1,0 +1,10 @@
+{
+  "name": "@current/inertia-type-tests",
+  "private": true,
+  "scripts": {
+    "test": "node node_modules/typescript/bin/tsc --project tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

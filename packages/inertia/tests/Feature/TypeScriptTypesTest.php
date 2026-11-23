@@ -21,8 +21,8 @@ function declaredTypes(): DeclaredTypes
     return new DeclaredTypes(dirname(__DIR__, 2).'/resources/types/current.d.ts');
 }
 
-test('the declaration file declares the shared types', function () {
-    expect(declaredTypes()->names())->toEqualCanonicalizing(['Breadcrumb', 'MenuItem', 'MenuItemKind', 'Subject', 'Current']);
+test('the concrete declaration shapes are inventoried', function () {
+    expect(declaredTypes()->names())->toEqualCanonicalizing(['Breadcrumb', 'MenuItem', 'MenuItemKind', 'Subject', 'BaseCurrent', 'CurrentFeature', 'PagePresentation', 'SubjectPresentation', 'Action']);
 });
 
 test('the shared prop matches the TypeScript types', function () {
@@ -49,7 +49,7 @@ test('the shared prop matches the TypeScript types', function () {
     expect($prop['breadcrumbs'][0]['url'])->toBeNull()
         ->and($prop['breadcrumbs'][1]['icon'])->toBe('book')
         ->and($prop['menus']['footer'][0]['kind'])->toBe('group');
-    declaredTypes()->assertMatches('Current', $prop, 'current');
+    declaredTypes()->assertMatches('BaseCurrent', $prop, 'current');
 });
 
 test('a prop without menus and outside any page still matches', function () {
@@ -61,7 +61,7 @@ test('a prop without menus and outside any page still matches', function () {
 
     // json_decode turns the empty `{}` record into an empty array.
     expect($content)->toContain('"menus":{}');
-    declaredTypes()->assertMatches('Current', $prop, 'current');
+    declaredTypes()->assertMatches('BaseCurrent', $prop, 'current');
 });
 
 test('drift is reported with the path and the declared type', function (string $type, mixed $value, string $message) {
@@ -88,5 +88,5 @@ test('a shared subject matches the TypeScript types', function () {
 
     expect($prop['subject'])->toBe(['kind' => 'project', 'id' => '42', 'label' => 'Apollo', 'url' => 'http://localhost/projects/42'])
         ->and($prop['breadcrumbs'][0]['label'])->toBe('Apollo');
-    declaredTypes()->assertMatches('Current', $prop, 'current');
+    declaredTypes()->assertMatches('BaseCurrent', $prop, 'current');
 });

@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "skipLibCheck": false,
+        "exactOptionalPropertyTypes": true,
+        "types": [],
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "Bundler"
+    },
+    "include": ["tests/types/**/*.ts"]
+}

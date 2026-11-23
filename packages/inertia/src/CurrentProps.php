@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Current\Inertia;
 
+use Current\Actions\ActionItem;
 use Current\Exceptions\InvalidDefinition;
 use Current\Exceptions\ResolutionFailed;
 use Current\Experience;
@@ -20,13 +21,21 @@ use stdClass;
  * The serialized form of the Current\Facades\Current facade. Place it in
  * HandleInertiaRequests::share() under a key of your choice; the documentation
  * uses `current`. It resolves when the response renders, after route-model binding, and not at
- * all when a partial reload excludes its key. The shape is
- * `{ pageId, subject, breadcrumbs, menus }`, matching the package's TypeScript types.
+ * all when a partial reload excludes its key. The default shape is
+ * `{ pageId, subject, breadcrumbs, menus }`. Independent pagePresentation(),
+ * subjectPresentation(), and actions() opt-ins add the documented fields and
+ * evaluate their readers only when requested, matching the TypeScript feature types.
  */
 final class CurrentProps implements ProvidesInertiaProperty
 {
     /** @var list<string> */
     private array $menus = [];
+
+    private bool $pagePresentation = false;
+
+    private bool $subjectPresentation = false;
+
+    private bool $actions = false;
 
     private function __construct() {}
 
@@ -34,6 +43,30 @@ final class CurrentProps implements ProvidesInertiaProperty
     public static function make(): self
     {
         return new self;
+    }
+
+    /** Include the selected page's nullable title and description. */
+    public function pagePresentation(): self
+    {
+        $this->pagePresentation = true;
+
+        return $this;
+    }
+
+    /** Include the current subject's own title and description when a subject exists. */
+    public function subjectPresentation(): self
+    {
+        $this->subjectPresentation = true;
+
+        return $this;
+    }
+
+    /** Include visible subject/page actions, including disabled actions and reasons. */
+    public function actions(): self
+    {
+        $this->actions = true;
+
+        return $this;
     }
 
     /**
@@ -58,7 +91,7 @@ final class CurrentProps implements ProvidesInertiaProperty
     /**
      * @internal Called by Inertia when the response renders.
      *
-     * @return array{pageId: ?string, subject: ?SubjectItem, breadcrumbs: list<Breadcrumb>, menus: stdClass}
+     * @return array{pageId: ?string, subject: SubjectItem|array{kind: string, id: string, label: string, url: ?string, title: string, description: ?string}|null, breadcrumbs: list<Breadcrumb>, menus: stdClass, title?: ?string, description?: ?string, actions?: list<ActionItem>}
      *
      * @throws InvalidDefinition If definitions or route references are invalid.
      * @throws ResolutionFailed If a menu is unknown, or callbacks or destination URLs cannot be resolved.
@@ -73,11 +106,31 @@ final class CurrentProps implements ProvidesInertiaProperty
             $menus->{$name} = $current->menu($name);
         }
 
-        return [
+        $subject = $current->subject();
+        if ($this->subjectPresentation && $subject !== null) {
+            $subject = [
+                'kind' => $subject->kind,
+                'id' => $subject->id,
+                'label' => $subject->label,
+                'url' => $subject->url,
+                'title' => $current->subjectTitle() ?? throw new ResolutionFailed('The current subject disappeared while resolving its Inertia presentation.'),
+                'description' => $current->subjectDescription(),
+            ];
+        }
+        $data = [
             'pageId' => $current->pageId(),
-            'subject' => $current->subject(),
+            'subject' => $subject,
             'breadcrumbs' => $current->breadcrumbs(),
             'menus' => $menus,
         ];
+        if ($this->pagePresentation) {
+            $data['title'] = $current->title();
+            $data['description'] = $current->description();
+        }
+        if ($this->actions) {
+            $data['actions'] = $current->actions();
+        }
+
+        return $data;
     }
 }

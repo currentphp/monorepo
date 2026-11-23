@@ -15,5 +15,5 @@ test('the supported API changes only deliberately', function () {
     ));
     sort($methods);
 
-    expect($methods)->toBe(['make', 'menus']);
+    expect($methods)->toBe(['actions', 'make', 'menus', 'pagePresentation', 'subjectPresentation']);
 });
