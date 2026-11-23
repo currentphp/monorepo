@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.5.0 - 2026-11-23
+
 ### Added
 
 - Independent `CurrentProps::pagePresentation()`, `subjectPresentation()`, and
@@ -16,8 +20,8 @@
 
 ### Changed
 
-- The development line is 0.5 and requires core `^0.6`, which contains the
-  subject-presentation readers. These are unreleased development changes.
+- Requires `current/current` `^0.6`, which contains the subject-presentation
+  readers.
 - End maintenance-only behavior after the coordinated integration design review.
 
 ## 0.4.0 - 2026-11-17

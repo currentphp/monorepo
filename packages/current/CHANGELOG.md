@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.6.0 - 2026-11-23
+
+### Upgrading
+
+Finish registering subjects before reading pages. Page reads now validate
+subject declarations, so registering a subject after a page has been read, or
+an invalid subject declaration, fails on that read instead of going unnoticed.
+Applications that register subjects in a service provider, with declarations
+that subject and action reads already accept, need no changes.
+
 ### Breaking
 
 - Page reads now finalize and validate subject declarations too, including reads

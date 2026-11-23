@@ -23,10 +23,6 @@ It was released as `wavykit/core` up to 0.2.0; the
 first release as `current/current` is 0.3.0. While Current is on 0.x, minor
 releases may change the public API; see [Versioning](#versioning).
 
-**Unreleased development:** this branch develops core 0.6, including explicit
-experience and subject-presentation readers. Published core 0.5.0 does not include
-those additions; see the Unreleased changelog. No version tag is created here.
-
 ## Requirements
 
 PHP 8.3+, Laravel / Illuminate 13, and Composer 2 for development. No Livewire
