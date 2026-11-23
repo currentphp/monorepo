@@ -9,16 +9,16 @@
             "url": "packages/*",
             "options": {
                 "versions": {
-                    "current/current": "0.5.x-dev",
-                    "current/inertia": "0.4.x-dev"
+                    "current/current": "0.6.x-dev",
+                    "current/inertia": "0.5.x-dev"
                 }
             }
         }
     ],
     "require": {
         "php": "^8.3",
-        "current/current": "^0.5@dev",
-        "current/inertia": "^0.4@dev"
+        "current/current": "^0.6@dev",
+        "current/inertia": "^0.5@dev"
     },
     "require-dev": {
         "laravel/pint": "^1.27",
@@ -47,13 +47,27 @@
         "format": "bin/format",
         "format:check": "bin/check --only=format",
         "analyse": "bin/check --only=analyse",
-        "test": "bin/check --only=test"
+        "test": "bin/check --only=test",
+        "test:types": [
+            "@test inertia",
+            "npm --prefix packages/inertia test"
+        ],
+        "check:playground": "@composer --working-dir=apps/playground check",
+        "check:all": [
+            "Composer\\Config::disableProcessTimeout",
+            "@check",
+            "@test:types",
+            "@check:playground"
+        ]
     },
     "scripts-descriptions": {
         "check": "Validate manifests, then run Pint, PHPStan, and Pest in each package (pass package names to limit).",
         "format": "Apply Pint formatting in each package (pass package names to limit).",
         "format:check": "Verify Pint formatting in each package without modifying files.",
         "analyse": "Run PHPStan at maximum level in each package.",
-        "test": "Run Pest in each package."
+        "test": "Run Pest in each package.",
+        "test:types": "Generate real Inertia serialization fixtures and compile adapter-owned TypeScript assertions.",
+        "check:playground": "Run the playground application checks with its installed dependencies.",
+        "check:all": "Run PHP packages, TypeScript contracts, and all playground integration checks."
     }
 }

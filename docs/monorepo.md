@@ -33,8 +33,8 @@ directories under `packages/`.
 
 The root `composer.json` is `current/monorepo`, a development-only manifest
 that is never published. It installs every package from `packages/*` through
-a path repository, each at its own development line (`0.5.x-dev` for core,
-`0.4.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
+a path repository, each at its own development line (`0.6.x-dev` for core,
+`0.5.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
 line. The `@dev` flag lets only these packages resolve to development
 versions; everything else stays stable, including `--prefer-lowest` runs. It
 also holds the development dependencies, test autoloading, scripts, and the PHP
@@ -58,6 +58,28 @@ because it resolves its root from the `vendor/` location. monorepo-builder
 comes from `monorepo-php/monorepo`, its prefixed build. Its `merge` command is
 not used: path repositories already install each package with its own
 `require`.
+
+## Complete local verification
+
+`composer check` remains PHP-only and supports package selection. Additional
+owned checks are `composer test:types` and `composer check:playground`. After the
+explicit dependency setup in CONTRIBUTING, `composer check:all` runs all three
+areas. Checks never install dependencies.
+
+Inertia owns its private TypeScript manifest/lock and compiler assertions under
+`packages/inertia`. Current Examples (`apps/playground`) is the single consumer application for Inertia,
+Blade, Livewire, and JSON endpoints. It owns their Composer lock, shared projects,
+policies, rendering, and HTTP tests. There is no separate Livewire application or
+core runtime dependency. `apps/playground/tests/http/run.py` starts the actual
+application with an isolated SQLite database, the same synthetic demo identity as the UI, and a loopback server. It never resets the database used for manual
+review; captures and test databases stay ignored.
+
+The Tests workflow runs compiler checks on PHP 8.5 stable alongside the separate
+PHP package matrix. The Playground workflow runs its complete application checks,
+including real HTTP coverage and DOM/visual/interaction parity in pinned Chromium.
+The browser suite uses the same app lifecycle runner in server mode; there is no
+second fixture application. Browser event wiring and `wire:navigate` remain
+outside the verified scope.
 
 ## Naming
 

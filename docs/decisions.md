@@ -129,6 +129,30 @@ last core primitive before the integrations are designed together:
 
 `current/inertia` follows with a release that only requires core 0.5.
 
+### Unreleased integration wave
+
+The core primitives are complete. The coordinated integration design keeps Blade
+and Livewire guide-first, with application-owned rendering and execution, and
+extends the Inertia adapter additively. Core develops on 0.6 and Inertia on 0.5;
+these development lines are not publication or release promises.
+
+A local explicit experience reader preserves logical page context on transports
+such as Livewire updates without replacing Laravel's actual request. Inertia's
+independent presentation/action opt-ins keep its default payload unchanged.
+One playground application hosts Inertia, Blade, Livewire, and JSON consumers
+against shared projects, declarations, and authorization. Package-owned compiler
+checks and the playground HTTP suite verify the described
+contracts. The package READMEs and [Livewire guide](../packages/current/docs/livewire.md)
+own exact behavior and tested limits; no Livewire runtime adapter or browser
+navigation guarantee is implied.
+
+The consumer is Current Examples: a curated overview with Projects and optional
+session-only Onboarding. Rendering transports are comparisons within a use case.
+A synthetic demo identity removes account setup; this is not an authentication
+product. The application owns simulation state, validation, and authorization;
+Current supplies its page, subject, navigation, and action descriptions. Canonical
+usage and checks live in the [examples README](../apps/playground/README.md).
+
 ### Later
 
 These are candidates without a release target:
