@@ -10,13 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "current/current": "^0.6@dev",
+        "current/inertia": "^0.5@dev",
         "inertiajs/inertia-laravel": "^3.0",
-        "laravel/fortify": "^1.39",
-        "laravel/framework": "^13.17",
+        "laravel/framework": "^13.42",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "current/current": "^0.5@dev",
-        "current/inertia": "^0.4@dev"
+        "livewire/livewire": "^4.4.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -81,8 +81,9 @@
             "@analyse",
             "npm run check",
             "npm run types:check",
-            "npm run build",
-            "@test"
+            "npm run test:parity",
+            "@test",
+            "@test:http"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -99,7 +100,8 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ]
+        ],
+        "test:http": "python3 tests/http/run.py"
     },
     "extra": {
         "laravel": {
@@ -123,8 +125,8 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "current/current": "0.5.x-dev",
-                    "current/inertia": "0.4.x-dev"
+                    "current/current": "0.6.x-dev",
+                    "current/inertia": "0.5.x-dev"
                 }
             }
         }

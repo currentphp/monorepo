@@ -1,0 +1,335 @@
+.playground {
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    margin: 0;
+    font-family: var(--font-sans);
+    color: #24332d;
+    background: #f4f6f2;
+}
+.playground * {
+    box-sizing: border-box;
+}
+.playground a {
+    color: #27644c;
+    text-underline-offset: 4px;
+}
+.playground a:hover {
+    color: #123c2b;
+}
+.playground .shell {
+    max-width: 1120px;
+    margin: auto;
+    padding: 32px 24px 64px;
+}
+.playground .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #d6dfd5;
+}
+.playground .brand {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    text-decoration: none;
+    color: #203e30;
+}
+.playground .account-nav,
+.playground .menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+}
+.playground .menu ul {
+    margin-top: 10px;
+}
+.playground .menu [data-active='true'],
+.playground [aria-current='page'] {
+    font-weight: 700;
+}
+.playground .account-nav form {
+    margin: 0;
+}
+.playground .account-nav button {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    text-decoration: underline;
+}
+.playground .rendering-switcher {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 24px 0;
+}
+.playground .rendering-switcher a,
+.playground .button-link {
+    display: inline-block;
+    padding: 9px 14px;
+    border: 1px solid #d6dfd5;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    background: #fff;
+}
+.playground .rendering-switcher [aria-current='page'] {
+    background: #e3ecdf;
+    border-color: #8ea787;
+}
+.playground .breadcrumbs {
+    margin: 24px 0;
+    font-size: 13px;
+}
+.playground .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0;
+    list-style: none;
+}
+.playground .breadcrumbs li {
+    display: flex;
+    gap: 10px;
+}
+.playground h1 {
+    font-size: 32px;
+    font-weight: 650;
+    letter-spacing: -1px;
+    margin: 0 0 12px;
+}
+.playground h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+.playground h3 {
+    font-weight: 600;
+    margin-top: 20px;
+}
+.playground p {
+    line-height: 1.7;
+}
+.playground .page-heading {
+    margin-bottom: 28px;
+}
+.playground .page-heading p,
+.playground .help {
+    color: #68766b;
+    font-size: 14px;
+    max-width: 680px;
+}
+.playground .card {
+    display: block;
+    background: #fff;
+    border: 1px solid #dce3d9;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px #263a2505;
+    min-width: 0;
+    text-decoration: none;
+}
+.playground .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 20px;
+}
+.playground .project-grid .card {
+    margin: 0;
+}
+.playground .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+}
+.playground form {
+    margin: 18px 0;
+}
+.playground .rename-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 12px;
+}
+.playground .task-form {
+    display: grid;
+    gap: 16px;
+    max-width: 640px;
+}
+.playground .actions form {
+    margin: 0;
+}
+.playground label {
+    display: grid;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.playground input {
+    font: inherit;
+    font-size: 14px;
+    color: #24332d;
+    padding: 11px 12px;
+    border: 1px solid #cbd7c9;
+    border-radius: 8px;
+    background: #fafcf8;
+    max-width: 100%;
+}
+.playground button {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    background: #2d6248;
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+}
+.playground button:hover {
+    background: #224d38;
+}
+.playground button:disabled,
+.playground [aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.playground :focus-visible {
+    outline: 3px solid #8eaf71;
+    outline-offset: 3px;
+}
+.playground .notice {
+    border: 1px solid #c3d5b9;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 20px 0;
+    background: #edf4e8;
+}
+.playground .error {
+    color: #922f2f;
+}
+.playground .task-links {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+    padding-left: 18px;
+}
+.playground .nested-context {
+    margin-top: 24px;
+    border-top: 1px solid #dce3d9;
+    padding-top: 18px;
+}
+.playground summary {
+    cursor: pointer;
+    color: #68766b;
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+.playground pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: 16px;
+    background: #edf0ea;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.8;
+    max-height: 320px;
+    overflow: auto;
+}
+.playground .skip-link {
+    position: absolute;
+    left: -10000px;
+}
+.playground .skip-link:focus {
+    left: 16px;
+    top: 8px;
+    background: white;
+    padding: 12px;
+    z-index: 20;
+}
+.playground footer {
+    border-top: 1px solid #d6dfd5;
+    padding-top: 24px;
+    margin-top: 32px;
+    font-size: 12px;
+}
+@media (max-width: 600px) {
+    .playground .shell {
+        padding: 20px 16px 40px;
+    }
+    .playground .card {
+        padding: 20px;
+    }
+    .playground .masthead {
+        gap: 12px;
+    }
+}
+
+.playground .actions {
+    list-style: none;
+    padding: 0;
+}
+.playground .actions li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.playground .task-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.playground nav a {
+    text-decoration: none;
+}
+.playground .actions a,
+.playground .task-links a {
+    text-decoration: underline;
+}
+.playground .task-links {
+    list-style: disc;
+}
+
+.playground .field {
+    display: grid;
+    gap: 8px;
+}
+.playground .field input {
+    width: 100%;
+}
+.playground .field .error {
+    font-size: 13px;
+}
+.playground input[aria-invalid='true'] {
+    border-color: #922f2f;
+}
+.playground input[readonly] {
+    opacity: 0.7;
+}
+.playground .button-link {
+    color: #27644c;
+}
+.playground [data-destructive='true'] {
+    background: #922f2f;
+    color: #fff;
+}
+.playground [data-feedback]:focus {
+    outline: 3px solid #8eaf71;
+    outline-offset: 3px;
+}

@@ -23,9 +23,12 @@ jobs:
         with:
           php-version: '8.5'
           coverage: none
+          extensions: pdo_sqlite
       - uses: actions/setup-node@v6
         with:
           node-version: '24.21.0'
       - run: composer install --prefer-dist --no-interaction --no-progress
       - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: python3 --version
       - run: composer check

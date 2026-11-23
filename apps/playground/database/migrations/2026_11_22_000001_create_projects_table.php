@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Fixtures;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('projects', function (Blueprint $table): void {
+            $table->id();
+            $table->string('name');
+            $table->boolean('is_visible')->default(true);
+            $table->boolean('is_editable')->default(true);
+        });
+        DB::table('projects')->insert(Fixtures::load('projects'));
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('projects');
+    }
+};

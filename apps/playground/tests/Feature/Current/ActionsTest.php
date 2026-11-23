@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\User;
 use App\ProjectExample;
 use App\TaskExample;
 use Current\Actions\Actions;
@@ -11,19 +10,9 @@ use Inertia\Testing\AssertableInertia as Assert;
 // Actions (Current\Actions): what users can do, described once; the routes
 // perform and authorize. Hidden actions are absent; disabled ones keep a reason.
 
-it('shows guests the task list without any actions', function () {
+it('gives every visitor the page action and each row its actions', function () {
     $this->get(route('tasks.index', 42))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->component('tasks')
-        ->where('title', 'Tasks')
-        ->where('actions', [])
-        ->has('rows', 2)
-        ->where('rows.0.subject.label', 'Fix login')
-        ->where('rows.0.actions', []));
-});
-
-it('gives signed-in users the page action and each row its actions', function () {
-    $this->actingAs(User::factory()->create())->get(route('tasks.index', 42))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->where('actions.0', [
+        ->where('current.actions.0', [
             'id' => 'projects.tasks.create',
             'name' => 'create',
             'label' => 'New task',
@@ -53,32 +42,27 @@ it('gives signed-in users the page action and each row its actions', function ()
         ]));
 });
 
-it('disables archive with the policy reason for unverified users', function () {
-    $user = User::factory()->unverified()->create();
-
-    $this->actingAs($user)->get(route('tasks.show', [42, 1]))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->where('actions.0.id', 'task.edit')
-        ->where('actions.1.id', 'task.archive')
-        ->where('actions.1.enabled', false)
-        ->where('actions.1.reason', 'Verify your email address to archive tasks.'));
-
-    $this->post(route('tasks.archive', [42, 1]))->assertForbidden();
+it('disables protected task actions and enforces their policy on the route', function () {
+    $this->get(route('tasks.show', [42, 2]))->assertOk()->assertInertia(fn (Assert $page) => $page
+        ->where('current.actions.1.enabled', false)
+        ->where('current.actions.1.reason', 'This demo task is protected from archiving.'));
+    $this->post(route('tasks.archive', [42, 2]))->assertForbidden();
 });
 
 it('takes the current subject’s actions on pages below it', function () {
-    $this->actingAs(User::factory()->create())->get(route('tasks.edit', [77, 4]))->assertOk()->assertInertia(fn (Assert $page) => $page
+    $this->get(route('tasks.edit', [77, 4]))->assertOk()->assertInertia(fn (Assert $page) => $page
         ->component('tasks')
-        ->where('title', 'Edit')
-        ->where('actions.0.id', 'task.edit')
-        ->where('actions.0.current', true)
-        ->where('actions.1.id', 'task.archive')
+        ->where('current.title', 'Edit')
+        ->where('current.actions.0.id', 'task.edit')
+        ->where('current.actions.0.current', true)
+        ->where('current.actions.1.id', 'task.archive')
         ->where('form.method', 'put'));
 
     $this->assertCurrentPage('tasks.edit')->assertBreadcrumbs(['Projects', 'Artemis', 'Tasks', 'Review budget', 'Edit']);
 });
 
 it('resolves one object’s actions for a table row', function () {
-    $this->actingAs(User::factory()->create())->get(route('projects.index'))->assertOk();
+    $this->get(route('projects.index'))->assertOk();
 
     $task = TaskExample::findExample(ProjectExample::findExample('77') ?? throw new LogicException, '5');
 
@@ -87,12 +71,11 @@ it('resolves one object’s actions for a table row', function () {
 });
 
 it('performs actions only through the app’s routes, which never write', function () {
-    $this->get(route('tasks.create', 42))->assertRedirect(route('login'));
+    $this->get(route('tasks.create', 42))->assertOk();
 
-    $this->actingAs(User::factory()->create())
-        ->post(route('tasks.archive', [42, 2]))
+    $this->post(route('tasks.archive', [42, 1]))
         ->assertRedirect(route('tasks.index', 42))
-        ->assertSessionHas('status', 'Demo: “Write release notes” was not archived.');
+        ->assertSessionHas('status', 'Demo: “Fix login” was not archived.');
 
     $this->put(route('tasks.update', [42, 2]), ['title' => 'Changed'])
         ->assertSessionHas('status', 'Demo: changes to “Write release notes” were not saved.');

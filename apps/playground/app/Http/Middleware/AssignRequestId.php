@@ -22,10 +22,6 @@ class AssignRequestId
         try {
             $response = $next($request);
             $response->headers->set('X-Request-ID', $requestId);
-            if ($request->is('reset-password*') || $request->is('email/verify*')) {
-                $response->headers->set('Cache-Control', 'no-store');
-                $response->headers->set('Referrer-Policy', 'no-referrer');
-            }
             Log::info('Request completed', [
                 'route' => $request->route()?->getName() ?? 'unmatched',
                 'method' => $request->method(),

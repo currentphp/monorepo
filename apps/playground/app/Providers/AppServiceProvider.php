@@ -3,15 +3,14 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\GenericUser;
 use Illuminate\Log\Context\Repository;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\Rules\Password;
-use LogicException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +25,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-        Mail::extend('log', fn () => throw new LogicException('Mail logging is disabled. Configure SMTP or an in-memory test transport.'));
+        // Every visitor is the same synthetic actor; this is a local demo, not authentication.
+        Auth::viaRequest('demo', fn (): GenericUser => new GenericUser(['id' => 1, 'name' => 'Demo maintainer']));
 
         Context::dehydrating(function (Repository $context): void {
             $requestId = $context->get('request_id');
@@ -50,14 +50,5 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
-            : null,
-        );
     }
 }
