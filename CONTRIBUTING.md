@@ -30,6 +30,35 @@ runs Pint, PHPStan at maximum level, and Pest in each package. CI runs the same
 checks on PHP 8.3, 8.4, and 8.5 with lowest and stable dependency resolutions.
 See [docs/monorepo.md](docs/monorepo.md) for the layout and release process.
 
+## Complete integration checks
+
+For the full local gate, install each owner's development dependencies explicitly:
+
+```sh
+composer install
+npm ci --prefix packages/inertia
+composer install --working-dir=apps/playground
+npm ci --prefix apps/playground
+npm exec --prefix apps/playground -- playwright install chromium
+composer check:all
+```
+
+Requires the playground's PHP/Node toolchain and Python 3 with PHP SQLite for the
+playground HTTP checks. Existing `composer check [package]` remains PHP-only. Individual
+extra tasks are `composer test:types` and `composer check:playground`. Missing dependencies produce an actionable failure;
+checks do not install or update them.
+
+The app gate builds current assets before browser comparisons; it requires the
+explicit Chromium install above. `npm run test:parity` in the app compares semantic
+DOM, screenshots, and interaction states across the three UI renderers.
+
+The complete gate covers compiler assertions for all Inertia opt-ins, real
+Blade/Livewire HTTP scenarios, and playground adoption alongside PHP checks.
+The playground owns the one application dependency lock and runs its HTTP checks
+through `composer check` (or `composer test:http` alone). Its existing CI runs on
+PHP 8.5; the separate PHP 8.3–8.5 package matrix is retained. Livewire is only an
+application dependency. Browser event wiring and `wire:navigate` are not claimed.
+
 ## Design guidelines
 
 1. **Describe, don't execute.** Current records identities, relationships,
