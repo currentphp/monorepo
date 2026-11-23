@@ -10,18 +10,12 @@ their own breadcrumb arrays and navigation lists.
 
 Package: `current/inertia`. Namespace: `Current\Inertia\`. Version 0.1.0 was
 released as `wavykit/inertia`; the first release as
-`current/inertia` is 0.2.0. Version 0.4.0 is for `current/current` 0.5. While
+`current/inertia` is 0.2.0. Version 0.5.0 is for `current/current` 0.6. While
 Current is on 0.x, minor releases may change the public API.
-
-**Unreleased integration wave:** this branch develops `current/inertia` 0.5
-against core 0.6. The new opt-ins below are not in published 0.4.0, which continues
-to require core 0.5. No tag or publication is created by moving development lines.
 
 ## Requirements
 
-PHP 8.3+, Laravel 13, `inertiajs/inertia-laravel` 3, and core `^0.6` for this
-unreleased development line. Core's Composer path repository supplies local 0.6
-when working in the monorepo.
+PHP 8.3+, Laravel 13, `inertiajs/inertia-laravel` 3, and `current/current` 0.6.
 
 ## Installation
 
@@ -83,7 +77,9 @@ types, for example `Inertia::defer(fn () => CurrentProps::make()->menus('primary
 
 ## Independent presentation and action opt-ins
 
-The default four-field prop is unchanged. Select each additional group explicitly:
+The default four-field prop is unchanged. Select each additional group explicitly.
+"Presentation" means the title and description that the core's Description
+primitive provides for a page or subject.
 
 ```php
 'current' => CurrentProps::make()

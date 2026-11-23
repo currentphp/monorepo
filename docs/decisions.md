@@ -129,12 +129,12 @@ last core primitive before the integrations are designed together:
 
 `current/inertia` follows with a release that only requires core 0.5.
 
-### Unreleased integration wave
+### v0.6
 
-The core primitives are complete. The coordinated integration design keeps Blade
-and Livewire guide-first, with application-owned rendering and execution, and
-extends the Inertia adapter additively. Core develops on 0.6 and Inertia on 0.5;
-these development lines are not publication or release promises.
+Released 2026-11-23 as `current/current` 0.6.0 and `current/inertia` 0.5.0, the
+integration wave. The core primitives are complete. The coordinated integration
+design keeps Blade and Livewire guide-first, with application-owned rendering and
+execution, and extends the Inertia adapter additively.
 
 A local explicit experience reader preserves logical page context on transports
 such as Livewire updates without replacing Laravel's actual request. Inertia's
