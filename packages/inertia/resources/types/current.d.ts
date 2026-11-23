@@ -44,7 +44,7 @@ export type MenuItem = {
  * The shared prop. Pass the names given to `menus()` to type the menus,
  * for example `Current<'primary' | 'footer'>`.
  */
-export type Current<MenuName extends string = string> = {
+type BaseCurrent<MenuName extends string = string> = {
     /** Null on unregistered routes. */
     pageId: string | null;
     /** The active page's subject, or the nearest ancestor's; null when none. */
@@ -53,3 +53,45 @@ export type Current<MenuName extends string = string> = {
     breadcrumbs: Breadcrumb[];
     menus: Record<MenuName, MenuItem[]>;
 };
+
+/** Independently selected CurrentProps builder options. */
+export type CurrentFeature = 'pagePresentation' | 'subjectPresentation' | 'actions';
+
+/** Selected page presentation; null on an unregistered route. */
+export type PagePresentation = {
+    title: string | null;
+    description: string | null;
+};
+
+/** A present subject always has a title-or-label; its description may be null. */
+export type SubjectPresentation = {
+    title: string;
+    description: string | null;
+};
+
+/** Describes an application's route; the application authorizes and executes it. */
+export type Action = {
+    id: string;
+    name: string;
+    label: string;
+    url: string;
+    method: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    icon: string | null;
+    destructive: boolean;
+    enabled: boolean;
+    reason: string | null;
+    confirm: string | null;
+    current: boolean;
+};
+
+/**
+ * Match Features to the PHP opt-ins. The default retains the four-field shape.
+ * Example: Current<'primary', 'pagePresentation' | 'actions'>.
+ */
+export type Current<
+    MenuName extends string = string,
+    Features extends CurrentFeature = never
+> = BaseCurrent<MenuName>
+    & ('pagePresentation' extends Features ? PagePresentation : unknown)
+    & ('subjectPresentation' extends Features ? { subject: (Subject & SubjectPresentation) | null } : unknown)
+    & ('actions' extends Features ? { actions: Action[] } : unknown);

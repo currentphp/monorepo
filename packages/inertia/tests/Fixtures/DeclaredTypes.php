@@ -9,8 +9,8 @@ use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * Reads the object and union types in resources/types/current.d.ts and checks
- * decoded JSON against them, so the hand-written types cannot drift from the
- * PHP output unnoticed.
+ * decoded JSON against concrete DTOs and the default base shape. Conditional
+ * Current feature types are separately compiled against PHP-generated JSON.
  *
  * Understands the forms the file uses: `string`, `boolean`, `null`, string
  * literals, `A | B`, `T[]`, `Record<K, T>`, and references to other declared
@@ -28,7 +28,7 @@ final class DeclaredTypes
     {
         $source = preg_replace(['~/\*.*?\*/~s', '~//[^\n]*~'], '', (string) file_get_contents($path)) ?? '';
 
-        preg_match_all('~export type (\w+)(?:<[^>]*>)? = \{(.*?)\};~s', $source, $objects, PREG_SET_ORDER);
+        preg_match_all('~(?:export )?type (\w+)(?:<[^>]*>)? = \{(.*?)\};~s', $source, $objects, PREG_SET_ORDER);
         foreach ($objects as [, $name, $body]) {
             preg_match_all('~(\w+): ([^;]+);~', $body, $fields, PREG_SET_ORDER);
             foreach ($fields as [, $field, $type]) {
@@ -36,7 +36,7 @@ final class DeclaredTypes
             }
         }
 
-        preg_match_all('~export type (\w+) = ([^{;][^;]*);~', $source, $aliases, PREG_SET_ORDER);
+        preg_match_all('~(?:export )?type (\w+) = ([^{;][^;]*);~', $source, $aliases, PREG_SET_ORDER);
         foreach ($aliases as [, $name, $type]) {
             $this->aliases[$name] = trim($type);
         }

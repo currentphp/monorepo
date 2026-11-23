@@ -24,9 +24,23 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: none
+          extensions: pdo_sqlite
 
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
       - name: Run checks
         run: composer check
+
+      - uses: actions/setup-node@v6
+        if: matrix.php == '8.5' && matrix.stability == 'prefer-stable'
+        with:
+          node-version: '24.21.0'
+
+      - name: Install adapter compiler dependencies
+        if: matrix.php == '8.5' && matrix.stability == 'prefer-stable'
+        run: npm ci --prefix packages/inertia
+
+      - name: Check TypeScript contracts
+        if: matrix.php == '8.5' && matrix.stability == 'prefer-stable'
+        run: composer test:types

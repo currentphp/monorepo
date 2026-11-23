@@ -4,3 +4,6 @@
 /.phpstan-cache/
 /.phpunit.result.cache
 /.pest/
+
+/node_modules/
+/tests/types/generated/

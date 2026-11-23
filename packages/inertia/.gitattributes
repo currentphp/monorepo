@@ -8,3 +8,8 @@
 /phpstan.neon export-ignore
 /pint.json export-ignore
 /composer.lock export-ignore
+
+/package.json export-ignore
+/package-lock.json export-ignore
+/tsconfig.json export-ignore
+/node_modules export-ignore
