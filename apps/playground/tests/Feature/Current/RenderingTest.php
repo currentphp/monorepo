@@ -70,9 +70,12 @@ it('keeps native navigation and task feedback in the selected renderer', functio
         ->assertSessionHas('status', 'Demo: the new task was not saved.');
 })->with(['blade', 'livewire']);
 
-it('rejects unsupported rendering choices', function () {
-    $this->get('/projects?view=unknown')->assertNotFound();
-});
+it('rejects unsupported rendering choices without failing error rendering', function (string $query) {
+    config(['app.debug' => false]);
+    $this->get('/projects?'.$query)->assertNotFound()->assertInertia(fn (Assert $page) => $page
+        ->component('error')->where('status', 404)->where('renderingChoices', []));
+    $this->getJson('/projects?'.$query)->assertNotFound()->assertJsonPath('message', 'Not Found');
+})->with(['view=unknown', 'view[]=blade']);
 
 it('opens directly in demo mode without account routes', function () {
     $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->component('examples'));

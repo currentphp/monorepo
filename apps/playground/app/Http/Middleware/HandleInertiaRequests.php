@@ -40,8 +40,14 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'renderingChoices' => fn (): array => preg_match('~^(projects|onboarding)(/|$)~', $request->path()) === 1
-                ? Rendering::forRequest($request)->choices($request) : [],
+            'renderingChoices' => function () use ($request): array {
+                $value = $request->query('view', 'inertia');
+                $rendering = is_string($value) ? Rendering::tryFrom($value) : null;
+
+                // Error responses share these props too; never reject the input again.
+                return $rendering !== null && preg_match('~^(projects|onboarding)(/|$)~', $request->path()) === 1
+                    ? $rendering->choices($request) : [];
+            },
             // Resolved at render time, after route-model binding.
             'current' => CurrentProps::make()->menus('primary', 'footer')
                 ->pagePresentation()->subjectPresentation()->actions(),
