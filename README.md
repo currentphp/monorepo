@@ -38,6 +38,20 @@ Integrations that need other libraries are separate packages.
 See [Direction and decisions](docs/decisions.md) for package boundaries,
 supported versions, and what is planned next.
 
+## Writing about Current
+
+Write the name as **Current**: one word, capital C, never all caps.
+`currentphp` is the GitHub organization and domain, not the product's name.
+Where readers need context, describe Current rather than renaming it:
+"Current, a Laravel package".
+
+Refer to packages by their Composer names in code formatting: `current/current`
+for the core and `current/inertia` for the Inertia integration. In prose, say
+"the core package" or "the Inertia integration".
+
+Where the everyday word would be ambiguous next to the product, Current's
+documentation says "active" instead, as in "the active page".
+
 ## Development
 
 Development runs from this root. One install links every package from
