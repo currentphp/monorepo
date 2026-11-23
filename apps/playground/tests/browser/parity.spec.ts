@@ -305,16 +305,22 @@ for (const mode of modes) {
         );
     });
 
-    test(`${mode}: rename succeeds with consistent feedback and focus`, async ({
+    test(`${mode}: rename recovers from validation with consistent feedback, focus and title`, async ({
         page,
     }) => {
         projects();
         await visit(page, '/projects/42/edit', mode);
-        await page
-            .getByRole('textbox', { name: 'Project name' })
-            .fill('Shared result');
-        page.once('dialog', (dialog) => dialog.accept());
+        page.on('dialog', (dialog) => dialog.accept());
+        const name = page.getByRole('textbox', { name: 'Project name' });
+        await name.fill('   ');
         await page.getByRole('button', { name: 'Rename', exact: true }).click();
+        await expect(page.getByRole('alert')).toBeVisible();
+        await expect(name).toHaveAttribute('aria-invalid', 'true');
+        await name.fill('Shared result');
+        await page.getByRole('button', { name: 'Rename', exact: true }).click();
+        await expect(page.getByRole('alert')).toHaveCount(0);
+        await expect(name).not.toHaveAttribute('aria-invalid', 'true');
+        await expect(page).toHaveTitle('Edit Shared result - Current Examples');
         await expect(page.getByRole('status')).toHaveText('Project renamed.');
         await expect(page.locator('[data-feedback]')).toBeFocused();
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(
