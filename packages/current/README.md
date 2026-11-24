@@ -265,7 +265,9 @@ Core has no Livewire runtime dependency.
 
 ## Rendering guides
 
-Use [Blade](docs/blade.md) to render escaped experience data and application-owned
+[Inertia](docs/inertia.md) shares the experience with every page as one typed
+prop through `Current\Inertia\CurrentProps`; install `inertiajs/inertia-laravel`
+to use it. Use [Blade](docs/blade.md) to render escaped experience data and application-owned
 route forms. The [Livewire guide](docs/livewire.md) explains explicit context,
 fresh models, authorization, and parent-shell refresh responsibilities. The
 playground HTTP suite tests one documented Laravel/Livewire/PHP combination;

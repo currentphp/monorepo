@@ -10,14 +10,15 @@ Inertia 3, React, Blade, and Livewire. Created from App Foundation `v0.1.0` (com
 | ---------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | `current/current`: pages                 | `ExperienceServiceProvider::registerPages()`      | Page identity and resource-aware labels on every page; the projects demo.                |
 | `current/current`: breadcrumbs and menus | `ExperienceServiceProvider::registerNavigation()` | Breadcrumbs, and primary and footer menus with `except()` and exclusions, on every page. |
-| `current/inertia`                        | `HandleInertiaRequests::share()`                  | The `current` prop on every page, typed by the package's `current.d.ts`.                 |
+| `current/current`: Inertia               | `HandleInertiaRequests::share()`                  | The `current` prop on every page, typed by the monorepo's `current.d.ts`.                |
 | `current/current`: subjects              | `ExperienceServiceProvider::registerSubjects()`   | Project and task subjects in breadcrumbs, task links, and `current.subject`.             |
 | `current/current`: actions               | `ExperienceServiceProvider::registerActions()`    | Contextual project/task actions, disabled reasons, and route authorization.              |
 
 [`HandleInertiaRequests`](app/Http/Middleware/HandleInertiaRequests.php) shares
 component output with every Inertia page as the `current` prop, through
-`CurrentProps` from `current/inertia`. Its TypeScript types come from the
-package, mapped to `@current/inertia` in `tsconfig.json` and declared in
+`CurrentProps` from `current/current`. Its TypeScript types come from the
+monorepo's `packages/inertia` folder, mapped to `@current/inertia` in
+`tsconfig.json` and declared in
 [`resources/js/types/global.d.ts`](resources/js/types/global.d.ts); the
 components in [`resources/js/components/current/`](resources/js/components/current/)
 render it.
@@ -155,7 +156,7 @@ packages or browsers implicitly.
 
 ## Checks
 
-The app imports its action type from `current/inertia`, representing all core HTTP methods. Its Inertia navigation
+The app imports its action type from `@current/inertia`, representing all core HTTP methods. Its Inertia navigation
 buttons omit `HEAD` actions, which have no page response; the installed Inertia
 transport supports GET, POST, PUT, PATCH, and DELETE. Other execution behavior
 belongs to the application.

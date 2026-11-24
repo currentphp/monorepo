@@ -110,7 +110,7 @@
         "paths": {
             "@/*": ["./resources/js/*"],
             "@current/inertia": [
-                "./vendor/current/inertia/resources/types/current.d.ts"
+                "../../packages/inertia/resources/types/current.d.ts"
             ]
         },
         "jsx": "react-jsx"

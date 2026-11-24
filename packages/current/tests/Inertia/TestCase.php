@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Current\Inertia\Tests;
+namespace Current\Tests\Inertia;
 
 use Current\CurrentServiceProvider;
 use Inertia\ServiceProvider as InertiaServiceProvider;

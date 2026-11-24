@@ -153,6 +153,17 @@ product. The application owns simulation state, validation, and authorization;
 Current supplies its page, subject, navigation, and action descriptions. Canonical
 usage and checks live in the [examples README](../apps/playground/README.md).
 
+### Unreleased: v0.7
+
+The Inertia adapter moves into `current/current` with the same class name and
+output; `inertiajs/inertia-laravel` becomes optional (`suggest`, with a
+`conflict` guard). `current/inertia` released in step with every core minor, so
+a separate package cost a release each time without letting the two move
+independently. Its last release, 0.6.0, contains no PHP and requires core 0.7,
+so applications update without code changes. The TypeScript types and a small
+`is()` helper that mirrors `Current::is()` move to the npm package
+`@currentphp/client`, starting at 0.1.0. The PHP API only grows in 0.7.
+
 ### Later
 
 These are candidates without a release target:

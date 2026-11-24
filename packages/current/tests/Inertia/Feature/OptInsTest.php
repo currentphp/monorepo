@@ -7,12 +7,13 @@ use Current\Actions\ActionRegistry;
 use Current\Context;
 use Current\Exceptions\ResolutionFailed;
 use Current\Inertia\CurrentProps;
-use Current\Inertia\Tests\Fixtures\DeclaredTypes;
-use Current\Inertia\Tests\Fixtures\Project;
 use Current\Pages\Page;
 use Current\Pages\PageRegistry;
 use Current\Subjects\Subject;
 use Current\Subjects\SubjectRegistry;
+use Current\Tests\Inertia\Fixtures\ClientTypes;
+use Current\Tests\Inertia\Fixtures\DeclaredTypes;
+use Current\Tests\Inertia\Fixtures\Project;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -85,7 +86,7 @@ test('all independent opt-in combinations have exact serialized shapes and match
             ->and($data['actions'][1]['reason'])->toBe('Protected project.')
             ->and($data['actions'][1]['icon'])->toBeNull()
             ->and($data['actions'][1]['confirm'])->toBeNull();
-        $types = new DeclaredTypes(dirname(__DIR__, 2).'/resources/types/current.d.ts');
+        $types = new DeclaredTypes(ClientTypes::declarations());
         foreach ($data['actions'] as $action) {
             $types->assertMatches('Action', $action, 'action');
         }
@@ -104,7 +105,7 @@ test('all independent opt-in combinations have exact serialized shapes and match
     if ($mask & 4) {
         expect($missing['actions'])->toBe([]);
     }
-    $directory = dirname(__DIR__).'/types/generated';
+    $directory = ClientTypes::generatedCases();
     if (! is_dir($directory)) {
         mkdir($directory, 0755, true);
     }
@@ -159,7 +160,7 @@ test('all six core HTTP methods survive action serialization and compile as pack
     $data = $this->getJson('/opt/projects/42/edit', ['X-Inertia' => 'true'])->assertOk()->json('props.current.actions');
     $actions = array_values(array_filter($data, fn (array $action): bool => str_starts_with($action['id'], 'opt.edit.http-')));
     expect(array_column($actions, 'method'))->toBe($methods);
-    $directory = dirname(__DIR__).'/types/generated';
+    $directory = ClientTypes::generatedCases();
     if (! is_dir($directory)) {
         mkdir($directory, 0755, true);
     }

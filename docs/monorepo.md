@@ -37,8 +37,8 @@ directories under `packages/`.
 
 The root `composer.json` is `current/monorepo`, a development-only manifest
 that is never published. It installs every package from `packages/*` through
-a path repository, each at its own development line (`0.6.x-dev` for core,
-`0.5.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
+a path repository, each at its own development line (`0.7.x-dev` for core,
+`0.6.x-dev` for inertia), and requires each one as `^MAJOR.MINOR@dev` of that
 line. The `@dev` flag lets only these packages resolve to development
 versions; everything else stays stable, including `--prefer-lowest` runs. It
 also holds the development dependencies, test autoloading, scripts, and the PHP
@@ -90,8 +90,10 @@ outside the verified scope.
 Every package is published under the `current/` Composer vendor and the
 `Current\` PHP namespace, and its folder matches its package name.
 
-- **Packages:** the core is `current/current`; integrations are named after
-  what they integrate, such as `current/inertia`.
+- **Packages:** the core is `current/current`. An integration that brings a
+  dependency most applications would not want gets its own package, named
+  after what it integrates; an optional one, such as Inertia from core 0.7,
+  stays in the core behind `suggest` and a namespace (`Current\Inertia\`).
   Namespaces inside a package are named after the concepts they hold, such as
   `Current\Pages\` and `Current\Navigation\` in the core.
 - **Composed products**, which combine packages with their own integration

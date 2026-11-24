@@ -3,14 +3,15 @@
 declare(strict_types=1);
 
 use Current\Inertia\CurrentProps;
-use Current\Inertia\Tests\Fixtures\DeclaredTypes;
-use Current\Inertia\Tests\Fixtures\Project;
 use Current\Navigation\MenuEntry;
 use Current\Navigation\MenuRegistry;
 use Current\Pages\Page;
 use Current\Pages\PageRegistry;
 use Current\Subjects\Subject;
 use Current\Subjects\SubjectRegistry;
+use Current\Tests\Inertia\Fixtures\ClientTypes;
+use Current\Tests\Inertia\Fixtures\DeclaredTypes;
+use Current\Tests\Inertia\Fixtures\Project;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,7 +19,7 @@ use PHPUnit\Framework\AssertionFailedError;
 
 function declaredTypes(): DeclaredTypes
 {
-    return new DeclaredTypes(dirname(__DIR__, 2).'/resources/types/current.d.ts');
+    return new DeclaredTypes(ClientTypes::declarations());
 }
 
 test('the concrete declaration shapes are inventoried', function () {

@@ -35,6 +35,12 @@ for package in $packages; do
     echo "==> $package"
     cd "$root/packages/$package"
     [ -n "$only" ] || composer validate --strict
+    # A package without source, such as a release that only requires another
+    # package, has nothing to format, analyse, or test.
+    if [ ! -d src ]; then
+        echo "No src/: manifest only."
+        continue
+    fi
     if run format; then
         "$bin/pint" --test
     fi

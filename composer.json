@@ -9,18 +9,19 @@
             "url": "packages/*",
             "options": {
                 "versions": {
-                    "current/current": "0.6.x-dev",
-                    "current/inertia": "0.5.x-dev"
+                    "current/current": "0.7.x-dev",
+                    "current/inertia": "0.6.x-dev"
                 }
             }
         }
     ],
     "require": {
         "php": "^8.3",
-        "current/current": "^0.6@dev",
-        "current/inertia": "^0.5@dev"
+        "current/current": "^0.7@dev",
+        "current/inertia": "^0.6@dev"
     },
     "require-dev": {
+        "inertiajs/inertia-laravel": "^3.0",
         "laravel/pint": "^1.27",
         "monorepo-php/monorepo": "^12.7",
         "orchestra/testbench": "^11.0",
@@ -29,8 +30,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Current\\Tests\\": "packages/current/tests/",
-            "Current\\Inertia\\Tests\\": "packages/inertia/tests/"
+            "Current\\Tests\\": "packages/current/tests/"
         }
     },
     "config": {
@@ -49,7 +49,7 @@
         "analyse": "bin/check --only=analyse",
         "test": "bin/check --only=test",
         "test:types": [
-            "@test inertia",
+            "@test current",
             "npm --prefix packages/inertia test"
         ],
         "check:playground": "@composer --working-dir=apps/playground check",
