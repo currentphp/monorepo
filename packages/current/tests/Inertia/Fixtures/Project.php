@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Current\Inertia\Tests\Fixtures;
+namespace Current\Tests\Inertia\Fixtures;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
 use LogicException;

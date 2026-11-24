@@ -2,7 +2,17 @@
 
 ## Unreleased
 
-No changes yet.
+### Removed
+
+- All PHP. `Current\Inertia\CurrentProps` is part of `current/current` 0.7
+  with the same class name. This release requires `current/current` `^0.7` and
+  `inertiajs/inertia-laravel` `^3.0`, so applications update without code
+  changes.
+
+### Changed
+
+- The type declarations stay at `resources/types/current.d.ts`, frozen at their
+  0.5 contents. New types are published on npm as `@currentphp/client`.
 
 ## 0.5.0 - 2026-11-23
 

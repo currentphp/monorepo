@@ -2,7 +2,18 @@
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- The Inertia adapter, `Current\Inertia\CurrentProps`, moved here from
+  `current/inertia` with the same class name, API, and output, together with its
+  [guide](docs/inertia.md). Install `inertiajs/inertia-laravel` 3 to use it; the
+  core suggests it and does not require it.
+
+### Changed
+
+- Requires `illuminate/container` directly, which the adapter uses.
+- Conflicts with `current/inertia` below 0.6, which also defines the adapter, and
+  with `inertiajs/inertia-laravel` outside 3.x.
 
 ## 0.6.0 - 2026-11-23
 

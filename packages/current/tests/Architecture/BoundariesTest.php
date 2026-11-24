@@ -6,6 +6,7 @@ use Current\Actions\Actions;
 use Current\Context;
 use Current\CurrentServiceProvider;
 use Current\Experience;
+use Current\Inertia\CurrentProps;
 use Current\Navigation\Navigation;
 use Current\Pages\Pages;
 use Current\Subjects\SubjectResolver;
@@ -31,8 +32,16 @@ arch('only the edges use Laravel')
         SubjectResolver::class,
         DestinationUrls::class,
         Actions::class,
+        CurrentProps::class,
         'Current\Tests',
     ]);
+
+// Inertia is an optional dependency: only the adapter may reference it, so
+// applications without inertiajs/inertia-laravel never load an Inertia class.
+arch('only the Inertia adapter uses Inertia')
+    ->expect('Current')
+    ->not->toUse('Inertia')
+    ->ignoring(['Current\Inertia', 'Current\Tests']);
 
 arch('source files declare strict types')
     ->expect('Current')

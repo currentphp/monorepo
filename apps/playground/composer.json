@@ -10,8 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "current/current": "^0.6@dev",
-        "current/inertia": "^0.5@dev",
+        "current/current": "^0.7@dev",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.42",
         "laravel/tinker": "^3.0",
@@ -125,8 +124,7 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "current/current": "0.6.x-dev",
-                    "current/inertia": "0.5.x-dev"
+                    "current/current": "0.7.x-dev"
                 }
             }
         }

@@ -19,7 +19,8 @@ composer require current/current
 ```
 
 The core provides pages, breadcrumbs, menus, subjects, and actions, for Laravel 13 and
-PHP 8.3+; Inertia apps add `composer require current/inertia`. Current was
+PHP 8.3+; Inertia apps add `inertiajs/inertia-laravel` (see the
+[Inertia guide](packages/current/docs/inertia.md)). Current was
 named WavyKit until 2026-11-16: its earlier releases are `wavykit/core` 0.2.0
 and `wavykit/inertia` 0.1.0, and the first releases under the new names,
 `current/current` 0.3.0 and `current/inertia` 0.2.0, were released on the same
@@ -31,9 +32,10 @@ requests are not open yet; issues and feedback are welcome (see
 | Package | Purpose |
 | --- | --- |
 | [`current/current`](packages/current/README.md) | Pages (identity, hierarchy, route association, request context), breadcrumbs, menus, and subjects. |
-| [`current/inertia`](packages/inertia/README.md) | Shares the page ID, subject, breadcrumbs, and menus with Inertia, with TypeScript types. |
+| [`current/inertia`](packages/inertia/README.md) | Superseded from core 0.7: its last release only requires `current/current`. |
 
-Integrations that need other libraries are separate packages.
+Inertia support is part of the core, with an optional dependency; Blade and
+Livewire are guides. Client types are published on npm as `@currentphp/client`.
 
 See [Direction and decisions](docs/decisions.md) for package boundaries,
 supported versions, and what is planned next.
@@ -45,9 +47,9 @@ Write the name as **Current**: one word, capital C, never all caps.
 Where readers need context, describe Current rather than renaming it:
 "Current, a Laravel package".
 
-Refer to packages by their Composer names in code formatting: `current/current`
-for the core and `current/inertia` for the Inertia integration. In prose, say
-"the core package" or "the Inertia integration".
+Refer to packages by their registry names in code formatting: `current/current`
+for the core on Composer and `@currentphp/client` for the client on npm. In
+prose, say "the core package" or "the client package".
 
 Where the everyday word would be ambiguous next to the product, Current's
 documentation says "active" instead, as in "the active page".

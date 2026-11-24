@@ -6,9 +6,17 @@
     "require": {
         "php": "^8.3",
         "illuminate/console": "^13.0",
+        "illuminate/container": "^13.0",
         "illuminate/contracts": "^13.0",
         "illuminate/routing": "^13.0",
         "illuminate/support": "^13.0"
+    },
+    "conflict": {
+        "current/inertia": "<0.6",
+        "inertiajs/inertia-laravel": "<3.0 || >=4.0"
+    },
+    "suggest": {
+        "inertiajs/inertia-laravel": "Share Current with an Inertia frontend through Current\\Inertia\\CurrentProps (^3.0)."
     },
     "autoload": {
         "psr-4": {

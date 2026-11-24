@@ -1,17 +1,11 @@
 {
     "name": "current/inertia",
-    "description": "Share Current pages, breadcrumbs, and menus with Inertia, with TypeScript types.",
+    "description": "Superseded: Inertia support is part of current/current from 0.7, and the TypeScript types are moving to npm. This release only requires current/current.",
     "type": "library",
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "illuminate/container": "^13.0",
-        "inertiajs/inertia-laravel": "^3.0",
-        "current/current": "^0.6"
-    },
-    "autoload": {
-        "psr-4": {
-            "Current\\Inertia\\": "src/"
-        }
+        "current/current": "^0.7",
+        "inertiajs/inertia-laravel": "^3.0"
     }
 }
