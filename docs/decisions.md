@@ -153,8 +153,9 @@ product. The application owns simulation state, validation, and authorization;
 Current supplies its page, subject, navigation, and action descriptions. Canonical
 usage and checks live in the [examples README](../apps/playground/README.md).
 
-### Unreleased: v0.7
+### v0.7
 
+Released 2026-11-23 as `current/current` 0.7.0 and `current/inertia` 0.6.0.
 The Inertia adapter moves into `current/current` with the same class name and
 output; `inertiajs/inertia-laravel` becomes optional (`suggest`, with a
 `conflict` guard). `current/inertia` released in step with every core minor, so

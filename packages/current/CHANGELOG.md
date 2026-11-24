@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.7.0 - 2026-11-23
+
 ### Added
 
 - The Inertia adapter, `Current\Inertia\CurrentProps`, moved here from
