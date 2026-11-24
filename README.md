@@ -68,11 +68,13 @@ composer check        # or: composer check current inertia
 
 Each package has its own version, released with a `<package>/vX.Y.Z` tag and
 distributed through a read-only split repository; CI runs every package's checks. See [Monorepo layout and releases](docs/monorepo.md)
-for the layout and release workflow. The monorepo and the `current/current` and
-`current/inertia` split repositories are public on GitHub, and both packages
-are published on Packagist:
-[`current/current`](https://packagist.org/packages/current/current) and
-[`current/inertia`](https://packagist.org/packages/current/inertia).
+for the layout and release workflow. The monorepo and the `current/current`
+split repository are public on GitHub, and the core is published on Packagist
+as [`current/current`](https://packagist.org/packages/current/current). The
+client is published on npm as
+[`@currentphp/client`](https://www.npmjs.com/package/@currentphp/client) from
+this repository. `current/inertia` is abandoned in favour of `current/current`,
+and its split repository is archived.
 
 ## Ownership
 
