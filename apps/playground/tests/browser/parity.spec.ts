@@ -117,11 +117,21 @@ async function state(page: Page, path: string, mode: Mode, scenario: string) {
         const field = page.getByRole('textbox').first();
         page.on('dialog', (dialog) => dialog.accept());
         await field.fill('   ');
+        // Wait for the submission's own response, whichever transport sends it (a
+        // native form post, Inertia, or a Livewire update), so a slow server
+        // response cannot use up the alert assertion's timeout. Track the
+        // request rather than responses: a redirected post's final response
+        // is a GET.
+        const sent = page.waitForRequest(
+            (request) => request.method() !== 'GET',
+        );
         await page
             .locator('form')
             .filter({ has: field })
             .getByRole('button', { name: /Continue|Rename|Save/ })
             .click();
+        await (await sent).response();
+        await page.waitForLoadState('networkidle');
         await expect(page.getByRole('alert')).toBeVisible();
         await expect(page.locator('[data-feedback]')).toBeFocused();
     }

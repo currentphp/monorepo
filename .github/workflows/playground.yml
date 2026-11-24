@@ -32,3 +32,13 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: python3 --version
       - run: composer check
+      # Browser failures keep a Playwright trace; upload it so a failure can be
+      # diagnosed from its recording rather than retried blind.
+      - name: Upload browser test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: apps/playground/tests/browser/.runtime/results
+          if-no-files-found: ignore
+          retention-days: 14
