@@ -32,7 +32,8 @@ requests are not open yet; issues and feedback are welcome (see
 | Package | Purpose |
 | --- | --- |
 | [`current/current`](packages/current/README.md) | Pages (identity, hierarchy, route association, request context), breadcrumbs, menus, and subjects. |
-| [`current/inertia`](packages/inertia/README.md) | Superseded from core 0.7: its last release only requires `current/current`. |
+| [`@currentphp/client`](packages/client/README.md) (npm) | TypeScript types for the shared experience data, and `is()`, matching `Current::is()`. |
+| [`current/inertia`](https://packagist.org/packages/current/inertia) | Superseded from core 0.7: its last release only requires `current/current`. |
 
 Inertia support is part of the core, with an optional dependency; Blade and
 Livewire are guides. Client types are published on npm as `@currentphp/client`.

@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, lazyPlugins } from 'vite-plus';
 
 export default defineConfig({
@@ -33,6 +34,14 @@ export default defineConfig({
             formVariants: true,
         }),
     ]),
+    resolve: {
+        // The client package from this monorepo, as published to npm.
+        alias: {
+            '@currentphp/client': fileURLToPath(
+                new URL('../../packages/client/src/index.ts', import.meta.url),
+            ),
+        },
+    },
     server: {
         watch: {
             ignored: [

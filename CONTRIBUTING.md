@@ -36,7 +36,7 @@ For the full local gate, install each owner's development dependencies explicitl
 
 ```sh
 composer install
-npm ci --prefix packages/inertia
+npm ci --prefix packages/client
 composer install --working-dir=apps/playground
 npm ci --prefix apps/playground
 npm exec --prefix apps/playground -- playwright install chromium

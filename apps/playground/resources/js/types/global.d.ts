@@ -1,4 +1,4 @@
-import type { Current } from '@current/inertia';
+import type { Current } from '@currentphp/client';
 
 declare module '@inertiajs/core' {
     export interface InertiaConfig {

@@ -1,4 +1,4 @@
-import type { Current, Action, Subject } from '../../resources/types/current';
+import type { Current, Action, Subject } from '../../src/index';
 import './generated/methods';
 import './generated/case-0';
 import './generated/case-1';

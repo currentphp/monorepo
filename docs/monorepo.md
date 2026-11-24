@@ -70,8 +70,9 @@ owned checks are `composer test:types` and `composer check:playground`. After th
 explicit dependency setup in CONTRIBUTING, `composer check:all` runs all three
 areas. Checks never install dependencies.
 
-Inertia owns its private TypeScript manifest/lock and compiler assertions under
-`packages/inertia`. Current Examples (`apps/playground`) is the single consumer application for Inertia,
+The npm client, `packages/client` (`@currentphp/client`), owns its manifest, lock,
+build, and tests; it has no `composer.json`, so it is never split or checked as
+PHP. Current Examples (`apps/playground`) is the single consumer application for Inertia,
 Blade, Livewire, and JSON endpoints. It owns their Composer lock, shared projects,
 policies, rendering, and HTTP tests. There is no separate Livewire application or
 core runtime dependency. `apps/playground/tests/http/run.py` starts the actual
@@ -126,6 +127,14 @@ and on `<name>/v*` release tags. It runs
 Packagist reads each split repository, so `composer.json` sits at its root and
 Composer derives versions from its tags. Contributions go to this repository;
 split repositories are read-only and close pull requests automatically.
+
+The npm client is released from this repository instead. A `client/vX.Y.Z` tag
+that matches `packages/client/package.json` runs the
+[publish workflow](../.github/workflows/publish-client.yml), which tests,
+builds, and publishes `@currentphp/client` with npm trusted publishing and
+provenance. The split workflow ignores tags for folders without a
+`composer.json`. The client versions independently; its README lists the
+compatible `current/current` minor, and its tests check that list.
 
 The split repository's history starts at the commit that first placed the
 package under `packages/<name>/`; earlier history remains in this repository.

@@ -1,0 +1,35 @@
+{
+    "name": "@currentphp/client",
+    "version": "0.1.0",
+    "description": "Types and small helpers for Current's shared experience data in TypeScript frontends.",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/currentphp/monorepo.git",
+        "directory": "packages/client"
+    },
+    "homepage": "https://github.com/currentphp/monorepo/tree/main/packages/client#readme",
+    "type": "module",
+    "sideEffects": false,
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "node node_modules/typescript/bin/tsc --project tsconfig.build.json",
+        "test": "node node_modules/typescript/bin/tsc --project tsconfig.json && node --test tests/*.test.ts"
+    },
+    "devDependencies": {
+        "typescript": "5.9.3"
+    },
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    }
+}

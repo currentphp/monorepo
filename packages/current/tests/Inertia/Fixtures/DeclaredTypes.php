@@ -8,7 +8,7 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\AssertionFailedError;
 
 /**
- * Reads the object and union types in resources/types/current.d.ts and checks
+ * Reads the object and union types in the client package's src/types.ts and checks
  * decoded JSON against concrete DTOs and the default base shape. Conditional
  * Current feature types are separately compiled against PHP-generated JSON.
  *

@@ -30,9 +30,15 @@ jobs:
         run: |
           if [ "$REF_TYPE" = tag ]; then
             package="${REF_NAME%%/*}"
-            if [ ! -f "packages/$package/composer.json" ]; then
-              echo "::error::Tag $REF_NAME does not name a package in packages/."
+            if [ ! -d "packages/$package" ]; then
+              echo "::error::Tag $REF_NAME does not name a folder in packages/."
               exit 1
+            fi
+            if [ ! -f "packages/$package/composer.json" ]; then
+              # Not a Composer package (for example the npm client): nothing to split.
+              echo "::notice::Tag $REF_NAME names packages/$package, which has no composer.json; not splitting."
+              echo "packages=[]" >> "$GITHUB_OUTPUT"
+              exit 0
             fi
             echo "packages=$(jq -cn --arg package "$package" '[$package]')" >> "$GITHUB_OUTPUT"
           else
@@ -42,6 +48,7 @@ jobs:
   split:
     name: Split ${{ matrix.package }}
     needs: packages
+    if: needs.packages.outputs.packages != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

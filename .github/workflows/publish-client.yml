@@ -1,0 +1,62 @@
+name: Publish client
+
+# Publishes @currentphp/client to npm with trusted publishing (OIDC) and
+# provenance. A client/vX.Y.Z tag, matching packages/client/package.json, is the
+# release approval; a manual run publishes the version on the selected ref.
+on:
+  push:
+    tags: ['client/v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-client
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish @currentphp/client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the tag matches the package version
+        if: github.ref_type == 'tag'
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version="$(jq -r .version packages/client/package.json)"
+          if [ "${REF_NAME#client/v}" != "$version" ]; then
+            echo "::error::Tag $REF_NAME does not match packages/client/package.json version $version."
+            exit 1
+          fi
+
+      # The is() parity table comes from the core's PHP tests.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.21.0'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install --global npm@^11.5.1
+
+      - run: composer install --prefer-dist --no-interaction --no-progress
+
+      - run: npm ci --prefix packages/client
+
+      - name: Check the client package (types, is() parity, compatibility)
+        run: composer test:types
+
+      - run: npm --prefix packages/client run build
+
+      - name: Publish
+        working-directory: packages/client
+        run: npm publish
