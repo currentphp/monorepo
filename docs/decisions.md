@@ -48,9 +48,18 @@ development package.
 
 ## Supported versions
 
-Packages support Laravel 13 and PHP 8.3 or later. Support for earlier Laravel
-versions is not planned and will be considered only if adopters ask for it;
-widening support means adding those versions to CI.
+Packages support Laravel 13 and PHP 8.3 or later.
+
+Current follows Laravel's release schedule:
+
+- Each Current minor release supports the current Laravel major version.
+- When a new Laravel major is released, the next Current minor adds it. The
+  previous major stays supported until Laravel stops fixing bugs in it.
+- Current supports the PHP versions that its supported Laravel majors support.
+
+Support for Laravel versions older than these is not planned and will be
+considered only if adopters ask for it; widening support means adding those
+versions to CI.
 
 ## Plan
 
