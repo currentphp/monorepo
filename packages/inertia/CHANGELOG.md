@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.6.0 - 2026-11-23
+
 ### Removed
 
 - All PHP. `Current\Inertia\CurrentProps` is part of `current/current` 0.7
