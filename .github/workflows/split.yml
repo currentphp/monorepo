@@ -21,7 +21,8 @@ jobs:
       packages: ${{ steps.list.outputs.packages }}
     steps:
       - uses: actions/checkout@v7
-      # A push to main splits every package; a release tag splits only its package.
+      # A package is a packages/* folder with a composer.json. A push to main
+      # splits every package; a release tag splits only its package.
       - id: list
         env:
           REF_TYPE: ${{ github.ref_type }}
@@ -35,7 +36,7 @@ jobs:
             fi
             echo "packages=$(jq -cn --arg package "$package" '[$package]')" >> "$GITHUB_OUTPUT"
           else
-            echo "packages=$(find packages -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+            echo "packages=$(find packages -mindepth 2 -maxdepth 2 -name composer.json -exec dirname {} \; | xargs -n1 basename | sort | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
           fi
 
   split:

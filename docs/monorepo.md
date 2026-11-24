@@ -6,6 +6,10 @@ its `illuminate/*` components.
 
 ## Layout
 
+A package is a folder in `packages/` that has a `composer.json`. The split
+workflow, `bin/packages`, and the checks act only on packages; any other folder
+there is ignored, so it is never split or checked as PHP.
+
 Each package lives in `packages/<name>/` and contains:
 
 - a runtime-only `composer.json`: `name`, `description`, `type`, `license`,

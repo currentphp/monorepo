@@ -1,11 +1,13 @@
 #!/bin/sh
-# Prints the package names to act on: the arguments, or every packages/* folder.
+# Prints the package names to act on: the arguments, or every package. A package
+# is a packages/* folder with a composer.json; other folders are ignored.
 set -eu
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 
 if [ "$#" -eq 0 ]; then
     for dir in "$root"/packages/*/; do
+        [ -f "${dir}composer.json" ] || continue
         basename "$dir"
     done
     exit
