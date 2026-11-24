@@ -1,3 +1,4 @@
+import { is } from '@currentphp/client';
 import { Link, usePage, useForm } from '@inertiajs/react';
 import Actions from '@/components/current/actions';
 import Content from '@/components/current/content';
@@ -41,7 +42,7 @@ export default function Projects({ project, projects, tasks }: Props) {
                     <section className="card">
                         <h2>{selected.name}</h2>
                         <p className="help">
-                            {current.pageId === 'projects.edit'
+                            {is(current, 'projects.edit')
                                 ? 'Update the project name. Changes appear in every view.'
                                 : 'View project details, manage its name, or explore its tasks.'}
                         </p>
@@ -49,7 +50,7 @@ export default function Projects({ project, projects, tasks }: Props) {
                             <Link href={selected.url}>View project</Link>
                             <Link href={selected.editUrl}>Edit project</Link>
                         </div>
-                        {current.pageId === 'projects.edit' ? (
+                        {is(current, 'projects.edit') ? (
                             <RenameProject
                                 key={`${selected.id}:${selected.name}`}
                                 project={selected}

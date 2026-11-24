@@ -37,10 +37,14 @@ jobs:
         with:
           node-version: '24.21.0'
 
-      - name: Install adapter compiler dependencies
+      - name: Install client package dependencies
         if: matrix.php == '8.5' && matrix.stability == 'prefer-stable'
-        run: npm ci --prefix packages/inertia
+        run: npm ci --prefix packages/client
 
-      - name: Check TypeScript contracts
+      - name: Check the client package (types, is() parity, compatibility)
         if: matrix.php == '8.5' && matrix.stability == 'prefer-stable'
         run: composer test:types
+
+      - name: Build the client package
+        if: matrix.php == '8.5' && matrix.stability == 'prefer-stable'
+        run: npm --prefix packages/client run build

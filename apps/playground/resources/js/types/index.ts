@@ -4,4 +4,4 @@ export type {
     MenuItem,
     MenuItemKind,
     Subject,
-} from '@current/inertia';
+} from '@currentphp/client';

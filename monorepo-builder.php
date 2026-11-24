@@ -13,6 +13,5 @@ return static function (MBConfig $mbConfig): void {
     $mbConfig->packageDirectories([__DIR__.'/packages']);
     $mbConfig->parameters()->set(Option::EXCLUDE_PACKAGE_VERSION_CONFLICTS, [
         'current/current',
-        'current/inertia',
     ]);
 };

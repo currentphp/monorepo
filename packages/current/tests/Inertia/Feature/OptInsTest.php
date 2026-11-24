@@ -115,7 +115,7 @@ test('all independent opt-in combinations have exact serialized shapes and match
     $emptyJson = json_encode($missing, JSON_THROW_ON_ERROR);
     $json = str_replace('"menus":[]', '"menus":{}', $json);
     $emptyJson = str_replace('"menus":[]', '"menus":{}', $emptyJson);
-    file_put_contents($directory.'/case-'.$mask.'.ts', "import type { Current } from '../../../resources/types/current';\nexport const selected: {$type} = {$json};\nexport const absent: {$type} = {$emptyJson};\n");
+    file_put_contents($directory.'/case-'.$mask.'.ts', "import type { Current } from '../../../src/index';\nexport const selected: {$type} = {$json};\nexport const absent: {$type} = {$emptyJson};\n");
 })->with(range(0, 7));
 
 test('an excluded partial reload or initial deferred prop evaluates no new facts', function (bool $deferred) {
@@ -164,5 +164,5 @@ test('all six core HTTP methods survive action serialization and compile as pack
     if (! is_dir($directory)) {
         mkdir($directory, 0755, true);
     }
-    file_put_contents($directory.'/methods.ts', "import type { Action } from '../../../resources/types/current';\nexport const actions: Action[] = ".json_encode($actions, JSON_THROW_ON_ERROR).";\n");
+    file_put_contents($directory.'/methods.ts', "import type { Action } from '../../../src/index';\nexport const actions: Action[] = ".json_encode($actions, JSON_THROW_ON_ERROR).";\n");
 });

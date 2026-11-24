@@ -9,16 +9,14 @@
             "url": "packages/*",
             "options": {
                 "versions": {
-                    "current/current": "0.7.x-dev",
-                    "current/inertia": "0.6.x-dev"
+                    "current/current": "0.7.x-dev"
                 }
             }
         }
     ],
     "require": {
         "php": "^8.3",
-        "current/current": "^0.7@dev",
-        "current/inertia": "^0.6@dev"
+        "current/current": "^0.7@dev"
     },
     "require-dev": {
         "inertiajs/inertia-laravel": "^3.0",
@@ -50,7 +48,7 @@
         "test": "bin/check --only=test",
         "test:types": [
             "@test current",
-            "npm --prefix packages/inertia test"
+            "npm --prefix packages/client test"
         ],
         "check:playground": "@composer --working-dir=apps/playground check",
         "check:all": [
